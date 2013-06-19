@@ -1,0 +1,23 @@
+body {
+	background-color:rgb(0,0,0);
+	margin:0px 0px;
+}	
+table#page {
+	margin:0px auto 0px auto;
+	border-style:none;
+	border-width:0px;	
+	border-spacing:0px;
+}
+td.corner {
+	background-color:rgb(255,0,0);
+	width:20px;
+	height:20px;
+}
+td.horisontal {
+	background-color:rgb(255,0,0);
+	height:20px;
+}
+td.vertical {
+	background-color:rgb(255,0,0);
+	width:20px;
+}
