@@ -3,7 +3,9 @@ window.requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAn
 	window.setTimeout(b, 1E3 / 60)
 };
 
-var ctx = document.querySelector("#game").getContext("2d");
+var ctx = document.querySelector("canvas#game").getContext("2d");
+var h_ctx = document.querySelector("canvas#holding").getContext("2d");
+var n_ctx = document.querySelector("canvas#next").getContext("2d");
 //document.body.appendChild((ctx = document.createElement("canvas").getContext("2d")).canvas); ;
 
 var FPS = 0;
@@ -48,6 +50,7 @@ function initVars() {
 	gameX = 0;//(CANVAS_WIDTH / 2) - (GRID_WIDTH / 2)
 	gameY = 0;
 
+	
 	GRAPHIC_FONT = "Verdana"
 		GRAPHIC_MENU_FONTSIZE = BRICKSIZE * 0.75;
 	GRAPHIC_MENUDESC_FONTSIZE = BRICKSIZE;
@@ -648,6 +651,15 @@ function clearAndResize(ctx) {
 	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	ctx.canvas.width = CANVAS_WIDTH;
 	ctx.canvas.height = CANVAS_HEIGHT;
+	
+	h_ctx.clearRect(0, 0, h_ctx.canvas.width, h_ctx.canvas.height);
+	h_ctx.canvas.width=BRICKSIZE*4;
+	h_ctx.canvas.height=BRICKSIZE*4;
+	
+	n_ctx.clearRect(0, 0, n_ctx.canvas.width, n_ctx.canvas.height);
+	n_ctx.canvas.width=BRICKSIZE*4;
+	n_ctx.canvas.height=BRICKSIZE*4;
+	
 	/*if (ctx.canvas.width != window.innerWidth) {
 		ctx.canvas.width = window.innerWidth;
 	}
@@ -675,7 +687,7 @@ function tiles(ctx) {
 		ctx.closePath();
 		ctx.stroke();
 	}
-	for (iy = 0; iy < (GRID_HEIGHT); iy += BRICKSIZE) {
+	for (iy = 0; iy <= (GRID_HEIGHT); iy += BRICKSIZE) {
 		ctx.beginPath();
 		ctx.lineTo(gameX, gameY + iy);
 		ctx.lineTo(gameX + (GRID_WIDTH), gameY + iy);
@@ -683,39 +695,40 @@ function tiles(ctx) {
 		ctx.stroke();
 	}
 	// NextBox field
-	ctx.lineWidth = 1;
-	ctx.strokeStyle = "rgba(0,255,0,0.5)";
-	ctx.fillStyle = "white";
-	ctx.font = GRAPHIC_SCORE_FONTSIZE + "px " + GRAPHIC_FONT;
-	ctx.fillText("Score: " + SCORE, (CANVAS_WIDTH / 2), 20);
+	
+	n_ctx.lineWidth = 1;
+	n_ctx.strokeStyle = "rgba(0,255,0,0.5)";
+	n_ctx.fillStyle = "white";
+	n_ctx.font = GRAPHIC_SCORE_FONTSIZE + "px " + GRAPHIC_FONT;
+	//n_ctx.fillText("Score: " + SCORE, (CANVAS_WIDTH / 2), 20);
 	var nextBrickW = BRICKSIZE * 4;
 	var nextBrickH = BRICKSIZE * 4;
-	var nextBrickX = gameX + GRID_WIDTH;
-	var nextBrickY = gameY;
-	ctx.font = GRAPHIC_BOARD_FONTSIZE + "px " + GRAPHIC_FONT;
-	ctx.fillText("Next: ", nextBrickX + (ctx.measureText("N").width / 2), nextBrickY + (GRAPHIC_BOARD_FONTSIZE + 2));
-	ctx.strokeRect(nextBrickX, nextBrickY, nextBrickW, nextBrickH);
+	var nextBrickX = 0;//gameX + GRID_WIDTH;
+	var nextBrickY = 0;//gameY;
+	n_ctx.font = GRAPHIC_BOARD_FONTSIZE + "px " + GRAPHIC_FONT;
+	n_ctx.fillText("Next: ", nextBrickX + (n_ctx.measureText("N").width / 2), nextBrickY + (GRAPHIC_BOARD_FONTSIZE + 2));
+	n_ctx.strokeRect(nextBrickX, nextBrickY, nextBrickW, nextBrickH);
 	var i1,
 	i2;
 	var BRICKSIZEDIV = 1.5;
 	for (i1 in bricksform[nextRandom]) {
 		for (i2 in bricksform[nextRandom][i1]) {
 			if (bricksform[nextRandom][i1][i2] == 1) {
-				makeBrick(ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(bricksform[nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(bricksform[nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[nextRandom]);
+				makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(bricksform[nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(bricksform[nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[nextRandom]);
 			}
 		}
 	}
 	// HoldingField
-	ctx.lineWidth = 1;
-	ctx.strokeStyle = "rgba(0,255,0,0.5)";
-	ctx.fillStyle = "white";
+	h_ctx.lineWidth = 1;
+	h_ctx.strokeStyle = "rgba(0,255,0,0.5)";
+	h_ctx.fillStyle = "white";
 	var nextBrickW = BRICKSIZE * 4;
 	var nextBrickH = BRICKSIZE * 4;
-	var nextBrickX = gameX - nextBrickW; ;
-	var nextBrickY = gameY;
-	ctx.font = GRAPHIC_BOARD_FONTSIZE + "px " + GRAPHIC_FONT;
-	ctx.fillText("Hold: ", nextBrickX + (ctx.measureText("H").width / 2), nextBrickY + (GRAPHIC_BOARD_FONTSIZE + 2));
-	ctx.strokeRect(nextBrickX, nextBrickY, nextBrickW, nextBrickH);
+	var nextBrickX = 0;//gameX - nextBrickW; ;
+	var nextBrickY = 0;//gameY;
+	h_ctx.font = GRAPHIC_BOARD_FONTSIZE + "px " + GRAPHIC_FONT;
+	h_ctx.fillText("Hold: ", nextBrickX + (h_ctx.measureText("H").width / 2), nextBrickY + (GRAPHIC_BOARD_FONTSIZE + 2));
+	h_ctx.strokeRect(nextBrickX, nextBrickY, nextBrickW, nextBrickH);
 	var i1,
 	i2;
 	var BRICKSIZEDIV = 1.5;
@@ -723,7 +736,7 @@ function tiles(ctx) {
 		for (i1 in HOLDING.blocks) {
 			for (i2 in HOLDING.blocks[i1]) {
 				if (HOLDING.blocks[i1][i2] == 1) {
-					makeBrick(ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(HOLDING.blocks).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(HOLDING.blocks).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, HOLDING.color);
+					makeBrick(h_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(HOLDING.blocks).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(HOLDING.blocks).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, HOLDING.color);
 				}
 			}
 		}
@@ -1237,13 +1250,14 @@ function getMovingBrick() {
 	}
 }
 var GAMECONTROLDOWN = false;
+var MOVESPEED=1000;
 function gameControlDown() {
 	if (GAMECONTROLDOWN == false) {
 		(function () {
 			GAMECONTROLDOWN = true;
 			if (WHERE == 1) {
 				getMovingBrick().movedown();
-				setTimeout(arguments.callee, 1000);
+				setTimeout(arguments.callee, MOVESPEED);
 			} else {
 				GAMECONTROLDOWN = false;
 			}
