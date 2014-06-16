@@ -113,7 +113,7 @@ function init() {
 		}
 		
 	} catch (e) {
-		alert('Web Audio API is not supported in this browser.\nSound is disabled..\nTry Chrome..');
+		console.warn('Web Audio API is not supported in this browser.\nSound is disabled..\nTry Chrome..');
 		context = false;
 		webAudioApiFailed=1;
 		WHERE=0;

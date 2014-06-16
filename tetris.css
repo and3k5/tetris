@@ -1,7 +1,19 @@
 body {
 	background-color:rgb(0,0,0);
-	margin:0px 0px;
+	margin:50px 10px;
+	text-align:center;
+	background: linear-gradient(rgb(123,123,123), rgb(200,200,200));
 }	
+#game {
+	margin:0px 0px;
+}
+div#container {
+	width:300px;
+	margin:auto auto;
+	background:linear-gradient(rgb(30,30,30), rgb(60,60,60));
+	border-radius: 50px;
+	padding: 30px;
+}
 table#page {
 	margin:0px auto 0px auto;
 	border-style:none;
@@ -20,4 +32,9 @@ td.horisontal {
 td.vertical {
 	background-color:rgb(255,0,0);
 	width:20px;
+}
+img#logo {
+	width:300px;
+	height:73px;
+	padding-bottom: 10px;
 }

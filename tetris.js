@@ -3,13 +3,13 @@ window.requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAn
 	window.setTimeout(b, 1E3 / 60)
 };
 
-var ctx;
-document.body.appendChild((ctx = document.createElement("canvas").getContext("2d")).canvas); ;
+var ctx = document.querySelector("#game").getContext("2d");
+//document.body.appendChild((ctx = document.createElement("canvas").getContext("2d")).canvas); ;
 
 var FPS = 0;
 
 var WIDTH, HEIGHT, BRICKSIZE, GRID_WIDTH, GRID_HEIGHT, gameX, gameY, CANVAS_WIDTH, CANVAS_HEIGHT, GRAPHIC_FONT, GRAPHIC_MENU_FONTSIZE, GRAPHIC_MENUDESC_FONTSIZE,
-GRAPHIC_MENU_DISTANCE, GRAPHIC_BOARD_FONTSIZE, GRAPHIC_SCORE_FONTSIZE, LOGOWIDTH, LOGOHEIGHT, LOGOX, LOGOY;
+GRAPHIC_MENU_DISTANCE, GRAPHIC_BOARD_FONTSIZE, GRAPHIC_SCORE_FONTSIZE/*, LOGOWIDTH, LOGOHEIGHT, LOGOX, LOGOY*/;
 
 // Game canvas size variables
 /*function initVars() {
@@ -38,21 +38,15 @@ function initVars() {
 	WIDTH = 10;
 	HEIGHT = 20;
 	//BRICKSIZE=(function(){if(arguments[0]!=undefined){return arguments[0];}else{return 20;}})(arguments[0]);
+	BRICKSIZE=30;
 
-
-	CANVAS_WIDTH = window.innerWidth; ;
-	CANVAS_HEIGHT = window.innerHeight;
-
-	if (window.innerWidth > window.innerHeight) {
-		// upper- and lowermargin = 20px
-		// divide by amount of rows (20 - HEIGHT)
-		BRICKSIZE = ((window.innerHeight - 40) / HEIGHT)
-	} else {}
+	CANVAS_WIDTH = BRICKSIZE * WIDTH;
+	CANVAS_HEIGHT = BRICKSIZE * HEIGHT;
 
 	GRID_WIDTH = WIDTH * BRICKSIZE;
 	GRID_HEIGHT = HEIGHT * BRICKSIZE;
-	gameX = (CANVAS_WIDTH / 2) - (GRID_WIDTH / 2)
-	gameY = 20;
+	gameX = 0;//(CANVAS_WIDTH / 2) - (GRID_WIDTH / 2)
+	gameY = 0;
 
 	GRAPHIC_FONT = "Verdana"
 		GRAPHIC_MENU_FONTSIZE = BRICKSIZE * 0.75;
@@ -60,10 +54,10 @@ function initVars() {
 	GRAPHIC_MENU_DISTANCE = GRAPHIC_MENU_FONTSIZE * 1.5;
 	GRAPHIC_BOARD_FONTSIZE = BRICKSIZE - 5;
 	GRAPHIC_SCORE_FONTSIZE = BRICKSIZE;
-	LOGOWIDTH = GRID_WIDTH;
+/*	LOGOWIDTH = GRID_WIDTH;
 	LOGOHEIGHT = LOGOWIDTH / 4.125;
 	LOGOX = gameX;
-	LOGOY = gameY;
+	LOGOY = gameY;*/
 }
 
 initVars();
@@ -148,27 +142,27 @@ var HOLDING = null;
 var HOLDINGCOUNT = 0;
 var MAYDROP = true;
 var colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)]
-function emulateBrick(vblocks) {
+Brick.emulate = function (vblocks) {
 	var tmp = new Brick();
 	tmp.moving = false;
 	tmp.blocks = vblocks;
 	return tmp;
 }
 function Color(r, g, b, a) {
-	this.r = r;
-	this.g = g;
-	this.b = b;
-	this.a = a;
-	var dis = this;
-	this.add = function (_r, _g, _b, _a) {
-		return (new Color(Math.min(255, (dis.r + _r)), dis.g + _g, dis.b + _b, dis.a + _a))
-	}
-	this.toRGBAString = function () {
-		return "rgba(" + parseInt(dis.r) + "," + parseInt(dis.g) + "," + parseInt(dis.b) + "," + parseFloat(dis.a) + ")";
-	}
-	this.copy = function () {
-		return new Color(dis.r, dis.g, dis.b, dis.a);
-	}
+	this.r = r; // Red
+	this.g = g; // Green
+	this.b = b; // Blue
+	this.a = a; // Alpha
+}
+
+Color.prototype.add = function (_r, _g, _b, _a) {
+	return (new Color(Math.min(255, (this.r + _r)), this.g + _g, this.b + _b, this.a + _a))
+}
+Color.prototype.toRGBAString = function () {
+	return "rgba(" + parseInt(this.r) + "," + parseInt(this.g) + "," + parseInt(this.b) + "," + parseFloat(this.a) + ")";
+}
+Color.prototype.copy = function () {
+	return new Color(this.r, this.g, this.b, this.a);
 }
 
 var nextRandom = Math.round(Math.random() * (bricksform.length - 1));
@@ -304,7 +298,7 @@ Brick.prototype.rotate = function (way) {
 				for (i1 in bl) {
 					for (i2 in bl[i1]) {
 						if (bl[i1][i2] == 1) {
-							if ((brick.checkCollision(brick.x + parseInt(i2), brick.y + parseInt(i1), bricks) == false) || ((brick.y + emulateBrick(bl).getHeight()) >= HEIGHT) || ((brick.x + emulateBrick(bl).getWidth() + emulateBrick(bl).getBlockX()) > WIDTH) || ((brick.x + emulateBrick(bl).getBlockX()) < 0)) {
+							if ((brick.checkCollision(brick.x + parseInt(i2), brick.y + parseInt(i1), bricks) == false) || ((brick.y + Brick.emulate(bl).getHeight()) >= HEIGHT) || ((brick.x + Brick.emulate(bl).getWidth() + Brick.emulate(bl).getBlockX()) > WIDTH) || ((brick.x + Brick.emulate(bl).getBlockX()) < 0)) {
 								return false;
 							}
 						}
@@ -316,7 +310,7 @@ Brick.prototype.rotate = function (way) {
 		if (okay(this, blocks2)) {
 			//yeah
 		} else {
-			if (((this.x + emulateBrick(blocks2).getWidth() + emulateBrick(blocks2).getBlockX()) > WIDTH)) {
+			if (((this.x + Brick.emulate(blocks2).getWidth() + Brick.emulate(blocks2).getBlockX()) > WIDTH)) {
 				this.x--;
 				if (okay(this, blocks2)) {
 					// yeah
@@ -324,7 +318,7 @@ Brick.prototype.rotate = function (way) {
 					this.x++;
 					return false;
 				}
-			} else if (((this.x + emulateBrick(blocks2).getBlockX()) < 0)) {
+			} else if (((this.x + Brick.emulate(blocks2).getBlockX()) < 0)) {
 				this.x++;
 				if (okay(this, blocks2)) {
 					//yeah
@@ -652,12 +646,14 @@ function holdingShift() {
 }
 function clearAndResize(ctx) {
 	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	if (ctx.canvas.width != window.innerWidth) {
+	ctx.canvas.width = CANVAS_WIDTH;
+	ctx.canvas.height = CANVAS_HEIGHT;
+	/*if (ctx.canvas.width != window.innerWidth) {
 		ctx.canvas.width = window.innerWidth;
 	}
 	if (ctx.canvas.height != window.innerHeight) {
 		ctx.canvas.height = window.innerHeight;
-	}
+	}*/
 	/*if (ctx.canvas.width!=CANVAS_WIDTH) {
 	ctx.canvas.width=CANVAS_WIDTH;
 	}
@@ -705,7 +701,7 @@ function tiles(ctx) {
 	for (i1 in bricksform[nextRandom]) {
 		for (i2 in bricksform[nextRandom][i1]) {
 			if (bricksform[nextRandom][i1][i2] == 1) {
-				makeBrick(ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((emulateBrick(bricksform[nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((emulateBrick(bricksform[nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[nextRandom]);
+				makeBrick(ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(bricksform[nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(bricksform[nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[nextRandom]);
 			}
 		}
 	}
@@ -727,7 +723,7 @@ function tiles(ctx) {
 		for (i1 in HOLDING.blocks) {
 			for (i2 in HOLDING.blocks[i1]) {
 				if (HOLDING.blocks[i1][i2] == 1) {
-					makeBrick(ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((emulateBrick(HOLDING.blocks).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((emulateBrick(HOLDING.blocks).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, HOLDING.color);
+					makeBrick(ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(HOLDING.blocks).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(HOLDING.blocks).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, HOLDING.color);
 				}
 			}
 		}
@@ -870,7 +866,7 @@ function menuselect() {
 	playSound("menuselect");
 }
 
-function logoGraphic() {
+/*function logoGraphic() {
 	var radgrad = ctx.createLinearGradient(LOGOX, LOGOY + (LOGOHEIGHT / 2), LOGOX + LOGOWIDTH, LOGOY + (LOGOHEIGHT / 2));
 	radgrad.addColorStop(0, 'rgba(128,100,100,1)');
 	radgrad.addColorStop(0.2, 'rgba(123,123,123,1)');
@@ -919,8 +915,8 @@ function logoGraphic() {
 	ctx.fillText(byText, byX, byY);
 	ctx.lineWidth = 1;
 	ctx.strokeText(byText, byX, byY);
-}
-var fireballs = [];
+}*/
+/*var fireballs = [];
 function Fireball() {
 	this.x = Math.random() * CANVAS_WIDTH;
 	this.y = Math.random() * CANVAS_HEIGHT;
@@ -965,7 +961,7 @@ function coolGraphic(ctx) {
 	ctx.closePath();
 	ctx.fill();
 	updateFireballs();
-}
+}*/
 var SELECTED_MENU_BUFFER = [];
 var SELECTED_MENU_BUFFER_CURSOR = 0;
 function GET_SELECTED_MENU() {
@@ -984,7 +980,7 @@ function launchMenuBuffer() {
 }
 
 function mouseMove(e) {
-	var STARTY = LOGOHEIGHT * 2 + LOGOY;
+	var STARTY = gameY;//LOGOHEIGHT * 2 + LOGOY;
 	var y_ = 0;
 	y_ += GRAPHIC_MENU_DISTANCE;
 	var cMenu = collectedMenu[WHERE];
@@ -1010,7 +1006,7 @@ function mouseMove(e) {
 }
 
 function mouseDown(e) {
-	var STARTY = LOGOHEIGHT * 2 + LOGOY;
+	var STARTY = gameY;//LOGOHEIGHT * 2 + LOGOY;
 	var y_ = 0;
 	y_ += GRAPHIC_MENU_DISTANCE;
 	var cMenu = collectedMenu[WHERE];
@@ -1036,19 +1032,19 @@ function mouseDown(e) {
 
 function allMenuGraphic() {
 	clearAndResize(ctx);
-	coolGraphic(ctx);
+	//coolGraphic(ctx);
 	ctx.fillStyle = "white";
 	ctx.strokeStyle = "white";
 
-	logoGraphic();
-	var STARTY = LOGOHEIGHT * 2 + LOGOY;
+	//logoGraphic();
+	var STARTY = gameY;//LOGOHEIGHT * 2 + LOGOY;
 	var y_ = 0;
 	ctx.font = "bold " + GRAPHIC_MENU_FONTSIZE + "px " + GRAPHIC_FONT;
 	ctx.fillStyle = "white";
 	ctx.fillText("Menu", gameX, STARTY + y_);
 	y_ += GRAPHIC_MENU_DISTANCE;
 	var cMenu = collectedMenu[WHERE];
-	var radgrad = ctx.createLinearGradient(LOGOX + (LOGOWIDTH / 2), STARTY, LOGOX + (LOGOWIDTH / 2), STARTY + (GRAPHIC_MENU_DISTANCE * cMenu.length) + GRAPHIC_MENU_FONTSIZE);
+	var radgrad = ctx.createLinearGradient(gameX, STARTY, gameX, STARTY + (GRAPHIC_MENU_DISTANCE * cMenu.length) + GRAPHIC_MENU_FONTSIZE);
 	radgrad.addColorStop(0, 'rgba(123,123,123,1)');
 	radgrad.addColorStop(0.5, 'rgba(200,200,200,1)');
 	radgrad.addColorStop(1, 'rgba(123,123,123,1)');
@@ -1078,11 +1074,11 @@ function allMenuGraphic() {
 
 function tutorialGraphic() {
 	clearAndResize(ctx);
-	coolGraphic(ctx);
+	//coolGraphic(ctx);
 	ctx.fillStyle = "white";
 	ctx.strokeStyle = "white";
-	logoGraphic();
-	var STARTY = LOGOHEIGHT * 2 + LOGOY;
+	//logoGraphic();
+	var STARTY = gameY;//LOGOHEIGHT * 2 + LOGOY;
 	var y_ = 0;
 	ctx.font = "bold " + GRAPHIC_MENU_FONTSIZE + "px " + GRAPHIC_FONT;
 	ctx.fillStyle = "white";
@@ -1106,11 +1102,11 @@ function tutorialGraphic() {
 
 function aboutGraphic() {
 	clearAndResize(ctx);
-	coolGraphic(ctx);
+	//coolGraphic(ctx);
 	ctx.fillStyle = "white";
 	ctx.strokeStyle = "white";
-	logoGraphic();
-	var STARTY = LOGOHEIGHT * 2 + LOGOY;
+	//logoGraphic();
+	var STARTY = gameY;//LOGOHEIGHT * 2 + LOGOY;
 	var y_ = 0;
 	ctx.font = "bold " + GRAPHIC_MENU_FONTSIZE + "px " + GRAPHIC_FONT;
 	ctx.fillStyle = "white";
@@ -1162,11 +1158,11 @@ var MUSIC = [
 ];
 function loadingGraphic() {
 	clearAndResize(ctx);
-	coolGraphic(ctx);
+	//coolGraphic(ctx);
 	ctx.fillStyle = "white";
 	ctx.strokeStyle = "white";
-	logoGraphic();
-	var STARTY = LOGOHEIGHT * 2 + LOGOY;
+	//logoGraphic();
+	var STARTY = gameY;//LOGOHEIGHT * 2 + LOGOY;
 	var y_ = STARTY;
 	ctx.fillStyle = "white";
 	for (i in SOUNDS) {
