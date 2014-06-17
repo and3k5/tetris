@@ -10,9 +10,23 @@
 	<body>
 		<div id="container">
 			<img id="logo" src="logo.svg"><br />
+			<p>Score: <span id="score">0</span><p>
 			<canvas id="holding"></canvas>			
 			<canvas id="game"></canvas>
 			<canvas id="next"></canvas>
 		</div>
+		<script>
+		var tetrisgame;
+			window.addEventListener("load",function () {
+				tetrisgame=new TetrisGame();
+				tetrisgame.init(
+					document.querySelector("#game"),
+					document.querySelector("#holding"),
+					document.querySelector("#next"),
+					document.querySelector("#score")
+					);
+				
+			},false);
+		</script>
 	</body>
 </html>

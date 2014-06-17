@@ -8,7 +8,7 @@ window.requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAn
 function Brick() {
 	var o=arguments[0];
 	if (o==undefined) {
-		o={'ingame':false,'game':null,'bricks':null};
+		o={'ingame':false,'game':null};
 	}
 	
 	this.game = o.game;
@@ -17,25 +17,17 @@ function Brick() {
 	/*if (this.ingame) {
 		rnd = this.game.nextRandom;
 	}*/
-	
-	var brfrm=this.game.getBricksform();
-	var rnd = Math.round(Math.random() * (brfrm.length - 1));
-	
-	this.color = this.game.getColors()[rnd].copy();
-	//this.cn = rnd + 2;
-	this.blocks = brfrm[rnd].concat();
-
-	/*if ((o.ingame)&&(game!=null)) {
-		//switch (settings_ch[2][2]) {
-		//case 0:
-		//	this.game.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
-		//	break;
-		//case 1:
-		this.game.nextRandom = (rnd + 1) % brfrm.length;
-		//	break;
-		//}
-	}*/
-	this.moving = true;
+	if (this.ingame) {
+		var brfrm=this.game.bricksform;
+		var rnd = Math.round(Math.random() * (brfrm.length - 1));
+		this.color = this.game.getColors()[rnd].copy();
+		this.blocks = brfrm[rnd].concat();
+		this.moving = true;
+		this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
+		this.y = Math.round(0 - (this.blocks.length));
+	}	
+}
+Brick.prototype.resetPosition = function () {
 	this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
 	this.y = Math.round(0 - (this.blocks.length));
 }
@@ -76,7 +68,7 @@ Brick.prototype.getWidth = function () {
 	var i1,
 	i2,
 	high = 0,
-	low = (this.game.getWIDTH()),
+	low = (1E309), // 1E309 = infinity
 	countrow = 0;
 	for (i1 in this.blocks) {
 		countrow = 0;
@@ -126,7 +118,20 @@ Brick.prototype.getBlockX = function () {
 		}
 	}
 }
-
+Brick.prototype.rotate_okay = function (brick, bl) {
+	var i1,
+	i2;
+	for (i1 in bl) {
+		for (i2 in bl[i1]) {
+			if (bl[i1][i2] == 1) {
+				if ((brick.checkCollision(brick.x + parseInt(i2), brick.y + parseInt(i1), this.game.bricks) == false) || ((brick.y + Brick.emulate(bl).getHeight()) >= this.game.HEIGHT) || ((brick.x + Brick.emulate(bl).getWidth() + Brick.emulate(bl).getBlockX()) > (this.game.getWIDTH())) || ((brick.x + Brick.emulate(bl).getBlockX()) < 0)) {
+					return false;
+				}
+			}
+		}
+	}
+	return true;
+}
 Brick.prototype.rotate = function (way) {
 	if (this.game.getRUNNING()) {
 		var blocks2 = [];
@@ -142,28 +147,12 @@ Brick.prototype.rotate = function (way) {
 			}
 			blocks2[y] = row;
 		}
-		with ({
-			okay : function (brick, bl) {
-				var i1,
-				i2;
-				for (i1 in bl) {
-					for (i2 in bl[i1]) {
-						if (bl[i1][i2] == 1) {
-							if ((brick.checkCollision(brick.x + parseInt(i2), brick.y + parseInt(i1), this.game.bricks) == false) || ((brick.y + Brick.emulate(bl).getHeight()) >= this.game.HEIGHT) || ((brick.x + Brick.emulate(bl).getWidth() + Brick.emulate(bl).getBlockX()) > (this.game.getWIDTH())) || ((brick.x + Brick.emulate(bl).getBlockX()) < 0)) {
-								return false;
-							}
-						}
-					}
-				}
-				return true;
-			}
-		})
-		if (okay(this, blocks2)) {
+		if (this.rotate_okay(this, blocks2)) {
 			//yeah
 		} else {
 			if (((this.x + Brick.emulate(blocks2).getWidth() + Brick.emulate(blocks2).getBlockX()) > (this.game.getWIDTH()))) {
 				this.x--;
-				if (okay(this, blocks2)) {
+				if (this.rotate_okay(this, blocks2)) {
 					// yeah
 				} else {
 					this.x++;
@@ -171,7 +160,7 @@ Brick.prototype.rotate = function (way) {
 				}
 			} else if (((this.x + Brick.emulate(blocks2).getBlockX()) < 0)) {
 				this.x++;
-				if (okay(this, blocks2)) {
+				if (this.rotate_okay(this, blocks2)) {
 					//yeah
 				} else {
 					this.x--;
@@ -247,8 +236,8 @@ Brick.prototype.smashdown = function () {
 			for (i in sliced) {
 				this.game.bricks.push(sliced[i])
 			}
-			checkLines();
-			this.game.bricks.push(new Brick(0));
+			this.game.checkLines();
+			this.game.bricks.push(new Brick({ingame:true,game:this.game}));
 
 			HOLDINGCOUNT = 0;
 		} else {
@@ -287,8 +276,8 @@ Brick.prototype.movedown = function () {
 					for (i in sliced) {
 						this.game.bricks.push(sliced[i]);
 					}
-					checkLines();
-					this.game.bricks.push(new Brick(0));
+					this.game.checkLines();
+					this.game.bricks.push(new Brick({ingame:true,game:this.game}));
 					HOLDINGCOUNT = 0;
 				} else {
 					menuNav("gamelose");
@@ -359,7 +348,7 @@ Brick.prototype.findMe = function () {
 }
 
 Brick.emulate = function (vblocks) {
-	var tmp = new Brick();
+	var tmp = new Brick({ingame:false,game:null});
 	tmp.moving = false;
 	tmp.blocks = vblocks;
 	return tmp;
@@ -371,8 +360,6 @@ function TetrisGame() {
 		BRICKSIZE, 					// [number] Size of a brick (in pixels)
 		GRID_WIDTH, 				// [number] Width of grid
 		GRID_HEIGHT, 				// [number] Height of grid
-		gameX, 						// [number] gamex position (soon to be deleted)
-		gameY,						// [number] gamey position (soon to be deleted)
 		CANVAS_WIDTH, 				// [number] canvas width (soon to be deleted)
 		CANVAS_HEIGHT,				// [number] canvas height (soon to be deleted)
 		FPS = 0,					// [number] FPS counter
@@ -397,8 +384,10 @@ function TetrisGame() {
 		FROM=0,						// [number] Unused (might be removed)
 		webAudioApiFailed = 0,		// [number/bool] If webaudio doesnt work, then skip download
 		SELECTED_MENU = 0,			// [number] Selected menu item
+		SETTING_GHOST = true		// [bool] ghost option
 		HOLDING = null,				// [Brick] current holding brick
 		HOLDINGCOUNT = 0,			// count of holding
+		scoreelement=null,
 		MAYDROP = true,				// Fix to avoid Space to repeat keydown events
 		SCORE=0,
 		bricks = [],
@@ -434,7 +423,10 @@ function TetrisGame() {
 		colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
 	
 	this.nextRandom = Math.round(Math.random() * (bricksform.length - 1));
-	
+	function setScore(v) {
+		SCORE=v;
+		scoreelement.innerHTML = SCORE;
+	}
 	Object.defineProperties(this,{
 		"bricks": {
 			get: function () {
@@ -442,7 +434,7 @@ function TetrisGame() {
 			},
 			set: function (v) {
 				if ((v=="")&&(typeof([])=="object")) {
-					SCORE = 0;
+					setScore(0);
 					HOLDINGCOUNT = 0;
 					HOLDING = null;
 					bricks = [];
@@ -498,7 +490,7 @@ function TetrisGame() {
 	}
 	function clearLine(l) {
 		if (RUNNING) {
-			SCORE++;
+			setScore(SCORE+1);
 			playSound("gamerow");
 			var toDelete = (function (line) {
 				var i,
@@ -549,7 +541,7 @@ function TetrisGame() {
 			})(l);
 		}
 	}
-	function checkLines() {
+	this.checkLines = function () {
 		//check for full lines
 		if (RUNNING) {
 			var i;
@@ -596,18 +588,26 @@ function TetrisGame() {
 		ctx.fillStyle = fstyle;
 		ctx.fillRect(x, y, w, h);
 	}
+	
+	function getMovingBrick() {
+		var i;
+		for (i in bricks) {
+			if (bricks[i].moving) {
+				return bricks[i];
+			}
+		}
+	}
+	
 	function holdingShift() {
 		if (HOLDINGCOUNT < 1) {
 			if (HOLDING == null) {
 				HOLDING = getMovingBrick();
-				bricks[getMovingBrick().findMe()] = new Brick(0);
+				bricks[getMovingBrick().findMe()] = new Brick({ingame:true,game:getMovingBrick().game});
 				HOLDINGCOUNT++;
 			} else {
 				var HOLDING2 = HOLDING;
 				HOLDING = getMovingBrick();
-				var tmp = new Brick();
-				HOLDING2.x = tmp.x;
-				HOLDING2.y = tmp.y;
+				HOLDING2.resetPosition();
 				bricks[getMovingBrick().findMe()] = HOLDING2;
 				HOLDINGCOUNT++;
 			}
@@ -635,50 +635,44 @@ function TetrisGame() {
 		ctx.fillStyle = "white";
 		for (ix = 0; ix <= (GRID_WIDTH); ix += BRICKSIZE) {
 			ctx.beginPath();
-			ctx.lineTo(gameX + ix, gameY);
-			ctx.lineTo(gameX + ix, gameY + (GRID_HEIGHT));
+			ctx.lineTo(ix, 0);
+			ctx.lineTo(ix, GRID_HEIGHT);
 			ctx.closePath();
 			ctx.stroke();
 		}
 		for (iy = 0; iy <= (GRID_HEIGHT); iy += BRICKSIZE) {
 			ctx.beginPath();
-			ctx.lineTo(gameX, gameY + iy);
-			ctx.lineTo(gameX + (GRID_WIDTH), gameY + iy);
+			ctx.lineTo(0, iy);
+			ctx.lineTo(GRID_WIDTH, iy);
 			ctx.closePath();
 			ctx.stroke();
 		}
-		// NextBox field
 		
-		n_ctx.lineWidth = 1;
-		n_ctx.strokeStyle = "rgba(0,255,0,0.5)";
-		n_ctx.fillStyle = "white";
-		n_ctx.font = GRAPHIC_SCORE_FONTSIZE + "px " + GRAPHIC_FONT;
-		//n_ctx.fillText("Score: " + SCORE, (CANVAS_WIDTH / 2), 20);
+		// NextBox field
 		var nextBrickW = BRICKSIZE * 4;
 		var nextBrickH = BRICKSIZE * 4;
-		var nextBrickX = 0;//gameX + GRID_WIDTH;
-		var nextBrickY = 0;//gameY;
-		n_ctx.font = GRAPHIC_BOARD_FONTSIZE + "px " + GRAPHIC_FONT;
-		n_ctx.fillText("Next: ", nextBrickX + (n_ctx.measureText("N").width / 2), nextBrickY + (GRAPHIC_BOARD_FONTSIZE + 2));
+		var nextBrickX = 0;
+		var nextBrickY = 0;
 		n_ctx.strokeRect(nextBrickX, nextBrickY, nextBrickW, nextBrickH);
 		var i1,
 		i2;
 		var BRICKSIZEDIV = 1.5;
-		for (i1 in bricksform[nextRandom]) {
-			for (i2 in bricksform[nextRandom][i1]) {
-				if (bricksform[nextRandom][i1][i2] == 1) {
-					makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(bricksform[nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(bricksform[nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[nextRandom]);
+		for (i1 in bricksform[this.nextRandom]) {
+			for (i2 in bricksform[this.nextRandom][i1]) {
+				if (bricksform[this.nextRandom][i1][i2] == 1) {
+					makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(bricksform[this.nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(bricksform[this.nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[this.nextRandom]);
 				}
 			}
 		}
+		
 		// HoldingField
 		h_ctx.lineWidth = 1;
 		h_ctx.strokeStyle = "rgba(0,255,0,0.5)";
 		h_ctx.fillStyle = "white";
 		var nextBrickW = BRICKSIZE * 4;
 		var nextBrickH = BRICKSIZE * 4;
-		var nextBrickX = 0;//gameX - nextBrickW; ;
-		var nextBrickY = 0;//gameY;
+		var nextBrickX = 0;
+		var nextBrickY = 0;
 		h_ctx.font = GRAPHIC_BOARD_FONTSIZE + "px " + GRAPHIC_FONT;
 		h_ctx.fillText("Hold: ", nextBrickX + (h_ctx.measureText("H").width / 2), nextBrickY + (GRAPHIC_BOARD_FONTSIZE + 2));
 		h_ctx.strokeRect(nextBrickX, nextBrickY, nextBrickW, nextBrickH);
@@ -702,7 +696,7 @@ function TetrisGame() {
 		i1,
 		i2;
 		for (i in bricks) {
-			if (settings_ch[1][2] == 1) {
+			if (SETTING_GHOST) {
 				if (bricks[i].moving) {
 					//ctx.fillStyle="rgba(255,255,255,0.5)";
 					var tmp_lowestPos = bricks[i].getLowestPosition(bricks);
@@ -710,7 +704,7 @@ function TetrisGame() {
 						for (i2 in bricks[i].blocks[i1]) {
 							if (bricks[i].blocks[i1][i2] == 1) {
 								if ((((tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
-									makeBrick(ctx, gameX + (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), gameY + (tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, new Color(255, 255, 255, 0.2));
+									makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, new Color(255, 255, 255, 0.2));
 								}
 							}
 						}
@@ -721,7 +715,7 @@ function TetrisGame() {
 				for (i2 in bricks[i].blocks[i1]) {
 					if (bricks[i].blocks[i1][i2] == 1) {
 						if ((((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
-							makeBrick(ctx, gameX + (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), gameY + (bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, bricks[i].color);
+							makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, bricks[i].color);
 						}
 					}
 				}
@@ -731,14 +725,7 @@ function TetrisGame() {
 
 	}
 
-	function getMovingBrick() {
-		var i;
-		for (i in bricks) {
-			if (bricks[i].moving) {
-				return bricks[i];
-			}
-		}
-	}
+	
 	var GAMECONTROLDOWN = false;
 	var MOVESPEED=1000;
 	function gameControlDown() {
@@ -756,242 +743,80 @@ function TetrisGame() {
 	}
 	function keyh(e) {
 		switch (e.keyCode) {
-		case 37:
-			// left arrow
-			e.preventDefault();
-			if (WHERE == 1) {
-				// ingame
-				getMovingBrick().moveleft();
-			} else if ((WHERE == 0) || (WHERE == 2) || (WHERE == 5)) {
-				// in a menu
-				menuup();
-			} else if (WHERE == 6) {
-				// Settings
-				menutoggleleft();
-			} else if ((WHERE == 3) || (WHERE == 4)) {
-				// tutorial or about
-				menuNav("menu");
-				playSound("menuback");
-			}
-			break;
-		case 38:
-			// up arrow
-			e.preventDefault();
-			if (WHERE == 1) {
-				// ingame
-				getMovingBrick().rotate();
-			} else if ((WHERE == 0) || (WHERE == 2) || (WHERE == 5) || (WHERE == 6)) {
-				// in a menu
-				menuup();
-			} else if ((WHERE == 3) || (WHERE == 4)) {
-				// tutorial or about
-				menuNav("menu");
-				playSound("menuback");
-			}
-			break;
-		case 39:
-			// right arrow
-			e.preventDefault();
-			if (WHERE == 1) {
-				// ingame
-				getMovingBrick().moveright();
-			} else if ((WHERE == 0) || (WHERE == 2) || (WHERE == 5)) {
-				// in a menu
-				menudown();
-			} else if (WHERE == 6) {
-				// Settings
-				menutoggleright();
-			} else if ((WHERE == 3) || (WHERE == 4)) {
-				// tutorial or about
-				menuNav("menu");
-				playSound("menuback");
-
-			}
-			break;
-		case 40:
-			//down arrow
-			e.preventDefault();
-			if (WHERE == 1) {
-				// ingame
-				getMovingBrick().movedown();
-			} else if ((WHERE == 0) || (WHERE == 2) || (WHERE == 5) || (WHERE == 6)) {
-				// in a menu
-				menudown();
-			} else if ((WHERE == 3) || (WHERE == 4)) {
-				// tutorial or about
-				menuNav("menu");
-				playSound("menuback");
-
-			}
-			break;
-		case 32:
-			//space
-			e.preventDefault();
-			if (WHERE == 1) {
-				// ingame
-				getMovingBrick().smashdown();
-			} else if ((WHERE == 3) || (WHERE == 4)) {
-				// tutorial or about
-				menuNav("menu");
-				playSound("menuback");
-
-			}
-			break;
-		case 27:
-			// escape
-			e.preventDefault();
-			if (WHERE == 1) {
-				// ingame
-				menuNav("paused");
-				playSound("menuback");
-			} else if ((WHERE == 3) || (WHERE == 4)) {
-				// tutorial, about or settings
-				menuNav("menu");
-				playSound("menuback");
-			} else if (WHERE == 6) {
-				WHERE = FROM;
-				playSound("menuback");
-			}
-			break;
-		case 13:
-			// enter
-			e.preventDefault();
-			if ((WHERE == 0) || (WHERE == 2) || (WHERE == 5)) {
-				menuselect();
-			} else if ((WHERE == 3) || (WHERE == 4)) {
-				menuNav("menu");
-				playSound("menuback");
-
-			}
-			break;
-		case 16:
-			// shift
-			e.preventDefault();
-			if ((WHERE == 1)) {
-				holdingShift();
-			}
-			break;
-		default:
-			// not defined in this..
-			//console.log("Key pressed: ",e.keyCode);
-			break;
+			case 37: case 38: case 39: case 40: case 32:
+				e.preventDefault();
+				if (RUNNING) {
+					// 32 = space brick.smashdown()
+					// 37 = left brick.moveleft()
+					// 38 = up brick.rotate()
+					// 39 = right brick.moveright()
+					// 40 = down brick.movedown()
+					getMovingBrick()[Array(32).concat("smashdown",Array(4)).concat("moveleft,rotate,moveright,movedown".split(","))[e.keyCode]]();
+				}
+				break;
+			case 27:
+				// escape
+				e.preventDefault();
+				if (RUNNING) {
+					// ingame
+					menuNav("paused");
+					playSound("menuback");
+				}
+				break;
+			case 16:
+				// shift
+				e.preventDefault();
+				if (RUNNING) {
+					holdingShift();
+				}
+				break;
 		}
 	}
 	function keyup(e) {
-		switch (e.keyCode) {
-		case 32:
-			//space
-			MAYDROP = true;
-			break;
-		}
+		if (e.keyCode == 32) MAYDROP = true;
 	}
 	function graphicControlLoop() {
 		// CTX GRAPHICS
 		requestAnimFrame(arguments.callee);
-		(function gameLoop() {
-			var thisLoop = new Date;
-			var fps = 1000 / (thisLoop - lastLoop);
-			lastLoop = thisLoop;
-			xF++;
-			if (xF % 10 == 0) {
-				F = fps;
-			}
-
-		})();
-
-		switch (WHERE) {
-		case  - 1:
-			// loading..
-			loadingGraphic(ctx);
-			break;
-		case 0:
-			// menu
-			//menuGraphic();
-			allMenuGraphic(ctx);
-			break;
-		case 1:
-			// ingame
-			inGameGraphic(ctx);
-			break;
-		case 2:
-			// game paused
-			allMenuGraphic(ctx);
-			break;
-		case 3:
-			// Tutorial
-			tutorialGraphic(ctx);
-			break;
-		case 4:
-			// About
-			aboutGraphic(ctx);
-			break;
-		case 5:
-			// Lost game
-			allMenuGraphic(ctx);
-			break;
-		case 6:
-			allMenuGraphic(ctx);
-			break;
-		default:
-			break;
-		}
-		ctx.fillStyle = "white";
-		ctx.font = "8px Verdana";
-		ctx.fillText(Math.round(F * 10) / 10, 10, 10);
+		inGameGraphic(ctx);
 	};
-	this.init = function () { 
-		function initVars() {
-			WIDTH = 10;
-			HEIGHT = 20;
-			BRICKSIZE=30;
+	this.init = function (g,h,n,sc) { 
+		WIDTH = 10;
+		HEIGHT = 20;
+		BRICKSIZE=30;
 
-			CANVAS_WIDTH = BRICKSIZE * WIDTH;
-			CANVAS_HEIGHT = BRICKSIZE * HEIGHT;
+		CANVAS_WIDTH = BRICKSIZE * WIDTH;
+		CANVAS_HEIGHT = BRICKSIZE * HEIGHT;
 
-			GRID_WIDTH = WIDTH * BRICKSIZE;
-			GRID_HEIGHT = HEIGHT * BRICKSIZE;
-			gameX = 0;
-			gameY = 0;
+		GRID_WIDTH = WIDTH * BRICKSIZE;
+		GRID_HEIGHT = HEIGHT * BRICKSIZE;
 
-			
-			GRAPHIC_FONT = "Verdana"
-				GRAPHIC_MENU_FONTSIZE = BRICKSIZE * 0.75;
-			GRAPHIC_MENUDESC_FONTSIZE = BRICKSIZE;
-			GRAPHIC_MENU_DISTANCE = GRAPHIC_MENU_FONTSIZE * 1.5;
-			GRAPHIC_BOARD_FONTSIZE = BRICKSIZE - 5;
-			GRAPHIC_SCORE_FONTSIZE = BRICKSIZE;
-		}
-
-		initVars();
 		
-		window.addEventListener("load",function () {
-			window.addEventListener("keydown", keyh, false);
-			window.addEventListener("keyup", keyup, false);
-			window.addEventListener("mousemove", mouseMove, false);
-			window.addEventListener("mousedown", mouseDown, false);
-
-			//setInterval("resizeC()",1500);
-
-
-			// executing
-
-			ctx = document.querySelector("canvas#game").getContext("2d");
-			h_ctx = document.querySelector("canvas#holding").getContext("2d");
-			n_ctx = document.querySelector("canvas#next").getContext("2d");
-			
-			graphicControlLoop();
-			
-		},false);
-		
+		GRAPHIC_FONT = "Verdana";
+		GRAPHIC_MENU_FONTSIZE = BRICKSIZE * 0.75;
+		GRAPHIC_MENUDESC_FONTSIZE = BRICKSIZE;
+		GRAPHIC_MENU_DISTANCE = GRAPHIC_MENU_FONTSIZE * 1.5;
+		GRAPHIC_BOARD_FONTSIZE = BRICKSIZE - 5;
+		GRAPHIC_SCORE_FONTSIZE = BRICKSIZE;
 		WHERE = 1;
 		RUNNING = true;
 		bricks = [];
-		SCORE = 0;
+		scoreelement = sc;
+		setScore(0);
 		HOLDINGCOUNT = 0;
 		HOLDING = null;
 		bricks.push(new Brick({ingame:true,game:this}));
 		gameControlDown();
 		
+
+		window.addEventListener("keydown", keyh, false);
+		window.addEventListener("keyup", keyup, false);
+
+		ctx = /*document.querySelector("canvas#game")*/g.getContext("2d");
+		h_ctx = /*document.querySelector("canvas#holding")*/h.getContext("2d");
+		n_ctx = /*document.querySelector("canvas#next")*/n.getContext("2d");
+		
+		graphicControlLoop();				
 	}
 };
 
