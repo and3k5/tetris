@@ -5,15 +5,15 @@
 		<script src="fragmenttext.js"></script>
 		<script src="tetris.sound.js"></script>
 		<script src="tetris.color.js"></script>
-		<script src="tetris.js"></script>		
+		<script src="tetris.js"></script>
 	</head>
 	<body>
 		<div id="container">
 			<img id="logo" src="logo.svg"><br />
-			<p>Score: <span id="score">0</span><p>
-			<canvas id="holding"></canvas>			
+			<p class="scorelbl">Score: <span id="score">0</span></p>
+			<span class="holding"><p>Hold:</p><canvas id="holding"></canvas></span>
 			<canvas id="game"></canvas>
-			<canvas id="next"></canvas>
+			<span class="next"><p>Next:</p><canvas id="next"></canvas></span>
 		</div>
 		<script>
 		var tetrisgame;
@@ -25,7 +25,6 @@
 					document.querySelector("#next"),
 					document.querySelector("#score")
 					);
-				
 			},false);
 		</script>
 	</body>

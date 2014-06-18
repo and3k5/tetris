@@ -13,10 +13,38 @@ function Brick() {
 	
 	this.game = o.game;
 	this.ingame = o.ingame;
-	
+	var x,y;
 	/*if (this.ingame) {
 		rnd = this.game.nextRandom;
 	}*/
+	
+	Object.defineProperties(this,{
+		"x":{
+			get: function () {
+				return x;
+			},
+			set: function (v) {
+				x=v;
+				if (this.ingame && (this.game!=null)) {
+					this.game.PENDINGUPDATE=true;
+					console.log("Value changed");
+				}
+			}
+		},
+		"y":{
+			get: function () {
+				return y;
+			},
+			set: function (v) {
+				y=v;
+				if (this.ingame && (this.game!=null)) {
+					this.game.PENDINGUPDATE=true;
+					console.log("Value changed");
+				}
+			}
+		}
+	});
+	
 	if (this.ingame) {
 		var brfrm=this.game.bricksform;
 		var rnd = Math.round(Math.random() * (brfrm.length - 1));
@@ -26,6 +54,8 @@ function Brick() {
 		this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
 		this.y = Math.round(0 - (this.blocks.length));
 	}	
+	
+	
 }
 Brick.prototype.resetPosition = function () {
 	this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
@@ -149,11 +179,17 @@ Brick.prototype.rotate = function (way) {
 		}
 		if (this.rotate_okay(this, blocks2)) {
 			//yeah
+			if (this.ingame && (this.game!=null)) {
+				this.game.PENDINGUPDATE=true;
+			}
 		} else {
 			if (((this.x + Brick.emulate(blocks2).getWidth() + Brick.emulate(blocks2).getBlockX()) > (this.game.getWIDTH()))) {
 				this.x--;
 				if (this.rotate_okay(this, blocks2)) {
 					// yeah
+					if (this.ingame && (this.game!=null)) {
+						this.game.PENDINGUPDATE=true;
+					}
 				} else {
 					this.x++;
 					return false;
@@ -162,6 +198,9 @@ Brick.prototype.rotate = function (way) {
 				this.x++;
 				if (this.rotate_okay(this, blocks2)) {
 					//yeah
+					if (this.ingame && (this.game!=null)) {
+						this.game.PENDINGUPDATE=true;
+					}
 				} else {
 					this.x--;
 					return false;
@@ -226,7 +265,7 @@ Brick.prototype.moveright = function () {
 	}
 }
 Brick.prototype.smashdown = function () {
-	if (this.game.getRUNNING() && this.game.getMAYDROP()) {
+	if (this.game.getRUNNING() && this.game.MAYDROP) {
 		playSound("gamebump");
 		this.moving = false;
 		this.y = this.getLowestPosition(this.game.bricks);
@@ -244,7 +283,7 @@ Brick.prototype.smashdown = function () {
 			menuNav("gamelose");
 			playSound("gamelose");
 		}
-		MAYDROP = false;
+		this.game.MAYDROP = false;
 
 	}
 }
@@ -363,6 +402,7 @@ function TetrisGame() {
 		CANVAS_WIDTH, 				// [number] canvas width (soon to be deleted)
 		CANVAS_HEIGHT,				// [number] canvas height (soon to be deleted)
 		FPS = 0,					// [number] FPS counter
+		PENDINGUPDATE=false,		// [Bool] Update to graphic
 		GRAPHIC_FONT,				// [string] Font name
 		GRAPHIC_MENU_FONTSIZE,		// [number] Menu font size
 		GRAPHIC_MENUDESC_FONTSIZE,	// [number] Menu subtext font size
@@ -421,8 +461,8 @@ function TetrisGame() {
 						[0, 1, 0, 0]]
 				],
 		colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
+	var nextRandom = Math.round(Math.random() * (bricksform.length - 1));
 	
-	this.nextRandom = Math.round(Math.random() * (bricksform.length - 1));
 	function setScore(v) {
 		SCORE=v;
 		scoreelement.innerHTML = SCORE;
@@ -458,12 +498,36 @@ function TetrisGame() {
 			set: function (v) {
 				console.log("nein");
 			}
+		},
+		"PENDINGUPDATE": {
+			get: function () {
+				return PENDINGUPDATE;
+			},
+			set: function (v) {
+				PENDINGUPDATE=v;
+			}
+		},
+		"nextRandom": {
+			get: function () {
+				return nextRandom;
+			},
+			set: function (v) {
+				nextRandom=v;
+			}
+		},
+		"MAYDROP": {
+			get: function () {
+				return MAYDROP;
+			},
+			set: function (v) {
+				MAYDROP=v;
+			}
 		}
 	});
 	
 	this.getBricksform=function () { return bricksform; };
 	this.getColors=function () { return colors; };
-	this.getMAYDROP=function () { return MAYDROP; };
+	//this.getMAYDROP=function () { return MAYDROP; };
 	this.getRUNNING = function () { return RUNNING; };
 	this.getWIDTH = function () { return WIDTH; };
 	this.bricksform = bricksform;
@@ -539,6 +603,7 @@ function TetrisGame() {
 
 				return rtn;
 			})(l);
+			PENDINGUPDATE=true;
 		}
 	}
 	this.checkLines = function () {
@@ -628,6 +693,7 @@ function TetrisGame() {
 	}
 	function tiles(ctx) {
 		// Grid
+		return 0;
 		var ix = 0,
 		iy = 0;
 		ctx.lineWidth = 1;
@@ -653,14 +719,14 @@ function TetrisGame() {
 		var nextBrickH = BRICKSIZE * 4;
 		var nextBrickX = 0;
 		var nextBrickY = 0;
-		n_ctx.strokeRect(nextBrickX, nextBrickY, nextBrickW, nextBrickH);
 		var i1,
 		i2;
-		var BRICKSIZEDIV = 1.5;
-		for (i1 in bricksform[this.nextRandom]) {
-			for (i2 in bricksform[this.nextRandom][i1]) {
-				if (bricksform[this.nextRandom][i1][i2] == 1) {
-					makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(bricksform[this.nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(bricksform[this.nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[this.nextRandom]);
+		var BRICKSIZEDIV = 1.5;		
+		console.log("wat",nextRandom);
+		for (i1 in bricksform[nextRandom]) {		
+			for (i2 in bricksform[nextRandom][i1]) {
+				if (bricksform[nextRandom][i1][i2] == 1) {
+					makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(bricksform[nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(bricksform[nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[nextRandom]);
 				}
 			}
 		}
@@ -673,9 +739,6 @@ function TetrisGame() {
 		var nextBrickH = BRICKSIZE * 4;
 		var nextBrickX = 0;
 		var nextBrickY = 0;
-		h_ctx.font = GRAPHIC_BOARD_FONTSIZE + "px " + GRAPHIC_FONT;
-		h_ctx.fillText("Hold: ", nextBrickX + (h_ctx.measureText("H").width / 2), nextBrickY + (GRAPHIC_BOARD_FONTSIZE + 2));
-		h_ctx.strokeRect(nextBrickX, nextBrickY, nextBrickW, nextBrickH);
 		var i1,
 		i2;
 		var BRICKSIZEDIV = 1.5;
@@ -778,7 +841,10 @@ function TetrisGame() {
 	function graphicControlLoop() {
 		// CTX GRAPHICS
 		requestAnimFrame(arguments.callee);
-		inGameGraphic(ctx);
+		if (PENDINGUPDATE) {
+			inGameGraphic(ctx);
+			PENDINGUPDATE=false;
+		}
 	};
 	this.init = function (g,h,n,sc) { 
 		WIDTH = 10;
@@ -815,7 +881,7 @@ function TetrisGame() {
 		ctx = /*document.querySelector("canvas#game")*/g.getContext("2d");
 		h_ctx = /*document.querySelector("canvas#holding")*/h.getContext("2d");
 		n_ctx = /*document.querySelector("canvas#next")*/n.getContext("2d");
-		
+		clearAndResize(ctx);
 		graphicControlLoop();				
 	}
 };

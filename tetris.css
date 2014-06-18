@@ -5,20 +5,48 @@ body {
 	background: linear-gradient(rgb(200,200,200), rgb(123,123,123));
 }	
 canvas#game {
-	background:linear-gradient(rgb(100,100,100), rgb(80,80,80));
+	background: url(grid.svg), linear-gradient(rgb(100,100,100), rgb(80,80,80));
 	border-radius: 5px;
 }
 canvas#holding {
+	width: 120px;
+	height: 120px;
+	/*background-color: #000;
+	vertical-align: top;
+	border-radius: 20px;
+	background:linear-gradient(rgb(30,30,30), rgb(60,60,60));*/
+}
+span.holding, span.next {
 	background-color: #000;
 	vertical-align: top;
 	border-radius: 20px;
-	background:linear-gradient(rgb(30,30,30), rgb(60,60,60));
+	background: linear-gradient(#1E1E1E, #3C3C3C);
+}
+span.holding p, span.next p, p.scorelbl {
+	font-family: sans-serif;
+	color: #FFF;
+	font-weight: bold;
+	margin: 10px 0px 0px 10px;
+}
+
+/* <p>Score: <span id="score">0</span></p> */
+p.scorelbl {
+	margin: 0px 0px 10px 0px;
+}
+
+span.holding {
+	float: left;
+	text-align: left;
+}
+span.next {
+	float: right;
+	text-align: left;
 }
 canvas#next {
-	background-color: #000;
+	/*background-color: #000;
 	vertical-align: top;
 	border-radius: 20px;
-	background:linear-gradient(rgb(30,30,30), rgb(60,60,60));
+	background:linear-gradient(rgb(30,30,30), rgb(60,60,60));*/
 }
 div#container {
 	width:600px;
