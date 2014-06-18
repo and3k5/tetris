@@ -1,8 +1,8 @@
 window.addEventListener('load', init, false);
-var playSound,playMusic,context;
+var playSound, playMusic, context;
 function init() {
 	try {
-		
+
 		//var context;
 		var audioBuffers = [];
 		context = new webkitAudioContext();
@@ -13,21 +13,21 @@ function init() {
 			var request = new XMLHttpRequest();
 			request.open('GET', url, true);
 			request.responseType = 'arraybuffer';
-			var idd=id;
+			var idd = id;
 			// Decode asynchronously
 			request.onprogress = function (e) {
 				(function (ed) {
 					for (i in SOUNDS) {
-						if (SOUNDS[i][0]==ed) {
+						if (SOUNDS[i][0] == ed) {
 							return SOUNDS[i];
 						}
 					}
 					for (i in MUSIC) {
-						if (MUSIC[i][0]==ed) {
+						if (MUSIC[i][0] == ed) {
 							return MUSIC[i];
 						}
 					}
-				})(idd)[2]=(id,e.loaded/e.total);
+				})(idd)[2] = (id, e.loaded / e.total);
 				//console.log(id,e.loaded/e.total);
 			}
 			request.onload = function () {
@@ -35,13 +35,13 @@ function init() {
 					audioBuffers[id] = buffer;
 					//playSound(buffer);
 					for (i in SOUNDS) {
-						if (SOUNDS[i][2]!=1) {
-							return ;
+						if (SOUNDS[i][2] != 1) {
+							return;
 						}
 					}
 					for (i in MUSIC) {
-						if (MUSIC[i][2]!=1) {
-							return ;
+						if (MUSIC[i][2] != 1) {
+							return;
 						}
 					}
 					menuNav("menu");
@@ -49,17 +49,17 @@ function init() {
 			}
 			request.send();
 		}
-		
+
 		function onError() {
 			console.log("?v");
 		}
 		var currentMusicPlaying;
 		var toKill;
-		
+
 		playMusic = function (id) {
 			// disabled sound.. i wanna hear music while making my tetris.. :)
 			return "blah";
-			if (settings_ch[0][2]!=1) {
+			if (settings_ch[0][2] != 1) {
 				return false;
 			}
 			if (context == false) {
@@ -72,21 +72,21 @@ function init() {
 				}
 				var source = context.createBufferSource(); // creates a sound source
 				source.loop = true;
-				
+
 				source.buffer = audioBuffers[id];
 				source.playbackRate.value = 1.0;
 				// tell the source which sound to play
 				source.connect(context.destination); // connect the source to the context's destination (the speakers)
 				source.noteOn(0); // play the source now
-				toKill=source;
+				toKill = source;
 			} catch (e) {
 				console.log(e.message);
 				console.log(typeof(audioBuffers[id]));
 			};
 		}
-		
+
 		playSound = function (id) {
-			if (settings_ch[0][2]!=1) {
+			if (settings_ch[0][2] != 1) {
 				return false;
 			}
 			if (context == false) {
@@ -101,8 +101,8 @@ function init() {
 				source.connect(context.destination); // connect the source to the context's destination (the speakers)
 				source.noteOn(0); // play the source now
 				setTimeout(function () {
-					source.disconnect();						
-				}, ((source.buffer.length/context.sampleRate)*1000)+100);
+					source.disconnect();
+				}, ((source.buffer.length / context.sampleRate) * 1000) + 100);
 			} catch (e) {};
 		}
 		for (i in SOUNDS) {
@@ -111,13 +111,13 @@ function init() {
 		for (i in MUSIC) {
 			loadSound(MUSIC[i][0], MUSIC[i][1]);
 		}
-		
+
 	} catch (e) {
 		console.warn('Web Audio API is not supported in this browser.\nSound is disabled..\nTry Chrome..');
 		context = false;
-		webAudioApiFailed=1;
-		WHERE=0;
-		playSound=playMusic=function () { };
+		webAudioApiFailed = 1;
+		WHERE = 0;
+		playSound = playMusic = function () {};
 	}
 	//menuNav("menu");
 }
