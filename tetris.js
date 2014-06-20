@@ -737,6 +737,41 @@ function TetrisGame() {
 			ctx.stroke();
 		}
 
+		
+	}
+	function inGameGraphic(ctx) {
+		clearAndResize(ctx);
+		tiles(ctx);
+		var i,
+		i1,
+		i2;
+		for (i in bricks) {
+			if (SETTING_GHOST) {
+				if (bricks[i].moving) {
+					//ctx.fillStyle="rgba(255,255,255,0.5)";
+					var tmp_lowestPos = bricks[i].getLowestPosition(bricks);
+					for (i1 in bricks[i].blocks) {
+						for (i2 in bricks[i].blocks[i1]) {
+							if (bricks[i].blocks[i1][i2] == 1) {
+								if ((((tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
+									makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, new Color(255, 255, 255, 0.2));
+								}
+							}
+						}
+					}
+				}
+			}
+			for (i1 in bricks[i].blocks) {
+				for (i2 in bricks[i].blocks[i1]) {
+					if (bricks[i].blocks[i1][i2] == 1) {
+						if ((((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
+							makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, bricks[i].color);
+						}
+					}
+				}
+			}
+
+		}
 		// NextBox field
 		var nextBrickW = BRICKSIZE * 4;
 		var nextBrickH = BRICKSIZE * 4;
@@ -774,41 +809,6 @@ function TetrisGame() {
 				}
 			}
 		}
-	}
-	function inGameGraphic(ctx) {
-		clearAndResize(ctx);
-		tiles(ctx);
-		var i,
-		i1,
-		i2;
-		for (i in bricks) {
-			if (SETTING_GHOST) {
-				if (bricks[i].moving) {
-					//ctx.fillStyle="rgba(255,255,255,0.5)";
-					var tmp_lowestPos = bricks[i].getLowestPosition(bricks);
-					for (i1 in bricks[i].blocks) {
-						for (i2 in bricks[i].blocks[i1]) {
-							if (bricks[i].blocks[i1][i2] == 1) {
-								if ((((tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
-									makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, new Color(255, 255, 255, 0.2));
-								}
-							}
-						}
-					}
-				}
-			}
-			for (i1 in bricks[i].blocks) {
-				for (i2 in bricks[i].blocks[i1]) {
-					if (bricks[i].blocks[i1][i2] == 1) {
-						if ((((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
-							makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, bricks[i].color);
-						}
-					}
-				}
-			}
-
-		}
-
 	}
 
 	var GAMECONTROLDOWN = false;
