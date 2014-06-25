@@ -11,6 +11,8 @@ canvas#game {
 canvas#holding {
 	width: 120px;
 	height: 120px;
+	background: url(grid.svg);
+	background-size: 20px;
 	/*background-color: #000;
 	vertical-align: top;
 	border-radius: 20px;
