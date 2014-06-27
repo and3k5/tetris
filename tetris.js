@@ -18,9 +18,6 @@ function Brick() {
 	this.ingame = o.ingame;
 	var x,
 	y;
-	/*if (this.ingame) {
-	rnd = this.game.nextRandom;
-	}*/
 
 	Object.defineProperties(this, {
 		"x" : {
@@ -51,12 +48,13 @@ function Brick() {
 
 	if (this.ingame) {
 		var brfrm = this.game.bricksform;
-		var rnd = Math.round(Math.random() * (brfrm.length - 1));
+		var rnd = this.game.nextRandom;
 		this.color = this.game.getColors()[rnd].copy();
 		this.blocks = brfrm[rnd].concat();
 		this.moving = true;
 		this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
 		this.y = Math.round(0 - (this.blocks.length));
+		this.game.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
 	}
 
 }
@@ -272,6 +270,7 @@ Brick.prototype.smashdown = function () {
 		playSound("gamebump");
 		this.moving = false;
 		this.y = this.getLowestPosition(this.game.bricks);
+		PENDINGUPDATE=true;
 		if ((this.y + this.getBlockY()) >= 0) {
 			var sliced = this.slice_up();
 			this.game.bricks.splice(this.findMe(), 1);
@@ -283,7 +282,6 @@ Brick.prototype.smashdown = function () {
 					ingame : true,
 					game : this.game
 				}));
-
 			HOLDINGCOUNT = 0;
 		} else {
 			menuNav("gamelose");
@@ -773,18 +771,15 @@ function TetrisGame() {
 
 		}
 		// NextBox field
-		var nextBrickW = BRICKSIZE * 4;
-		var nextBrickH = BRICKSIZE * 4;
-		var nextBrickX = 0;
-		var nextBrickY = 0;
-		var i1,
-		i2;
-		var BRICKSIZEDIV = 1.5;
-		console.log("wat", nextRandom);
-		for (i1 in bricksform[nextRandom]) {
-			for (i2 in bricksform[nextRandom][i1]) {
+		var BRICKSIZESCALE = 1.5;
+		
+		var nextBrickX = (BRICKSIZE / BRICKSIZESCALE)*2;
+		var nextBrickY = (BRICKSIZE / BRICKSIZESCALE)*2;
+		
+		for (var i1 in bricksform[nextRandom]) {
+			for (var i2 in bricksform[nextRandom][i1]) {
 				if (bricksform[nextRandom][i1][i2] == 1) {
-					makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(bricksform[nextRandom]).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(bricksform[nextRandom]).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, colors[nextRandom]);
+					makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZESCALE)), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZESCALE)), BRICKSIZE / BRICKSIZESCALE, BRICKSIZE / BRICKSIZESCALE, colors[nextRandom]);
 				}
 			}
 		}
@@ -793,18 +788,15 @@ function TetrisGame() {
 		h_ctx.lineWidth = 1;
 		h_ctx.strokeStyle = "rgba(0,255,0,0.5)";
 		h_ctx.fillStyle = "white";
-		var nextBrickW = BRICKSIZE * 4;
-		var nextBrickH = BRICKSIZE * 4;
-		var nextBrickX = 0;
-		var nextBrickY = 0;
-		var i1,
-		i2;
-		var BRICKSIZEDIV = 1.5;
+		
+		var holdBrickX = 0;
+		var holdBrickY = 0;
+		
 		if (HOLDING != null) {
-			for (i1 in HOLDING.blocks) {
-				for (i2 in HOLDING.blocks[i1]) {
+			for (var i1 in HOLDING.blocks) {
+				for (var i2 in HOLDING.blocks[i1]) {
 					if (HOLDING.blocks[i1][i2] == 1) {
-						makeBrick(h_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickW / 2) - ((Brick.emulate(HOLDING.blocks).getWidth() / 2) * (BRICKSIZE / BRICKSIZEDIV))), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZEDIV)) + ((nextBrickH / 2) - ((Brick.emulate(HOLDING.blocks).getHeight() / 2) * (BRICKSIZE / BRICKSIZEDIV))), BRICKSIZE / BRICKSIZEDIV, BRICKSIZE / BRICKSIZEDIV, HOLDING.color);
+						makeBrick(h_ctx, holdBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZESCALE)), holdBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZESCALE)) , BRICKSIZE / BRICKSIZESCALE, BRICKSIZE / BRICKSIZESCALE, HOLDING.color);
 					}
 				}
 			}
