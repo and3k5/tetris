@@ -2,10 +2,10 @@ window.addEventListener('load', init, false);
 var playSound, playMusic, context;
 function init() {
 	try {
-
+		SOUNDS=["gamelose","gamebump","gamerow","menuback","gamemove"];
 		//var context;
 		var audioBuffers = [];
-		context = new webkitAudioContext();
+		context = new AudioContext();
 		function loadSound(id, url) {
 			if (context == false) {
 				return false;
@@ -16,19 +16,19 @@ function init() {
 			var idd = id;
 			// Decode asynchronously
 			request.onprogress = function (e) {
+				return;
 				(function (ed) {
 					for (i in SOUNDS) {
 						if (SOUNDS[i][0] == ed) {
 							return SOUNDS[i];
 						}
 					}
-					for (i in MUSIC) {
+					/*for (i in MUSIC) {
 						if (MUSIC[i][0] == ed) {
 							return MUSIC[i];
 						}
-					}
+					}*/
 				})(idd)[2] = (id, e.loaded / e.total);
-				//console.log(id,e.loaded/e.total);
 			}
 			request.onload = function () {
 				context.decodeAudioData(request.response, function (buffer) {
@@ -50,8 +50,8 @@ function init() {
 			request.send();
 		}
 
-		function onError() {
-			console.log("?v");
+		function onError(e) {
+			console.error(e);
 		}
 		var currentMusicPlaying;
 		var toKill;
@@ -86,9 +86,9 @@ function init() {
 		}
 
 		playSound = function (id) {
-			if (settings_ch[0][2] != 1) {
+			/*if (settings_ch[0][2] != 1) {
 				return false;
-			}
+			}*/
 			if (context == false) {
 				return false;
 			}
@@ -106,14 +106,14 @@ function init() {
 			} catch (e) {};
 		}
 		for (i in SOUNDS) {
-			loadSound(SOUNDS[i][0], SOUNDS[i][1]);
+			loadSound(SOUNDS[i], "sound/"+SOUNDS[i]+".wav");
 		}
-		for (i in MUSIC) {
+		/*for (i in MUSIC) {
 			loadSound(MUSIC[i][0], MUSIC[i][1]);
-		}
+		}*/
 
 	} catch (e) {
-		console.warn('Web Audio API is not supported in this browser.\nSound is disabled..\nTry Chrome..');
+		console.error(e);
 		context = false;
 		webAudioApiFailed = 1;
 		WHERE = 0;
