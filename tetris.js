@@ -1,10 +1,4 @@
 // TETRIS.JS
-window.requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (b) {
-	window.setTimeout(b, 1000 / 60)
-};
-//document.body.appendChild((ctx = document.createElement("canvas").getContext("2d")).canvas); ;
-//var nextRandom = Math.round(Math.random() * (bricksform.length - 1));
-// {ingame:false,game:TetrisGame}
 function Brick() {
 	var o = arguments[0];
 	if (o == undefined) {
@@ -28,7 +22,6 @@ function Brick() {
 				x = v;
 				if (this.ingame && (this.game != null)) {
 					this.game.PENDINGUPDATE = true;
-					console.log("Value changed");
 				}
 			}
 		},
@@ -40,7 +33,6 @@ function Brick() {
 				y = v;
 				if (this.ingame && (this.game != null)) {
 					this.game.PENDINGUPDATE = true;
-					console.log("Value changed");
 				}
 			}
 		}
@@ -489,7 +481,7 @@ function TetrisGame() {
 					HOLDING = null;
 					bricks = [];
 				} else {
-					console.log("nein");
+					return false;
 				}
 			}
 		},
@@ -498,7 +490,7 @@ function TetrisGame() {
 				return WIDTH;
 			},
 			set : function (v) {
-				console.log("nein");
+				return false;
 			}
 		},
 		"HEIGHT" : {
@@ -506,7 +498,7 @@ function TetrisGame() {
 				return HEIGHT;
 			},
 			set : function (v) {
-				console.log("nein");
+				return false;
 			}
 		},
 		"PENDINGUPDATE" : {
@@ -552,14 +544,17 @@ function TetrisGame() {
 
 	function checkXY(x, y) {
 		var i,
-		i1,
-		i2;
-		for (i in bricks) {
-			for (i1 in bricks[i].blocks) {
-				for (i2 in bricks[i].blocks[i1]) {
-					if (bricks[i].blocks[i1][i2] == 1) {
-						var cond1 = (x == bricks[i].x + parseInt(i2));
-						var cond2 = (y == bricks[i].y + parseInt(i1));
+		j,
+		k,
+		bri_len,
+		blo_len,
+		brl_len;
+		for (i=0,bri_len=bricks.length;i<bri_len;i++) {
+			for (j=0,blo_len=bricks[i].blocks.length;j<blo_len;j++) {
+				for (k=0,brl_len=bricks[i].blocks[j].length;k<brl_len;k++) {
+					if (bricks[i].blocks[j][k] == 1) {
+						var cond1 = (x == bricks[i].x + parseInt(k));
+						var cond2 = (y == bricks[i].y + parseInt(j));
 						var cond3 = (bricks[i].moving == false);
 						if (cond1 && cond2 && cond3) {
 							return true;
@@ -621,7 +616,6 @@ function TetrisGame() {
 
 				return rtn;
 			})(l);
-			PENDINGUPDATE = true;
 		}
 	}
 	this.checkLines = function () {
@@ -637,11 +631,10 @@ function TetrisGame() {
 					}
 				}
 				if (cnt == WIDTH) {
-					clearLine(i);
-					setTimeout(arguments.callee, 0);
-					return 0;
+					clearLine(i++);
 				}
 			}
+			PENDINGUPDATE = true;
 		}
 	}
 	function makeBrick(ctx, x, y, w, h, color) {
@@ -859,7 +852,7 @@ function TetrisGame() {
 	}
 	function graphicControlLoop() {
 		// CTX GRAPHICS
-		requestAnimFrame(arguments.callee);
+		requestAnimationFrame(graphicControlLoop);
 		if (PENDINGUPDATE) {
 			inGameGraphic(ctx);
 			PENDINGUPDATE = false;
