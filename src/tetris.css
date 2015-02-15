@@ -13,10 +13,6 @@ canvas#holding {
 	height: 120px;
 	background: url(grid.svg);
 	background-size: 20px;
-	/*background-color: #000;
-	vertical-align: top;
-	border-radius: 20px;
-	background:linear-gradient(rgb(30,30,30), rgb(60,60,60));*/
 }
 span.holding, span.next {
 	background-color: #000;
@@ -30,8 +26,6 @@ span.holding p, span.next p, p.scorelbl {
 	font-weight: bold;
 	margin: 10px 0px 0px 10px;
 }
-
-/* <p>Score: <span id="score">0</span></p> */
 p.scorelbl {
 	margin: 0px 0px 10px 0px;
 }
@@ -49,15 +43,11 @@ canvas#next {
 	height: 120px;
 	background: url(grid.svg);
 	background-size: 20px;
-	/*background-color: #000;
-	vertical-align: top;
-	border-radius: 20px;
-	background:linear-gradient(rgb(30,30,30), rgb(60,60,60));*/
 }
 div#container {
 	width:600px;
 	margin:auto auto;
-	background:linear-gradient(rgb(50,50,50), rgb(60,60,60));
+	background:linear-gradient(rgb(80,80,80), rgb(90,90,90));
 	border-radius: 50px;
 	padding: 30px;
 }
@@ -65,18 +55,4 @@ img#logo {
 	width:300px;
 	height:73px;
 	padding-bottom: 10px;
-	animation:mymove 1s ease-in-out infinite;
-	-webkit-animation:mymove 1s ease-in-out infinite;
-}
-
-@keyframes mymove { 
-	0% { transform: rotate(-1.25deg); }
-	50% { transform: rotate(1.25deg); }
-	100% { transform: rotate(-1.25deg); }
-}
-
-@-webkit-keyframes mymove { 
-	0% { -webkit-transform: rotate(-1.25deg); }
-	50% { -webkit-transform: rotate(1.25deg); }
-	100% { -webkit-transform: rotate(-1.25deg); }
 }

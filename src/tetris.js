@@ -48,8 +48,14 @@ function Brick() {
 		this.y = Math.round(0 - (this.blocks.length));
 		this.game.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
 	}
-
 }
+
+Brick.prototype.color = null;
+Brick.prototype.blocks = null;
+Brick.prototype.moving = false;
+Brick.prototype.x = 0;
+Brick.prototype.y = 0;
+
 Brick.prototype.resetPosition = function () {
 	this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
 	this.y = Math.round(0 - (this.blocks.length));
@@ -142,6 +148,7 @@ Brick.prototype.getBlockX = function () {
 	}
 }
 Brick.prototype.rotate_okay = function (brick, bl) {
+	if (this.game==null) return true;
 	var i1,
 	i2;
 	for (i1 in bl) {
@@ -156,7 +163,7 @@ Brick.prototype.rotate_okay = function (brick, bl) {
 	return true;
 }
 Brick.prototype.rotate = function (way) {
-	if (this.game.getRUNNING()) {
+	//if (this.game.getRUNNING()) {
 		var blocks2 = [];
 		var w = this.blocks[0].length;
 		var h = this.blocks.length;
@@ -205,7 +212,7 @@ Brick.prototype.rotate = function (way) {
 
 		this.blocks = blocks2;
 
-	}
+	//}
 }
 Brick.prototype.moveleft = function () {
 	if (this.game.getRUNNING()) {
