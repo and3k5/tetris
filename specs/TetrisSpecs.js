@@ -1,3 +1,4 @@
+// ------------------------- BRICK -------------------------
 describe("Brick", function() {
   var brick;
 
@@ -21,9 +22,6 @@ describe("Brick", function() {
 	}
   });
 });
-
-
-// helpers
 
 beforeEach(function () {
   jasmine.addMatchers({
@@ -49,3 +47,15 @@ beforeEach(function () {
   });
 });
 
+// ------------------------- COLOR -------------------------
+describe("Color", function() {
+  var color;
+
+  beforeEach(function() {
+    color = new Color();
+  });
+
+  it("adding feature", function() {
+	
+  });
+});
