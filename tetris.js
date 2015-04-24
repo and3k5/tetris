@@ -1,12 +1,6 @@
 // TETRIS.JS
-function Brick() {
-	var o = arguments[0];
-	if (o == undefined) {
-		o = {
-			'ingame' : false,
-			'game' : null
-		};
-	}
+function Brick(options) {
+	var o = options || {'ingame' : false,'game' : null};
 
 	this.game = o.game;
 	this.ingame = o.ingame;
