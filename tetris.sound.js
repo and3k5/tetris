@@ -77,7 +77,7 @@ function init() {
 				source.playbackRate.value = 1.0;
 				// tell the source which sound to play
 				source.connect(context.destination); // connect the source to the context's destination (the speakers)
-				source.noteOn(0); // play the source now
+				source.start(0); // play the source now
 				toKill = source;
 			} catch (e) {
 				console.log(e.message);
@@ -99,7 +99,7 @@ function init() {
 				source.playbackRate.value = 1.0;
 				// tell the source which sound to play
 				source.connect(context.destination); // connect the source to the context's destination (the speakers)
-				source.noteOn(0); // play the source now
+				source.start(0); // play the source now
 				setTimeout(function () {
 					source.disconnect();
 				}, ((source.buffer.length / context.sampleRate) * 1000) + 100);
