@@ -1,21 +1,21 @@
 import { playSound } from "./sound.js";
 
 class Brick {
+	#x = undefined;
+	#y = undefined;
     constructor(options) {
         const o = options || {'ingame' : false,'game' : null};
 
         this.game = o.game;
         this.ingame = o.ingame;
-        let x;
-        let y;
 
         Object.defineProperties(this, {
             "x" : {
                 get() {
-                    return x;
+                    return this.#x;
                 },
                 set(v) {
-                    x = v;
+                    this.#x = v;
                     if (this.ingame && (this.game != null)) {
                         this.game.PENDINGUPDATE = true;
                     }
@@ -23,10 +23,10 @@ class Brick {
             },
             "y" : {
                 get() {
-                    return y;
+                    return this.#y;
                 },
                 set(v) {
-                    y = v;
+                    this.#y = v;
                     if (this.ingame && (this.game != null)) {
                         this.game.PENDINGUPDATE = true;
                     }
