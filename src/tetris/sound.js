@@ -1,5 +1,6 @@
 window.addEventListener('load', init, false);
-var playSound, playMusic, context;
+var SOUNDS,playMusic, context;
+var soundReady = false;
 function init() {
 	try {
 		SOUNDS=["gamelose","gamebump","gamerow","menuback","gamemove"];
@@ -85,27 +86,8 @@ function init() {
 			};
 		}
 
-		playSound = function (id) {
-			/*if (settings_ch[0][2] != 1) {
-				return false;
-			}*/
-			if (context == false) {
-				return false;
-			}
-			try {
-				var source = context.createBufferSource(); // creates a sound source
-				source.loop = false;
-				source.buffer = audioBuffers[id];
-				source.playbackRate.value = 1.0;
-				// tell the source which sound to play
-				source.connect(context.destination); // connect the source to the context's destination (the speakers)
-				source.start(0); // play the source now
-				setTimeout(function () {
-					source.disconnect();
-				}, ((source.buffer.length / context.sampleRate) * 1000) + 100);
-			} catch (e) {};
-		}
-		for (i in SOUNDS) {
+		soundReady = true;
+		for (var i in SOUNDS) {
 			loadSound(SOUNDS[i], "sound/"+SOUNDS[i]+".wav");
 		}
 		/*for (i in MUSIC) {
@@ -120,4 +102,27 @@ function init() {
 		playSound = playMusic = function () {};
 	}
 	//menuNav("menu");
+}
+
+export function playSound (id) {
+	if (soundReady !== true)
+		return false;
+	/*if (settings_ch[0][2] != 1) {
+		return false;
+	}*/
+	if (context == false) {
+		return false;
+	}
+	try {
+		var source = context.createBufferSource(); // creates a sound source
+		source.loop = false;
+		source.buffer = audioBuffers[id];
+		source.playbackRate.value = 1.0;
+		// tell the source which sound to play
+		source.connect(context.destination); // connect the source to the context's destination (the speakers)
+		source.start(0); // play the source now
+		setTimeout(function () {
+			source.disconnect();
+		}, ((source.buffer.length / context.sampleRate) * 1000) + 100);
+	} catch (e) {};
 }

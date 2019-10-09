@@ -14,3 +14,5 @@ Color.prototype.toRGBAString = function () {
 Color.prototype.copy = function () {
 	return new Color(this.r, this.g, this.b, this.a);
 }
+
+export default Color

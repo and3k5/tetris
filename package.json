@@ -1,0 +1,35 @@
+{
+  "name": "tetris",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node node_modules/webpack/bin/webpack.js --env.mode=production",
+    "watch": "node node_modules/webpack/bin/webpack.js --env.mode=development --env.watch=yes",
+    "build-dev": "node node_modules/webpack/bin/webpack.js --env.mode=development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/and3k5/tetris.git"
+  },
+  "author": "Anders Kjeldsen",
+  "bugs": {
+    "url": "https://github.com/and3k5/tetris/issues"
+  },
+  "homepage": "https://github.com/and3k5/tetris#readme",
+  "dependencies": {
+    "axios": "^0.19.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.3",
+    "@babel/preset-env": "^7.6.3",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.6",
+    "babel-polyfill": "^6.26.0",
+    "core-js": "^3.2.1",
+    "css-loader": "^3.2.0",
+    "file-loader": "^4.2.0",
+    "regenerator-runtime": "^0.13.3",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
+  }
+}
