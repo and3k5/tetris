@@ -19,12 +19,12 @@ function init() {
 			request.onprogress = function (e) {
 				return;
 				(function (ed) {
-					for (i in SOUNDS) {
+					for (var i in SOUNDS) {
 						if (SOUNDS[i][0] == ed) {
 							return SOUNDS[i];
 						}
 					}
-					/*for (i in MUSIC) {
+					/*for (var i in MUSIC) {
 						if (MUSIC[i][0] == ed) {
 							return MUSIC[i];
 						}
@@ -35,12 +35,12 @@ function init() {
 				context.decodeAudioData(request.response, function (buffer) {
 					audioBuffers[id] = buffer;
 					//playSound(buffer);
-					for (i in SOUNDS) {
+					for (var i in SOUNDS) {
 						if (SOUNDS[i][2] != 1) {
 							return;
 						}
 					}
-					for (i in MUSIC) {
+					for (var i in MUSIC) {
 						if (MUSIC[i][2] != 1) {
 							return;
 						}
@@ -90,7 +90,7 @@ function init() {
 		for (var i in SOUNDS) {
 			loadSound(SOUNDS[i], "sound/"+SOUNDS[i]+".wav");
 		}
-		/*for (i in MUSIC) {
+		/*for (var i in MUSIC) {
 			loadSound(MUSIC[i][0], MUSIC[i][1]);
 		}*/
 

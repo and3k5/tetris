@@ -194,13 +194,10 @@ Brick.prototype.rotate = function (way) {
 Brick.prototype.moveleft = function () {
 	if (this.game.getRUNNING()) {
 		playSound("gamemove");
-		var i,
-		i1,
-		i2,
-		may_i_fall = true;
+		var may_i_fall = true;
 		if (this.moving) {
-			for (i1 in this.blocks) {
-				for (i2 in this.blocks[i1]) {
+			for (var i1 in this.blocks) {
+				for (var i2 in this.blocks[i1]) {
 					if (this.blocks[i1][i2] == 1) {
 						if ((this.checkCollision(this.x + parseInt(i2) - 1, this.y + parseInt(i1), this.game.bricks) == false) || ((this.x + this.getBlockX()) <= 0)) {
 							may_i_fall = false;
@@ -219,13 +216,10 @@ Brick.prototype.moveleft = function () {
 Brick.prototype.moveright = function () {
 	if (this.game.getRUNNING()) {
 		playSound("gamemove");
-		var i,
-		i1,
-		i2,
-		may_i_fall = true;
+		var may_i_fall = true;
 		if (this.moving) {
-			for (i1 in this.blocks) {
-				for (i2 in this.blocks[i1]) {
+			for (var i1 in this.blocks) {
+				for (var i2 in this.blocks[i1]) {
 					if (this.blocks[i1][i2] == 1) {
 						if ((this.checkCollision(this.x + parseInt(i2) + 1, this.y + parseInt(i1), this.game.bricks) == false) || ((this.x + this.getWidth() + this.getBlockX()) >= (this.game.getWIDTH()))) {
 							may_i_fall = false;
@@ -246,11 +240,11 @@ Brick.prototype.smashdown = function () {
 		playSound("gamebump");
 		this.moving = false;
 		this.y = this.getLowestPosition(this.game.bricks);
-		PENDINGUPDATE=true;
+		this.game.PENDINGUPDATE=true;
 		if ((this.y + this.getBlockY()) >= 0) {
 			var sliced = this.slice_up();
 			this.game.bricks.splice(this.findMe(), 1);
-			for (i in sliced) {
+			for (var i in sliced) {
 				this.game.bricks.push(sliced[i])
 			}
 			this.game.checkLines();
@@ -258,7 +252,7 @@ Brick.prototype.smashdown = function () {
 					ingame : true,
 					game : this.game
 				}));
-			HOLDINGCOUNT = 0;
+			this.game.HOLDINGCOUNT = 0;
 		} else {
 			menuNav("gamelose");
 			playSound("gamelose");
@@ -270,12 +264,10 @@ Brick.prototype.smashdown = function () {
 Brick.prototype.movedown = function () {
 	if (this.game.getRUNNING()) {
 		var i,
-		i1,
-		i2,
 		may_i_fall = true;
 		if (this.moving) {
-			for (i1 in this.blocks) {
-				for (i2 in this.blocks[i1]) {
+			for (var i1 in this.blocks) {
+				for (var i2 in this.blocks[i1]) {
 					if (this.blocks[i1][i2] == 1) {
 						if ((this.checkCollision(this.x + parseInt(i2), this.y + parseInt(i1) + 1, this.game.bricks) == false) || ((this.y + this.getHeight()) >= this.game.HEIGHT)) {
 							may_i_fall = false;
@@ -292,7 +284,7 @@ Brick.prototype.movedown = function () {
 				if ((this.y + this.getBlockY()) >= 0) {
 					var sliced = this.slice_up();
 					this.game.bricks.splice(this.findMe(), 1);
-					for (i in sliced) {
+					for (var i in sliced) {
 						this.game.bricks.push(sliced[i]);
 					}
 					this.game.checkLines();
@@ -300,7 +292,7 @@ Brick.prototype.movedown = function () {
 							ingame : true,
 							game : this.game
 						}));
-					HOLDINGCOUNT = 0;
+					this.game.HOLDINGCOUNT = 0;
 				} else {
 					menuNav("gamelose");
 					playSound("gamelose");
@@ -313,15 +305,13 @@ Brick.prototype.movedown = function () {
 Brick.prototype.getLowestPosition = function (br) {
 	var h = this.getHeight();
 	var this_x = this.x,
-	this_y = this.y,
-	i1,
-	i2;
+	this_y = this.y;
 	var stillgood = true,
 	isgood = true;
 	while ((stillgood)) {
 		isgood = true;
-		for (i1 in this.blocks) {
-			for (i2 in this.blocks[i1]) {
+		for (var i1 in this.blocks) {
+			for (var i2 in this.blocks[i1]) {
 				if (this.blocks[i1][i2] == 1) {
 					if ((this.checkCollision(this_x + parseInt(i2), this_y + parseInt(i1), br) == false) || ((this_y + h) > this.game.HEIGHT)) {
 						isgood = false;
@@ -343,8 +333,8 @@ Brick.prototype.slice_up = function () {
 	i1,
 	i2;
 	var this_color = this.color;
-	for (i1 in this.blocks) {
-		for (i2 in this.blocks[i1]) {
+	for (var i1 in this.blocks) {
+		for (var i2 in this.blocks[i1]) {
 			if (this.blocks[i1][i2] == 1) {
 				rtn.push((function (x, y) {
 						var tmp = new Brick();
@@ -361,7 +351,7 @@ Brick.prototype.slice_up = function () {
 	return rtn;
 }
 Brick.prototype.findMe = function () {
-	for (i in this.game.bricks) {
+	for (var i in this.game.bricks) {
 		if (this.game.bricks[i] == this) {
 			return i;
 		}

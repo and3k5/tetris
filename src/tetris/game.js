@@ -108,6 +108,14 @@ function TetrisGame() {
 				return false;
 			}
 		},
+		"HOLDINGCOUNT" : {
+			get : function () {
+				return HOLDINGCOUNT;
+			},
+			set : function (v) {
+				HOLDINGCOUNT = v;
+			}
+		},
 		"PENDINGUPDATE" : {
 			get : function () {
 				return PENDINGUPDATE;
@@ -150,15 +158,13 @@ function TetrisGame() {
 	this.bricksform = bricksform;
 
 	function checkXY(x, y) {
-		var i,
-		j,
-		k,
+		var 
 		bri_len,
 		blo_len,
 		brl_len;
-		for (i=0,bri_len=bricks.length;i<bri_len;i++) {
-			for (j=0,blo_len=bricks[i].blocks.length;j<blo_len;j++) {
-				for (k=0,brl_len=bricks[i].blocks[j].length;k<brl_len;k++) {
+		for (var i=0,bri_len=bricks.length;i<bri_len;i++) {
+			for (var j=0,blo_len=bricks[i].blocks.length;j<blo_len;j++) {
+				for (var k=0,brl_len=bricks[i].blocks[j].length;k<brl_len;k++) {
 					if (bricks[i].blocks[j][k] == 1) {
 						var cond1 = (x == bricks[i].x + parseInt(k));
 						var cond2 = (y == bricks[i].y + parseInt(j));
@@ -177,16 +183,13 @@ function TetrisGame() {
 			setScore(SCORE + 1);
 			playSound("gamerow");
 			var toDelete = (function (line) {
-				var i,
-				i1,
-				i2;
 				var rtn = [];
 				var tx = 0;
 				var times = 0;
 				for (times = 0; times <= WIDTH; times++) {
-					for (i in bricks) {
-						for (i1 in bricks[i].blocks) {
-							for (i2 in bricks[i].blocks[i1]) {
+					for (var i in bricks) {
+						for (var i1 in bricks[i].blocks) {
+							for (var i2 in bricks[i].blocks[i1]) {
 								if (bricks[i].blocks[i1][i2] == 1) {
 									var cond1 = (line == bricks[i].y + parseInt(i1));
 									var cond2 = (bricks[i].moving == false);
@@ -201,15 +204,12 @@ function TetrisGame() {
 				return rtn;
 			})(l);
 			var movedown = (function (line) {
-				var i,
-				i1,
-				i2;
 				var rtn = [];
 				var tx = 0;
 				var times = 0;
-				for (i in bricks) {
-					for (i1 in bricks[i].blocks) {
-						for (i2 in bricks[i].blocks[i1]) {
+				for (var i in bricks) {
+					for (var i1 in bricks[i].blocks) {
+						for (var i2 in bricks[i].blocks[i1]) {
 							if (bricks[i].blocks[i1][i2] == 1) {
 								var cond1 = (line > bricks[i].y + parseInt(i1));
 								var cond2 = (bricks[i].moving == false);
@@ -228,9 +228,8 @@ function TetrisGame() {
 	this.checkLines = function () {
 		//check for full lines
 		if (RUNNING) {
-			var i;
 			var cx;
-			for (i = HEIGHT; i > 1; i--) {
+			for (var i = HEIGHT; i > 1; i--) {
 				var cnt = 0;
 				for (cx = 0; cx <= WIDTH - 1; cx++) {
 					if (checkXY(cx, i)) {
@@ -274,7 +273,7 @@ function TetrisGame() {
 
 	function getMovingBrick() {
 		var i;
-		for (i in bricks) {
+		for (var i in bricks) {
 			if (bricks[i].moving) {
 				return bricks[i];
 			}
@@ -320,14 +319,14 @@ function TetrisGame() {
 		ctx.lineWidth = 1;
 		ctx.strokeStyle = "rgba(0,255,0,0.5)";
 		ctx.fillStyle = "white";
-		for (ix = 0; ix <= (GRID_WIDTH); ix += BRICKSIZE) {
+		for (var ix = 0; ix <= (GRID_WIDTH); ix += BRICKSIZE) {
 			ctx.beginPath();
 			ctx.lineTo(ix, 0);
 			ctx.lineTo(ix, GRID_HEIGHT);
 			ctx.closePath();
 			ctx.stroke();
 		}
-		for (iy = 0; iy <= (GRID_HEIGHT); iy += BRICKSIZE) {
+		for (var iy = 0; iy <= (GRID_HEIGHT); iy += BRICKSIZE) {
 			ctx.beginPath();
 			ctx.lineTo(0, iy);
 			ctx.lineTo(GRID_WIDTH, iy);
@@ -340,16 +339,13 @@ function TetrisGame() {
 	function inGameGraphic(ctx) {
 		clearAndResize(ctx);
 		tiles(ctx);
-		var i,
-		i1,
-		i2;
-		for (i in bricks) {
+		for (var i in bricks) {
 			if (SETTING_GHOST) {
 				if (bricks[i].moving) {
 					//ctx.fillStyle="rgba(255,255,255,0.5)";
 					var tmp_lowestPos = bricks[i].getLowestPosition(bricks);
-					for (i1 in bricks[i].blocks) {
-						for (i2 in bricks[i].blocks[i1]) {
+					for (var i1 in bricks[i].blocks) {
+						for (var i2 in bricks[i].blocks[i1]) {
 							if (bricks[i].blocks[i1][i2] == 1) {
 								if ((((tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
 									makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, new Color(255, 255, 255, 0.2));
@@ -359,8 +355,8 @@ function TetrisGame() {
 					}
 				}
 			}
-			for (i1 in bricks[i].blocks) {
-				for (i2 in bricks[i].blocks[i1]) {
+			for (var i1 in bricks[i].blocks) {
+				for (var i2 in bricks[i].blocks[i1]) {
 					if (bricks[i].blocks[i1][i2] == 1) {
 						if ((((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
 							makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, bricks[i].color);
