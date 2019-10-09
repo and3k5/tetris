@@ -1,13 +1,15 @@
-window.addEventListener('load', init, false);
+window.addEventListener('mousedown', init, { once: true });
 let SOUNDS;
 let playMusic;
 let context;
 let soundReady = false;
+const audioBuffers = [];
+
 function init() {
     try {
         SOUNDS = ["gamelose", "gamebump", "gamerow", "menuback", "gamemove"];
         //var context;
-        const audioBuffers = [];
+
         context = new AudioContext();
         function loadSound(id, url) {
             if (context == false) {
@@ -92,6 +94,7 @@ function init() {
         for (const i in SOUNDS) {
             loadSound(SOUNDS[i], `sound/${SOUNDS[i]}.wav`);
         }
+        console.log("sound ready");
 		/*for (var i in MUSIC) {
 			loadSound(MUSIC[i][0], MUSIC[i][1]);
 		}*/
@@ -106,13 +109,19 @@ function init() {
     //menuNav("menu");
 }
 
+
+
 export function playSound(id) {
-    if (soundReady !== true)
+    console.debug("playSound:" + id);
+    if (soundReady !== true) {
+        console.debug("tried to play sound before ready");
         return false;
+    }
 	/*if (settings_ch[0][2] != 1) {
 		return false;
 	}*/
     if (context == false) {
+        console.debug("tried to play sound with disabled context");
         return false;
     }
     try {
@@ -126,5 +135,7 @@ export function playSound(id) {
         setTimeout(() => {
             source.disconnect();
         }, ((source.buffer.length / context.sampleRate) * 1000) + 100);
-    } catch (e) { };
+    } catch (e) {
+        console.warn(e);
+    };
 }

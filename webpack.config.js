@@ -1,8 +1,8 @@
 const path = require('path');
 
-module.exports = function(env) {
+module.exports = function (env) {
     var mode = env.mode;
-    
+
     const commonConfig = {
         mode: mode,
     };
@@ -12,12 +12,7 @@ module.exports = function(env) {
             rules: [
                 {
                     test: /\.css$/,
-                    use: {
-                        loader: "css-loader",
-                        options: {
-                            modules: "local",
-                        }
-                    }
+                    use: ["style-loader","css-loader"]
                 },
                 {
                     test: /\.js$/,
@@ -40,7 +35,7 @@ module.exports = function(env) {
         watch: env.watch === "yes",
         output: {
             library: "tetris",
-            path: path.resolve(__dirname,"js"),
+            path: path.resolve(__dirname, "js"),
             filename: "tetris.js",
         }
     });
