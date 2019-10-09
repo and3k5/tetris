@@ -1,7 +1,10 @@
 import Color from "./color.js";
+import { RadialGradient, LinearGradient } from "./gradient.js";
 import Brick from "./brick.js";
 import { playSound } from "./sound.js";
 import { BinaryBrickForm } from "./brick-form.js";
+
+window.BinaryBrickForm = BinaryBrickForm;
 
 class TetrisGame {
     // [number] Bricks x count
@@ -422,17 +425,15 @@ class TetrisGame {
     }
 
     clearAndResize(ctx, h_ctx, n_ctx) {
+        this.clearCanvas(ctx, this.#CANVAS_WIDTH, this.#CANVAS_HEIGHT);
+        this.clearCanvas(h_ctx, this.#BRICKSIZE * 4, this.#BRICKSIZE * 4);
+        this.clearCanvas(n_ctx, this.#BRICKSIZE * 4, this.#BRICKSIZE * 4);
+    }
+
+    clearCanvas(ctx, w, h) {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.canvas.width = this.#CANVAS_WIDTH;
-        ctx.canvas.height = this.#CANVAS_HEIGHT;
-
-        h_ctx.clearRect(0, 0, h_ctx.canvas.width, h_ctx.canvas.height);
-        h_ctx.canvas.width = this.#BRICKSIZE * 4;
-        h_ctx.canvas.height = this.#BRICKSIZE * 4;
-
-        n_ctx.clearRect(0, 0, n_ctx.canvas.width, n_ctx.canvas.height);
-        n_ctx.canvas.width = this.#BRICKSIZE * 4;
-        n_ctx.canvas.height = this.#BRICKSIZE * 4;
+        ctx.canvas.width = w;
+        ctx.canvas.height = h;
     }
 
     inGameGraphic(ctx, h_ctx, n_ctx) {
@@ -444,9 +445,9 @@ class TetrisGame {
                 var ghostColor = new Color(255, 255, 255, 0.2);
                 //ctx.fillStyle="rgba(255,255,255,0.5)";
                 const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
-                this.drawBrickForm(bricks[i].blocks,ctx,bricks[i].x,tmp_lowestPos,ghostColor)
+                this.drawBrickForm(bricks[i].blocks, ctx, bricks[i].x, tmp_lowestPos, ghostColor)
             }
-            this.drawBrickForm(bricks[i].blocks,ctx,bricks[i].x,bricks[i].y,bricks[i].color);
+            this.drawBrickForm(bricks[i].blocks, ctx, bricks[i].x, bricks[i].y, bricks[i].color);
         }
         // NextBox field
         const BRICKSIZESCALE = 1.5;
@@ -458,7 +459,7 @@ class TetrisGame {
         var nextBrickForm = bricksform[this.nextRandom];
         var nextBrickColor = colors[this.nextRandom];
 
-        this.drawBrickForm(nextBrickForm,n_ctx,2,2,nextBrickColor,BRICKSIZESCALE);
+        this.drawBrickForm(nextBrickForm, n_ctx, 2, 2, nextBrickColor, BRICKSIZESCALE);
 
         // HoldingField
         h_ctx.lineWidth = 1;
@@ -466,11 +467,11 @@ class TetrisGame {
         h_ctx.fillStyle = "white";
 
         if (this.#HOLDING != null) {
-            this.drawBrickForm(this.#HOLDING.blocks,h_ctx,0,0,this.#HOLDING.color,BRICKSIZESCALE);
+            this.drawBrickForm(this.#HOLDING.blocks, h_ctx, 0, 0, this.#HOLDING.color, BRICKSIZESCALE);
         }
     }
 
-    drawBrickForm(brickForm,ctx,x,y,color,scale = 1) {
+    drawBrickForm(brickForm, ctx, x, y, color, scale = 1) {
         var brickSize = this.#BRICKSIZE / scale;
 
         for (var i1 in brickForm) {
@@ -483,31 +484,35 @@ class TetrisGame {
         }
     }
 
-    makeBrick(ctx, x, y, w, h, { r, g, b, a }) {
-        var fstyle = ctx.createRadialGradient(x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
-        fstyle.addColorStop(0, new Color(r, g, b, a).toRGBAString());
-        fstyle.addColorStop(1, new Color(r, g, b, a * 0.5).toRGBAString());
-        ctx.fillStyle = fstyle;
+    makeBrick(ctx, x, y, w, h, color) {
+        var fstyle = new RadialGradient(ctx, x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
+        fstyle.addColor(0, color);
+        fstyle.addColor(1, color.alphaScale(0.5));
+        ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
-        var fstyle = ctx.createLinearGradient(x + (w / 2), y, x + (w / 2), y + h);
-        fstyle.addColorStop(0.2, new Color(r, g, b, 0.5).toRGBAString());
-        fstyle.addColorStop(0, new Color(0, 0, 0, 0.9).toRGBAString());
-        ctx.fillStyle = fstyle;
+
+        var fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
+        fstyle.addColor(0.2, color.alpha(0.5));
+        fstyle.addColor(0, Color.Black().alpha(0.9));
+        ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
-        var fstyle = ctx.createLinearGradient(x, y + (h / 2), x + w, y + (h / 2));
-        fstyle.addColorStop(0.3, new Color(r * 0.7, g * 0.7, b * 0.7, 0).toRGBAString());
-        fstyle.addColorStop(0, new Color(0, 0, 0, 0.4).toRGBAString());
-        ctx.fillStyle = fstyle;
+
+        var fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
+        fstyle.addColor(0.3, color.scale(0.7).alpha(0));
+        fstyle.addColor(0, Color.Black().alpha(0.4));
+        ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
-        var fstyle = ctx.createLinearGradient(x + (w / 2), y, x + (w / 2), y + h);
-        fstyle.addColorStop(0.8, new Color(r * 0.1, g * 0.1, b * 0.1, 0).toRGBAString());
-        fstyle.addColorStop(1, new Color(0, 0, 0, 1).toRGBAString());
-        ctx.fillStyle = fstyle;
+
+        var fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
+        fstyle.addColor(0.8, color.scale(0.1).alpha(0));
+        fstyle.addColor(1, Color.Black());
+        ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
-        var fstyle = ctx.createLinearGradient(x, y + (h / 2), x + w, y + (h / 2));
-        fstyle.addColorStop(0.8, new Color(r * 0.2, g * 0.2, b * 0.2, 0).toRGBAString());
-        fstyle.addColorStop(1, new Color(0, 0, 0, 1).toRGBAString());
-        ctx.fillStyle = fstyle;
+
+        var fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
+        fstyle.addColor(0.8, color.scale(0.2).alpha(0));
+        fstyle.addColor(1, Color.Black());
+        ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
     }
 

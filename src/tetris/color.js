@@ -14,8 +14,41 @@ class Color {
         return `rgba(${parseInt(this.r)},${parseInt(this.g)},${parseInt(this.b)},${parseFloat(this.a)})`;
     }
 
+    setAlpha(a) {
+        this.a = a;
+        return this;
+    }
+
+    alpha(a) {
+        return this.copy().setAlpha(a);
+    }
+
+    setAlphaScale(s) {
+        this.a = this.a * s;
+        return this;
+    }
+
+    alphaScale(s) {
+        return this.copy().setAlphaScale(s);
+    }
+
+    setScale(s) {
+        this.r *= s;
+        this.g *= s;
+        this.b *= s;
+        return this;
+    }
+
+    scale(s) {
+        return this.copy().setScale(s);
+    }
+
     copy() {
         return new Color(this.r, this.g, this.b, this.a);
+    }
+
+    static Black() {
+        return new Color(0, 0, 0, 1);
     }
 }
 
