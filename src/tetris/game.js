@@ -5,126 +5,126 @@ import { playSound } from "./sound.js";
 class TetrisGame {
     constructor() {
         let // [number] Bricks x count
-        WIDTH;
+            WIDTH;
 
         let // [number] Bricks y count
-        HEIGHT;
+            HEIGHT;
 
         let // [number] Size of a brick (in pixels)
-        BRICKSIZE;
+            BRICKSIZE;
 
         let // [number] Width of grid
-        GRID_WIDTH;
+            GRID_WIDTH;
 
         let // [number] Height of grid
-        GRID_HEIGHT;
+            GRID_HEIGHT;
 
         let // [number] canvas width (soon to be deleted)
-        CANVAS_WIDTH;
+            CANVAS_WIDTH;
 
         let // [number] canvas height (soon to be deleted)
-        CANVAS_HEIGHT;
+            CANVAS_HEIGHT;
 
         const // [number] FPS counter
-        FPS = 0;
+            FPS = 0;
 
         let // [Bool] Update to graphic
-        PENDINGUPDATE = false;
+            PENDINGUPDATE = false;
 
         let // [string] Font name
-        GRAPHIC_FONT;
+            GRAPHIC_FONT;
 
         let // [number] Menu font size
-        GRAPHIC_MENU_FONTSIZE;
+            GRAPHIC_MENU_FONTSIZE;
 
         let // [number] Menu subtext font size
-        GRAPHIC_MENUDESC_FONTSIZE;
+            GRAPHIC_MENUDESC_FONTSIZE;
 
         let // [number] Menu ???
-        GRAPHIC_MENU_DISTANCE;
+            GRAPHIC_MENU_DISTANCE;
 
         let // [number] Board font size
-        GRAPHIC_BOARD_FONTSIZE;
+            GRAPHIC_BOARD_FONTSIZE;
 
         let // [number] Score font size
-        GRAPHIC_SCORE_FONTSIZE;
+            GRAPHIC_SCORE_FONTSIZE;
 
         let // [bool] running
-        RUNNING = true;
+            RUNNING = true;
 
         let // [Graphic Context] Game 2d context
-        ctx;
+            ctx;
 
         let // [Graphic Context] Game holding brick 2d context
-        h_ctx;
+            h_ctx;
 
         let // [Graphic Context] Game next brick 2d context
-        n_ctx;
+            n_ctx;
 
         let // [number] Current showing screen
-        WHERE = -1;
+            WHERE = -1;
 
         const // 0 = menu
-        // 1 = ingame
-        // 2 = paused
-        // 3 = tutorial
-        // 4 = about
-        // 5 = lost game
-        // 6 = Settings
-        // [number] Unused (might be removed)
-        FROM = 0;
+            // 1 = ingame
+            // 2 = paused
+            // 3 = tutorial
+            // 4 = about
+            // 5 = lost game
+            // 6 = Settings
+            // [number] Unused (might be removed)
+            FROM = 0;
 
         const // [number/bool] If webaudio doesnt work, then skip download
-        webAudioApiFailed = 0;
+            webAudioApiFailed = 0;
 
         const // [number] Selected menu item
-        SELECTED_MENU = 0;
+            SELECTED_MENU = 0;
 
         const // [bool] ghost option
-        SETTING_GHOST = true;
+            SETTING_GHOST = true;
 
         let // [Brick] current holding brick
-        HOLDING = null;
+            HOLDING = null;
 
         let // count of holding
-        HOLDINGCOUNT = 0;
+            HOLDINGCOUNT = 0;
 
         let scoreelement = null;
 
         let // Fix to avoid Space to repeat keydown events
-        MAYDROP = true;
+            MAYDROP = true;
 
         let SCORE = 0;
         let bricks = [];
 
         const bricksform = [
             [[0, 1, 0],
-                [0, 1, 0],
-                [0, 1, 1]],
+            [0, 1, 0],
+            [0, 1, 1]],
 
             [[0, 1, 0],
-                [0, 1, 0],
-                [1, 1, 0]],
+            [0, 1, 0],
+            [1, 1, 0]],
 
             [[0, 1, 1],
-                [1, 1, 0],
-                [0, 0, 0]],
+            [1, 1, 0],
+            [0, 0, 0]],
 
             [[1, 1, 0],
-                [0, 1, 1],
-                [0, 0, 0]],
+            [0, 1, 1],
+            [0, 0, 0]],
 
             [[0, 1, 0],
-                [1, 1, 1],
-                [0, 0, 0]],
+            [1, 1, 1],
+            [0, 0, 0]],
 
             [[1, 1],
-                [1, 1]],
+            [1, 1]],
 
             [[0, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 0, 0]]
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 0, 0]]
         ];
 
         const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
@@ -135,12 +135,12 @@ class TetrisGame {
             scoreelement.innerHTML = SCORE;
         }
         Object.defineProperties(this, {
-            "bricks" : {
+            "bricks": {
                 get() {
                     return bricks;
                 },
                 set(v) {
-                    if ((v == "") && (typeof([]) == "object")) {
+                    if ((v == "") && (typeof ([]) == "object")) {
                         setScore(0);
                         HOLDINGCOUNT = 0;
                         HOLDING = null;
@@ -150,7 +150,7 @@ class TetrisGame {
                     }
                 }
             },
-            "WIDTH" : {
+            "WIDTH": {
                 get() {
                     return WIDTH;
                 },
@@ -158,7 +158,7 @@ class TetrisGame {
                     return false;
                 }
             },
-            "HEIGHT" : {
+            "HEIGHT": {
                 get() {
                     return HEIGHT;
                 },
@@ -166,7 +166,7 @@ class TetrisGame {
                     return false;
                 }
             },
-            "HOLDINGCOUNT" : {
+            "HOLDINGCOUNT": {
                 get() {
                     return HOLDINGCOUNT;
                 },
@@ -174,7 +174,7 @@ class TetrisGame {
                     HOLDINGCOUNT = v;
                 }
             },
-            "PENDINGUPDATE" : {
+            "PENDINGUPDATE": {
                 get() {
                     return PENDINGUPDATE;
                 },
@@ -182,7 +182,7 @@ class TetrisGame {
                     PENDINGUPDATE = v;
                 }
             },
-            "nextRandom" : {
+            "nextRandom": {
                 get() {
                     return nextRandom;
                 },
@@ -190,7 +190,7 @@ class TetrisGame {
                     nextRandom = v;
                 }
             },
-            "MAYDROP" : {
+            "MAYDROP": {
                 get() {
                     return MAYDROP;
                 },
@@ -211,9 +211,9 @@ class TetrisGame {
             var bri_len;
             var blo_len;
             var brl_len;
-            for (let i=0, bri_len=bricks.length;i<bri_len;i++) {
-                for (let j=0, blo_len=bricks[i].blocks.length;j<blo_len;j++) {
-                    for (let k=0, brl_len=bricks[i].blocks[j].length;k<brl_len;k++) {
+            for (let i = 0, bri_len = bricks.length; i < bri_len; i++) {
+                for (let j = 0, blo_len = bricks[i].blocks.length; j < blo_len; j++) {
+                    for (let k = 0, brl_len = bricks[i].blocks[j].length; k < brl_len; k++) {
                         if (bricks[i].blocks[j][k] == 1) {
                             const cond1 = (x == bricks[i].x + parseInt(k));
                             const cond2 = (y == bricks[i].y + parseInt(j));
@@ -292,7 +292,7 @@ class TetrisGame {
                 PENDINGUPDATE = true;
             }
         }
-        function makeBrick(ctx, x, y, w, h, {r, g, b, a}) {
+        function makeBrick(ctx, x, y, w, h, { r, g, b, a }) {
             var fstyle = ctx.createRadialGradient(x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
             fstyle.addColorStop(0, new Color(r, g, b, a).toRGBAString());
             fstyle.addColorStop(1, new Color(r, g, b, a * 0.5).toRGBAString());
@@ -334,9 +334,9 @@ class TetrisGame {
                 if (HOLDING == null) {
                     HOLDING = getMovingBrick();
                     bricks[getMovingBrick().findMe()] = new Brick({
-                            ingame : true,
-                            game : getMovingBrick().game
-                        });
+                        ingame: true,
+                        game: getMovingBrick().game
+                    });
                     HOLDINGCOUNT++;
                 } else {
                     const HOLDING2 = HOLDING;
@@ -415,10 +415,10 @@ class TetrisGame {
             }
             // NextBox field
             const BRICKSIZESCALE = 1.5;
-            
-            const nextBrickX = (BRICKSIZE / BRICKSIZESCALE)*2;
-            const nextBrickY = (BRICKSIZE / BRICKSIZESCALE)*2;
-            
+
+            const nextBrickX = (BRICKSIZE / BRICKSIZESCALE) * 2;
+            const nextBrickY = (BRICKSIZE / BRICKSIZESCALE) * 2;
+
             for (var i1 in bricksform[nextRandom]) {
                 for (var i2 in bricksform[nextRandom][i1]) {
                     if (bricksform[nextRandom][i1][i2] == 1) {
@@ -431,15 +431,15 @@ class TetrisGame {
             h_ctx.lineWidth = 1;
             h_ctx.strokeStyle = "rgba(0,255,0,0.5)";
             h_ctx.fillStyle = "white";
-            
+
             const holdBrickX = 0;
             const holdBrickY = 0;
-            
+
             if (HOLDING != null) {
                 for (var i1 in HOLDING.blocks) {
                     for (var i2 in HOLDING.blocks[i1]) {
                         if (HOLDING.blocks[i1][i2] == 1) {
-                            makeBrick(h_ctx, holdBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZESCALE)), holdBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZESCALE)) , BRICKSIZE / BRICKSIZESCALE, BRICKSIZE / BRICKSIZESCALE, HOLDING.color);
+                            makeBrick(h_ctx, holdBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZESCALE)), holdBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZESCALE)), BRICKSIZE / BRICKSIZESCALE, BRICKSIZE / BRICKSIZESCALE, HOLDING.color);
                         }
                     }
                 }
@@ -464,40 +464,40 @@ class TetrisGame {
         }
         function keyh(e) {
             switch (e.keyCode) {
-            case 37:
-            case 38:
-            case 39:
-            case 40:
-            case 32:
-                e.preventDefault();
-                if (RUNNING) {
-                    // 32 = space brick.smashdown()
-                    // 37 = left brick.moveleft()
-                    // 38 = up brick.rotate()
-                    // 39 = right brick.moveright()
-                    // 40 = down brick.movedown()
-                    getMovingBrick()[Array(32).concat("smashdown", Array(4)).concat("moveleft,rotate,moveright,movedown".split(","))[e.keyCode]]();
-                }
-                break;
-            case 27:
-                // escape
-                e.preventDefault();
-                if (RUNNING) {
-                    // ingame
-                    menuNav("paused");
-                    playSound("menuback");
-                }
-                break;
-            case 16:
-                // shift
-                e.preventDefault();
-                if (RUNNING) {
-                    holdingShift();
-                }
-                break;
+                case 37:
+                case 38:
+                case 39:
+                case 40:
+                case 32:
+                    e.preventDefault();
+                    if (RUNNING) {
+                        // 32 = space brick.smashdown()
+                        // 37 = left brick.moveleft()
+                        // 38 = up brick.rotate()
+                        // 39 = right brick.moveright()
+                        // 40 = down brick.movedown()
+                        getMovingBrick()[Array(32).concat("smashdown", Array(4)).concat("moveleft,rotate,moveright,movedown".split(","))[e.keyCode]]();
+                    }
+                    break;
+                case 27:
+                    // escape
+                    e.preventDefault();
+                    if (RUNNING) {
+                        // ingame
+                        menuNav("paused");
+                        playSound("menuback");
+                    }
+                    break;
+                case 16:
+                    // shift
+                    e.preventDefault();
+                    if (RUNNING) {
+                        holdingShift();
+                    }
+                    break;
             }
         }
-        function keyup({keyCode}) {
+        function keyup({ keyCode }) {
             if (keyCode == 32)
                 MAYDROP = true;
         }
@@ -534,9 +534,9 @@ class TetrisGame {
             HOLDINGCOUNT = 0;
             HOLDING = null;
             bricks.push(new Brick({
-                    ingame : true,
-                    game : this
-                }));
+                ingame: true,
+                game: this
+            }));
             gameControlDown();
 
             window.addEventListener("keydown", keyh, false);
@@ -554,12 +554,12 @@ class TetrisGame {
     }
 
     get bricksform() {
-		return this._value;
-	}
+        return this._value;
+    }
 
     set bricksform(val) {
-		this._value = val;
-	}
+        this._value = val;
+    }
 }
 
 export default TetrisGame
