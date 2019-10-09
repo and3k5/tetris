@@ -3,28 +3,34 @@ import Brick from "./brick.js";
 import { playSound } from "./sound.js";
 
 class TetrisGame {
+    // [number] Bricks x count
+    #WIDTH;
+
+    // [number] Bricks y count
+    #HEIGHT;
+
+    // [number] Size of a brick (in pixels)
+    #BRICKSIZE;
+
+    // [number] canvas width (soon to be deleted)
+    #CANVAS_WIDTH;
+
+    // [number] canvas height (soon to be deleted)
+    #CANVAS_HEIGHT;
+
+    // [bool] ghost option
+    #SETTING_GHOST = true;
+
+    // [number] Width of grid
+    #GRID_WIDTH;
+
+    // [number] Height of grid
+    #GRID_HEIGHT;
+
+    // [Brick] current holding brick
+    #HOLDING = null;
+
     constructor() {
-        let // [number] Bricks x count
-            WIDTH;
-
-        let // [number] Bricks y count
-            HEIGHT;
-
-        let // [number] Size of a brick (in pixels)
-            BRICKSIZE;
-
-        let // [number] Width of grid
-            GRID_WIDTH;
-
-        let // [number] Height of grid
-            GRID_HEIGHT;
-
-        let // [number] canvas width (soon to be deleted)
-            CANVAS_WIDTH;
-
-        let // [number] canvas height (soon to be deleted)
-            CANVAS_HEIGHT;
-
         const // [number] FPS counter
             FPS = 0;
 
@@ -80,12 +86,6 @@ class TetrisGame {
         const // [number] Selected menu item
             SELECTED_MENU = 0;
 
-        const // [bool] ghost option
-            SETTING_GHOST = true;
-
-        let // [Brick] current holding brick
-            HOLDING = null;
-
         let // count of holding
             HOLDINGCOUNT = 0;
 
@@ -130,6 +130,8 @@ class TetrisGame {
         const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
         let nextRandom = Math.round(Math.random() * (bricksform.length - 1));
 
+        var game = this;
+
         function setScore(v) {
             SCORE = v;
             scoreelement.innerHTML = SCORE;
@@ -143,7 +145,7 @@ class TetrisGame {
                     if ((v == "") && (typeof ([]) == "object")) {
                         setScore(0);
                         HOLDINGCOUNT = 0;
-                        HOLDING = null;
+                        this.#HOLDING = null;
                         bricks = [];
                     } else {
                         return false;
@@ -152,18 +154,12 @@ class TetrisGame {
             },
             "WIDTH": {
                 get() {
-                    return WIDTH;
-                },
-                set(v) {
-                    return false;
+                    return this.#WIDTH;
                 }
             },
             "HEIGHT": {
                 get() {
-                    return HEIGHT;
-                },
-                set(v) {
-                    return false;
+                    return this.#HEIGHT;
                 }
             },
             "HOLDINGCOUNT": {
@@ -204,7 +200,7 @@ class TetrisGame {
         this.getColors = () => colors;
         //this.getMAYDROP=function () { return MAYDROP; };
         this.getRUNNING = () => RUNNING;
-        this.getWIDTH = () => WIDTH;
+        this.getWIDTH = () => game.#WIDTH;
         this.bricksform = bricksform;
 
         function checkXY(x, y) {
@@ -235,7 +231,7 @@ class TetrisGame {
                     const rtn = [];
                     const tx = 0;
                     let times = 0;
-                    for (times = 0; times <= WIDTH; times++) {
+                    for (times = 0; times <= this.#WIDTH; times++) {
                         for (const i in bricks) {
                             for (const i1 in bricks[i].blocks) {
                                 for (const i2 in bricks[i].blocks[i1]) {
@@ -278,88 +274,21 @@ class TetrisGame {
             //check for full lines
             if (RUNNING) {
                 let cx;
-                for (let i = HEIGHT; i > 1; i--) {
+                for (let i = this.#HEIGHT; i > 1; i--) {
                     let cnt = 0;
-                    for (cx = 0; cx <= WIDTH - 1; cx++) {
+                    for (cx = 0; cx <= this.#WIDTH - 1; cx++) {
                         if (checkXY(cx, i)) {
                             cnt++;
                         }
                     }
-                    if (cnt == WIDTH) {
-                        clearLine(i++);
+                    if (cnt == this.#WIDTH) {
+                        clearLine.call(this, i++);
                     }
                 }
                 PENDINGUPDATE = true;
             }
         }
-        function makeBrick(ctx, x, y, w, h, { r, g, b, a }) {
-            var fstyle = ctx.createRadialGradient(x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
-            fstyle.addColorStop(0, new Color(r, g, b, a).toRGBAString());
-            fstyle.addColorStop(1, new Color(r, g, b, a * 0.5).toRGBAString());
-            ctx.fillStyle = fstyle;
-            ctx.fillRect(x, y, w, h);
-            var fstyle = ctx.createLinearGradient(x + (w / 2), y, x + (w / 2), y + h);
-            fstyle.addColorStop(0.2, new Color(r, g, b, 0.5).toRGBAString());
-            fstyle.addColorStop(0, new Color(0, 0, 0, 0.9).toRGBAString());
-            ctx.fillStyle = fstyle;
-            ctx.fillRect(x, y, w, h);
-            var fstyle = ctx.createLinearGradient(x, y + (h / 2), x + w, y + (h / 2));
-            fstyle.addColorStop(0.3, new Color(r * 0.7, g * 0.7, b * 0.7, 0).toRGBAString());
-            fstyle.addColorStop(0, new Color(0, 0, 0, 0.4).toRGBAString());
-            ctx.fillStyle = fstyle;
-            ctx.fillRect(x, y, w, h);
-            var fstyle = ctx.createLinearGradient(x + (w / 2), y, x + (w / 2), y + h);
-            fstyle.addColorStop(0.8, new Color(r * 0.1, g * 0.1, b * 0.1, 0).toRGBAString());
-            fstyle.addColorStop(1, new Color(0, 0, 0, 1).toRGBAString());
-            ctx.fillStyle = fstyle;
-            ctx.fillRect(x, y, w, h);
-            var fstyle = ctx.createLinearGradient(x, y + (h / 2), x + w, y + (h / 2));
-            fstyle.addColorStop(0.8, new Color(r * 0.2, g * 0.2, b * 0.2, 0).toRGBAString());
-            fstyle.addColorStop(1, new Color(0, 0, 0, 1).toRGBAString());
-            ctx.fillStyle = fstyle;
-            ctx.fillRect(x, y, w, h);
-        }
 
-        function getMovingBrick() {
-            var i;
-            for (var i in bricks) {
-                if (bricks[i].moving) {
-                    return bricks[i];
-                }
-            }
-        }
-
-        function holdingShift() {
-            if (HOLDINGCOUNT < 1) {
-                if (HOLDING == null) {
-                    HOLDING = getMovingBrick();
-                    bricks[getMovingBrick().findMe()] = new Brick({
-                        ingame: true,
-                        game: getMovingBrick().game
-                    });
-                    HOLDINGCOUNT++;
-                } else {
-                    const HOLDING2 = HOLDING;
-                    HOLDING = getMovingBrick();
-                    HOLDING2.resetPosition();
-                    bricks[getMovingBrick().findMe()] = HOLDING2;
-                    HOLDINGCOUNT++;
-                }
-            }
-        }
-        function clearAndResize(ctx) {
-            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            ctx.canvas.width = CANVAS_WIDTH;
-            ctx.canvas.height = CANVAS_HEIGHT;
-
-            h_ctx.clearRect(0, 0, h_ctx.canvas.width, h_ctx.canvas.height);
-            h_ctx.canvas.width = BRICKSIZE * 4;
-            h_ctx.canvas.height = BRICKSIZE * 4;
-
-            n_ctx.clearRect(0, 0, n_ctx.canvas.width, n_ctx.canvas.height);
-            n_ctx.canvas.width = BRICKSIZE * 4;
-            n_ctx.canvas.height = BRICKSIZE * 4;
-        }
         function tiles(ctx) {
             // Grid
             return 0;
@@ -368,81 +297,19 @@ class TetrisGame {
             ctx.lineWidth = 1;
             ctx.strokeStyle = "rgba(0,255,0,0.5)";
             ctx.fillStyle = "white";
-            for (var ix = 0; ix <= (GRID_WIDTH); ix += BRICKSIZE) {
+            for (var ix = 0; ix <= (this.#GRID_WIDTH); ix += this.#BRICKSIZE) {
                 ctx.beginPath();
                 ctx.lineTo(ix, 0);
-                ctx.lineTo(ix, GRID_HEIGHT);
+                ctx.lineTo(ix, this.#GRID_HEIGHT);
                 ctx.closePath();
                 ctx.stroke();
             }
-            for (var iy = 0; iy <= (GRID_HEIGHT); iy += BRICKSIZE) {
+            for (var iy = 0; iy <= (this.#GRID_HEIGHT); iy += this.#BRICKSIZE) {
                 ctx.beginPath();
                 ctx.lineTo(0, iy);
-                ctx.lineTo(GRID_WIDTH, iy);
+                ctx.lineTo(this.#GRID_WIDTH, iy);
                 ctx.closePath();
                 ctx.stroke();
-            }
-        }
-        function inGameGraphic(ctx) {
-            clearAndResize(ctx);
-            tiles(ctx);
-            for (const i in bricks) {
-                if (SETTING_GHOST) {
-                    if (bricks[i].moving) {
-                        //ctx.fillStyle="rgba(255,255,255,0.5)";
-                        const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
-                        for (var i1 in bricks[i].blocks) {
-                            for (var i2 in bricks[i].blocks[i1]) {
-                                if (bricks[i].blocks[i1][i2] == 1) {
-                                    if ((((tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
-                                        makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (tmp_lowestPos * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, new Color(255, 255, 255, 0.2));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                for (var i1 in bricks[i].blocks) {
-                    for (var i2 in bricks[i].blocks[i1]) {
-                        if (bricks[i].blocks[i1][i2] == 1) {
-                            if ((((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) >= 0) && (((bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE)) <= (GRID_HEIGHT))) {
-                                makeBrick(ctx, (bricks[i].x * BRICKSIZE) + (parseInt(i2) * BRICKSIZE), (bricks[i].y * BRICKSIZE) + (parseInt(i1) * BRICKSIZE), BRICKSIZE, BRICKSIZE, bricks[i].color);
-                            }
-                        }
-                    }
-                }
-
-            }
-            // NextBox field
-            const BRICKSIZESCALE = 1.5;
-
-            const nextBrickX = (BRICKSIZE / BRICKSIZESCALE) * 2;
-            const nextBrickY = (BRICKSIZE / BRICKSIZESCALE) * 2;
-
-            for (var i1 in bricksform[nextRandom]) {
-                for (var i2 in bricksform[nextRandom][i1]) {
-                    if (bricksform[nextRandom][i1][i2] == 1) {
-                        makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZESCALE)), nextBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZESCALE)), BRICKSIZE / BRICKSIZESCALE, BRICKSIZE / BRICKSIZESCALE, colors[nextRandom]);
-                    }
-                }
-            }
-
-            // HoldingField
-            h_ctx.lineWidth = 1;
-            h_ctx.strokeStyle = "rgba(0,255,0,0.5)";
-            h_ctx.fillStyle = "white";
-
-            const holdBrickX = 0;
-            const holdBrickY = 0;
-
-            if (HOLDING != null) {
-                for (var i1 in HOLDING.blocks) {
-                    for (var i2 in HOLDING.blocks[i1]) {
-                        if (HOLDING.blocks[i1][i2] == 1) {
-                            makeBrick(h_ctx, holdBrickX + (parseInt(i2) * (BRICKSIZE / BRICKSIZESCALE)), holdBrickY + (parseInt(i1) * (BRICKSIZE / BRICKSIZESCALE)), BRICKSIZE / BRICKSIZESCALE, BRICKSIZE / BRICKSIZESCALE, HOLDING.color);
-                        }
-                    }
-                }
             }
         }
 
@@ -453,7 +320,7 @@ class TetrisGame {
                 const func = () => {
                     GAMECONTROLDOWN = true;
                     if (WHERE == 1) {
-                        getMovingBrick().movedown();
+                        game.getMovingBrick().movedown();
                         setTimeout(func, MOVESPEED);
                     } else {
                         GAMECONTROLDOWN = false;
@@ -476,7 +343,7 @@ class TetrisGame {
                         // 38 = up brick.rotate()
                         // 39 = right brick.moveright()
                         // 40 = down brick.movedown()
-                        getMovingBrick()[Array(32).concat("smashdown", Array(4)).concat("moveleft,rotate,moveright,movedown".split(","))[e.keyCode]]();
+                        game.getMovingBrick()[Array(32).concat("smashdown", Array(4)).concat("moveleft,rotate,moveright,movedown".split(","))[e.keyCode]]();
                     }
                     break;
                 case 27:
@@ -492,7 +359,7 @@ class TetrisGame {
                     // shift
                     e.preventDefault();
                     if (RUNNING) {
-                        holdingShift();
+                        game.holdingShift();
                     }
                     break;
             }
@@ -501,38 +368,38 @@ class TetrisGame {
             if (keyCode == 32)
                 MAYDROP = true;
         }
-        function graphicControlLoop() {
+        function graphicControlLoop(game, ctx, h_ctx, n_ctx) {
             // CTX GRAPHICS
-            requestAnimationFrame(graphicControlLoop);
+            requestAnimationFrame(() => graphicControlLoop(game, ctx, h_ctx, n_ctx));
             if (PENDINGUPDATE) {
-                inGameGraphic(ctx);
+                game.inGameGraphic(ctx, h_ctx, n_ctx);
                 PENDINGUPDATE = false;
             }
         }
         this.init = function (g, h, n, sc) {
-            WIDTH = 10;
-            HEIGHT = 20;
-            BRICKSIZE = 30;
+            this.#WIDTH = 10;
+            this.#HEIGHT = 20;
+            this.#BRICKSIZE = 30;
 
-            CANVAS_WIDTH = BRICKSIZE * WIDTH;
-            CANVAS_HEIGHT = BRICKSIZE * HEIGHT;
+            this.#CANVAS_WIDTH = this.#BRICKSIZE * this.#WIDTH;
+            this.#CANVAS_HEIGHT = this.#BRICKSIZE * this.#HEIGHT;
 
-            GRID_WIDTH = WIDTH * BRICKSIZE;
-            GRID_HEIGHT = HEIGHT * BRICKSIZE;
+            this.#GRID_WIDTH = this.#WIDTH * this.#BRICKSIZE;
+            this.#GRID_HEIGHT = this.#HEIGHT * this.#BRICKSIZE;
 
             GRAPHIC_FONT = "Verdana";
-            GRAPHIC_MENU_FONTSIZE = BRICKSIZE * 0.75;
-            GRAPHIC_MENUDESC_FONTSIZE = BRICKSIZE;
+            GRAPHIC_MENU_FONTSIZE = this.#BRICKSIZE * 0.75;
+            GRAPHIC_MENUDESC_FONTSIZE = this.#BRICKSIZE;
             GRAPHIC_MENU_DISTANCE = GRAPHIC_MENU_FONTSIZE * 1.5;
-            GRAPHIC_BOARD_FONTSIZE = BRICKSIZE - 5;
-            GRAPHIC_SCORE_FONTSIZE = BRICKSIZE;
+            GRAPHIC_BOARD_FONTSIZE = this.#BRICKSIZE - 5;
+            GRAPHIC_SCORE_FONTSIZE = this.#BRICKSIZE;
             WHERE = 1;
             RUNNING = true;
             bricks = [];
             scoreelement = sc;
             setScore(0);
             HOLDINGCOUNT = 0;
-            HOLDING = null;
+            this.#HOLDING = null;
             bricks.push(new Brick({
                 ingame: true,
                 game: this
@@ -548,8 +415,146 @@ class TetrisGame {
                 h.getContext("2d");
             n_ctx = /*document.querySelector("canvas#next")*/
                 n.getContext("2d");
-            clearAndResize(ctx);
-            graphicControlLoop();
+            this.clearAndResize(ctx, h_ctx, n_ctx);
+            graphicControlLoop(this, ctx, h_ctx, n_ctx);
+        }
+    }
+
+    clearAndResize(ctx, h_ctx, n_ctx) {
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.canvas.width = this.#CANVAS_WIDTH;
+        ctx.canvas.height = this.#CANVAS_HEIGHT;
+
+        h_ctx.clearRect(0, 0, h_ctx.canvas.width, h_ctx.canvas.height);
+        h_ctx.canvas.width = this.#BRICKSIZE * 4;
+        h_ctx.canvas.height = this.#BRICKSIZE * 4;
+
+        n_ctx.clearRect(0, 0, n_ctx.canvas.width, n_ctx.canvas.height);
+        n_ctx.canvas.width = this.#BRICKSIZE * 4;
+        n_ctx.canvas.height = this.#BRICKSIZE * 4;
+    }
+
+    inGameGraphic(ctx, h_ctx, n_ctx) {
+        this.clearAndResize(ctx, h_ctx, n_ctx);
+        //tiles(ctx);
+        var bricks = this.bricks;
+        for (const i in bricks) {
+            if (this.#SETTING_GHOST) {
+                if (bricks[i].moving) {
+                    //ctx.fillStyle="rgba(255,255,255,0.5)";
+                    const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
+                    for (var i1 in bricks[i].blocks) {
+                        for (var i2 in bricks[i].blocks[i1]) {
+                            if (bricks[i].blocks[i1][i2] == 1) {
+                                if ((((tmp_lowestPos * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE)) >= 0) && (((bricks[i].y * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE)) <= (this.#GRID_HEIGHT))) {
+                                    this.makeBrick(ctx, (bricks[i].x * this.#BRICKSIZE) + (parseInt(i2) * this.#BRICKSIZE), (tmp_lowestPos * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE), this.#BRICKSIZE, this.#BRICKSIZE, new Color(255, 255, 255, 0.2));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            for (var i1 in bricks[i].blocks) {
+                for (var i2 in bricks[i].blocks[i1]) {
+                    if (bricks[i].blocks[i1][i2] == 1) {
+                        if ((((bricks[i].y * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE)) >= 0) && (((bricks[i].y * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE)) <= (this.#GRID_HEIGHT))) {
+                            this.makeBrick(ctx, (bricks[i].x * this.#BRICKSIZE) + (parseInt(i2) * this.#BRICKSIZE), (bricks[i].y * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE), this.#BRICKSIZE, this.#BRICKSIZE, bricks[i].color);
+                        }
+                    }
+                }
+            }
+
+        }
+        // NextBox field
+        const BRICKSIZESCALE = 1.5;
+
+        const nextBrickX = (this.#BRICKSIZE / BRICKSIZESCALE) * 2;
+        const nextBrickY = (this.#BRICKSIZE / BRICKSIZESCALE) * 2;
+
+        var bricksform = this.getBricksform();
+
+        var colors = this.getColors();
+
+        for (var i1 in bricksform[this.nextRandom]) {
+            for (var i2 in bricksform[this.nextRandom][i1]) {
+                if (bricksform[this.nextRandom][i1][i2] == 1) {
+                    this.makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (this.#BRICKSIZE / BRICKSIZESCALE)), nextBrickY + (parseInt(i1) * (this.#BRICKSIZE / BRICKSIZESCALE)), this.#BRICKSIZE / BRICKSIZESCALE, this.#BRICKSIZE / BRICKSIZESCALE, colors[this.nextRandom]);
+                }
+            }
+        }
+
+        // HoldingField
+        h_ctx.lineWidth = 1;
+        h_ctx.strokeStyle = "rgba(0,255,0,0.5)";
+        h_ctx.fillStyle = "white";
+
+        const holdBrickX = 0;
+        const holdBrickY = 0;
+
+        if (this.#HOLDING != null) {
+            for (var i1 in this.#HOLDING.blocks) {
+                for (var i2 in this.#HOLDING.blocks[i1]) {
+                    if (this.#HOLDING.blocks[i1][i2] == 1) {
+                        this.makeBrick(h_ctx, holdBrickX + (parseInt(i2) * (this.#BRICKSIZE / BRICKSIZESCALE)), holdBrickY + (parseInt(i1) * (this.#BRICKSIZE / BRICKSIZESCALE)), this.#BRICKSIZE / BRICKSIZESCALE, this.#BRICKSIZE / BRICKSIZESCALE, this.#HOLDING.color);
+                    }
+                }
+            }
+        }
+    }
+
+    makeBrick(ctx, x, y, w, h, { r, g, b, a }) {
+        var fstyle = ctx.createRadialGradient(x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
+        fstyle.addColorStop(0, new Color(r, g, b, a).toRGBAString());
+        fstyle.addColorStop(1, new Color(r, g, b, a * 0.5).toRGBAString());
+        ctx.fillStyle = fstyle;
+        ctx.fillRect(x, y, w, h);
+        var fstyle = ctx.createLinearGradient(x + (w / 2), y, x + (w / 2), y + h);
+        fstyle.addColorStop(0.2, new Color(r, g, b, 0.5).toRGBAString());
+        fstyle.addColorStop(0, new Color(0, 0, 0, 0.9).toRGBAString());
+        ctx.fillStyle = fstyle;
+        ctx.fillRect(x, y, w, h);
+        var fstyle = ctx.createLinearGradient(x, y + (h / 2), x + w, y + (h / 2));
+        fstyle.addColorStop(0.3, new Color(r * 0.7, g * 0.7, b * 0.7, 0).toRGBAString());
+        fstyle.addColorStop(0, new Color(0, 0, 0, 0.4).toRGBAString());
+        ctx.fillStyle = fstyle;
+        ctx.fillRect(x, y, w, h);
+        var fstyle = ctx.createLinearGradient(x + (w / 2), y, x + (w / 2), y + h);
+        fstyle.addColorStop(0.8, new Color(r * 0.1, g * 0.1, b * 0.1, 0).toRGBAString());
+        fstyle.addColorStop(1, new Color(0, 0, 0, 1).toRGBAString());
+        ctx.fillStyle = fstyle;
+        ctx.fillRect(x, y, w, h);
+        var fstyle = ctx.createLinearGradient(x, y + (h / 2), x + w, y + (h / 2));
+        fstyle.addColorStop(0.8, new Color(r * 0.2, g * 0.2, b * 0.2, 0).toRGBAString());
+        fstyle.addColorStop(1, new Color(0, 0, 0, 1).toRGBAString());
+        ctx.fillStyle = fstyle;
+        ctx.fillRect(x, y, w, h);
+    }
+
+    holdingShift() {
+        if (this.HOLDINGCOUNT < 1) {
+            if (this.#HOLDING == null) {
+                this.#HOLDING = this.getMovingBrick();
+                this.bricks[this.getMovingBrick().findMe()] = new Brick({
+                    ingame: true,
+                    game: this
+                });
+                this.HOLDINGCOUNT++;
+            } else {
+                const HOLDING2 = this.#HOLDING;
+                this.#HOLDING = this.getMovingBrick();
+                HOLDING2.resetPosition();
+                this.bricks[this.getMovingBrick().findMe()] = HOLDING2;
+                this.HOLDINGCOUNT++;
+            }
+        }
+    }
+
+    getMovingBrick() {
+        var i;
+        for (var i in this.bricks) {
+            if (this.bricks[i].moving) {
+                return this.bricks[i];
+            }
         }
     }
 
