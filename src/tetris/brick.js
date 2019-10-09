@@ -166,17 +166,13 @@ class Brick {
             }
             if (this.rotate_okay(this, blocks2)) {
                 //yeah
-                if (this.ingame && (this.game != null)) {
-                    this.game.PENDINGUPDATE = true;
-                }
+                this.requestUpdate();
             } else {
                 if (((this.x + Brick.emulate(blocks2).getWidth() + Brick.emulate(blocks2).getBlockX()) > (this.game.getWIDTH()))) {
                     this.x--;
                     if (this.rotate_okay(this, blocks2)) {
                         // yeah
-                        if (this.ingame && (this.game != null)) {
-                            this.game.PENDINGUPDATE = true;
-                        }
+                        this.requestUpdate();
                     } else {
                         this.x++;
                         return false;
@@ -185,9 +181,7 @@ class Brick {
                     this.x++;
                     if (this.rotate_okay(this, blocks2)) {
                         //yeah
-                        if (this.ingame && (this.game != null)) {
-                            this.game.PENDINGUPDATE = true;
-                        }
+                        this.requestUpdate();
                     } else {
                         this.x--;
                         return false;
@@ -252,7 +246,7 @@ class Brick {
             playSound("gamebump");
             this.moving = false;
             this.y = this.getLowestPosition(this.game.bricks);
-            this.game.PENDINGUPDATE = true;
+            this.requestUpdate();
             if ((this.y + this.getBlockY()) >= 0) {
                 const sliced = this.slice_up();
                 this.game.bricks.splice(this.findMe(), 1);
