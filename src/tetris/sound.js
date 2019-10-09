@@ -1,25 +1,27 @@
 window.addEventListener('load', init, false);
-var SOUNDS,playMusic, context;
-var soundReady = false;
+let SOUNDS;
+let playMusic;
+let context;
+let soundReady = false;
 function init() {
 	try {
 		SOUNDS=["gamelose","gamebump","gamerow","menuback","gamemove"];
 		//var context;
-		var audioBuffers = [];
+		const audioBuffers = [];
 		context = new AudioContext();
 		function loadSound(id, url) {
 			if (context == false) {
 				return false;
 			}
-			var request = new XMLHttpRequest();
+			const request = new XMLHttpRequest();
 			request.open('GET', url, true);
 			request.responseType = 'arraybuffer';
-			var idd = id;
+			const idd = id;
 			// Decode asynchronously
-			request.onprogress = function (e) {
+			request.onprogress = ({loaded, total}) => {
 				return;
-				(function (ed) {
-					for (var i in SOUNDS) {
+				(ed => {
+					for (const i in SOUNDS) {
 						if (SOUNDS[i][0] == ed) {
 							return SOUNDS[i];
 						}
@@ -29,10 +31,10 @@ function init() {
 							return MUSIC[i];
 						}
 					}*/
-				})(idd)[2] = (id, e.loaded / e.total);
+				})(idd)[2] = (id, loaded / total);
 			}
-			request.onload = function () {
-				context.decodeAudioData(request.response, function (buffer) {
+			request.onload = () => {
+				context.decodeAudioData(request.response, buffer => {
 					audioBuffers[id] = buffer;
 					//playSound(buffer);
 					for (var i in SOUNDS) {
@@ -54,10 +56,10 @@ function init() {
 		function onError(e) {
 			console.error(e);
 		}
-		var currentMusicPlaying;
-		var toKill;
+		let currentMusicPlaying;
+		let toKill;
 
-		playMusic = function (id) {
+		playMusic = id => {
 			// disabled sound.. i wanna hear music while making my tetris.. :)
 			return "blah";
 			if (settings_ch[0][2] != 1) {
@@ -71,7 +73,7 @@ function init() {
 					toKill.noteOff(0);
 					toKill.disconnect();
 				}
-				var source = context.createBufferSource(); // creates a sound source
+				const source = context.createBufferSource(); // creates a sound source
 				source.loop = true;
 
 				source.buffer = audioBuffers[id];
@@ -87,8 +89,8 @@ function init() {
 		}
 
 		soundReady = true;
-		for (var i in SOUNDS) {
-			loadSound(SOUNDS[i], "sound/"+SOUNDS[i]+".wav");
+		for (const i in SOUNDS) {
+			loadSound(SOUNDS[i], `sound/${SOUNDS[i]}.wav`);
 		}
 		/*for (var i in MUSIC) {
 			loadSound(MUSIC[i][0], MUSIC[i][1]);
@@ -99,7 +101,7 @@ function init() {
 		context = false;
 		webAudioApiFailed = 1;
 		WHERE = 0;
-		playSound = playMusic = function () {};
+		playSound = playMusic = () => {};
 	}
 	//menuNav("menu");
 }
@@ -114,14 +116,14 @@ export function playSound (id) {
 		return false;
 	}
 	try {
-		var source = context.createBufferSource(); // creates a sound source
+		const source = context.createBufferSource(); // creates a sound source
 		source.loop = false;
 		source.buffer = audioBuffers[id];
 		source.playbackRate.value = 1.0;
 		// tell the source which sound to play
 		source.connect(context.destination); // connect the source to the context's destination (the speakers)
 		source.start(0); // play the source now
-		setTimeout(function () {
+		setTimeout(() => {
 			source.disconnect();
 		}, ((source.buffer.length / context.sampleRate) * 1000) + 100);
 	} catch (e) {};
