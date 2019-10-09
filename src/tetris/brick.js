@@ -1,38 +1,13 @@
 import { playSound } from "./sound.js";
 
 class Brick {
-	#x = undefined;
-	#y = undefined;
+    #x = undefined;
+    #y = undefined;
     constructor(options) {
-        const o = options || {'ingame' : false,'game' : null};
+        const o = options || { 'ingame': false, 'game': null };
 
         this.game = o.game;
         this.ingame = o.ingame;
-
-        Object.defineProperties(this, {
-            "x" : {
-                get() {
-                    return this.#x;
-                },
-                set(v) {
-                    this.#x = v;
-                    if (this.ingame && (this.game != null)) {
-                        this.game.PENDINGUPDATE = true;
-                    }
-                }
-            },
-            "y" : {
-                get() {
-                    return this.#y;
-                },
-                set(v) {
-                    this.#y = v;
-                    if (this.ingame && (this.game != null)) {
-                        this.game.PENDINGUPDATE = true;
-                    }
-                }
-            }
-        });
 
         if (this.ingame) {
             const brfrm = this.game.bricksform;
@@ -43,6 +18,30 @@ class Brick {
             this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
             this.y = Math.round(0 - (this.blocks.length));
             this.game.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
+        }
+    }
+
+    get x() {
+        return this.#x;
+    }
+
+    set x(v) {
+        this.#x = v;
+        this.requestUpdate();
+    }
+
+    get y() {
+        return this.#y;
+    }
+
+    set y(v) {
+        this.#y = v;
+        this.requestUpdate();
+    }
+
+    requestUpdate() {
+        if (this.ingame && (this.game != null)) {
+            this.game.PENDINGUPDATE = true;
         }
     }
 
@@ -61,7 +60,7 @@ class Brick {
                         const cond3 = (this != brcks[i]);
                         if (cond1 && cond2 && cond3) {
                             return false;
-                        } else {}
+                        } else { }
                     }
                 }
             }
@@ -85,7 +84,7 @@ class Brick {
         let high = 0;
 
         let // 1E309 = infinity
-        low = (1E309);
+            low = (1E309);
 
         let countrow = 0;
         for (const i1 in this.blocks) {
@@ -253,7 +252,7 @@ class Brick {
             playSound("gamebump");
             this.moving = false;
             this.y = this.getLowestPosition(this.game.bricks);
-            this.game.PENDINGUPDATE=true;
+            this.game.PENDINGUPDATE = true;
             if ((this.y + this.getBlockY()) >= 0) {
                 const sliced = this.slice_up();
                 this.game.bricks.splice(this.findMe(), 1);
@@ -262,9 +261,9 @@ class Brick {
                 }
                 this.game.checkLines();
                 this.game.bricks.push(new Brick({
-                        ingame : true,
-                        game : this.game
-                    }));
+                    ingame: true,
+                    game: this.game
+                }));
                 this.game.HOLDINGCOUNT = 0;
             } else {
                 menuNav("gamelose");
@@ -303,9 +302,9 @@ class Brick {
                         }
                         this.game.checkLines();
                         this.game.bricks.push(new Brick({
-                                ingame : true,
-                                game : this.game
-                            }));
+                            ingame: true,
+                            game: this.game
+                        }));
                         this.game.HOLDINGCOUNT = 0;
                     } else {
                         menuNav("gamelose");
@@ -329,7 +328,7 @@ class Brick {
                     if (this.blocks[i1][i2] == 1) {
                         if ((this.checkCollision(this_x + parseInt(i2), this_y + parseInt(i1), br) == false) || ((this_y + h) > this.game.HEIGHT)) {
                             isgood = false;
-                        } else {}
+                        } else { }
                     }
                 }
             }
@@ -352,14 +351,14 @@ class Brick {
             for (var i2 in this.blocks[i1]) {
                 if (this.blocks[i1][i2] == 1) {
                     rtn.push(((x, y) => {
-                            const tmp = new Brick();
-                            tmp.moving = false;
-                            tmp.blocks = [[1]];
-                            tmp.color = this_color;
-                            tmp.x = x;
-                            tmp.y = y;
-                            return tmp;
-                        })(parseInt(i2) + this.x, parseInt(i1) + this.y));
+                        const tmp = new Brick();
+                        tmp.moving = false;
+                        tmp.blocks = [[1]];
+                        tmp.color = this_color;
+                        tmp.x = x;
+                        tmp.y = y;
+                        return tmp;
+                    })(parseInt(i2) + this.x, parseInt(i1) + this.y));
                 }
             }
         }
@@ -377,13 +376,13 @@ class Brick {
 }
 
 Brick.emulate = vblocks => {
-	const tmp = new Brick({
-			ingame : false,
-			game : null
-		});
-	tmp.moving = false;
-	tmp.blocks = vblocks;
-	return tmp;
+    const tmp = new Brick({
+        ingame: false,
+        game: null
+    });
+    tmp.moving = false;
+    tmp.blocks = vblocks;
+    return tmp;
 }
 
 export default Brick
