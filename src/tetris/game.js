@@ -439,64 +439,44 @@ class TetrisGame {
         //tiles(ctx);
         var bricks = this.bricks;
         for (const i in bricks) {
-            if (this.#SETTING_GHOST) {
-                if (bricks[i].moving) {
-                    //ctx.fillStyle="rgba(255,255,255,0.5)";
-                    const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
-                    for (var i1 in bricks[i].blocks) {
-                        for (var i2 in bricks[i].blocks[i1]) {
-                            if (bricks[i].blocks[i1][i2] == 1) {
-                                if ((((tmp_lowestPos * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE)) >= 0) && (((bricks[i].y * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE)) <= (this.#GRID_HEIGHT))) {
-                                    this.makeBrick(ctx, (bricks[i].x * this.#BRICKSIZE) + (parseInt(i2) * this.#BRICKSIZE), (tmp_lowestPos * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE), this.#BRICKSIZE, this.#BRICKSIZE, new Color(255, 255, 255, 0.2));
-                                }
-                            }
-                        }
-                    }
-                }
+            if (this.#SETTING_GHOST && bricks[i].moving) {
+                var ghostColor = new Color(255, 255, 255, 0.2);
+                //ctx.fillStyle="rgba(255,255,255,0.5)";
+                const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
+                this.drawBrickForm(bricks[i].blocks,ctx,bricks[i].x,tmp_lowestPos,ghostColor)
             }
-            for (var i1 in bricks[i].blocks) {
-                for (var i2 in bricks[i].blocks[i1]) {
-                    if (bricks[i].blocks[i1][i2] == 1) {
-                        if ((((bricks[i].y * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE)) >= 0) && (((bricks[i].y * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE)) <= (this.#GRID_HEIGHT))) {
-                            this.makeBrick(ctx, (bricks[i].x * this.#BRICKSIZE) + (parseInt(i2) * this.#BRICKSIZE), (bricks[i].y * this.#BRICKSIZE) + (parseInt(i1) * this.#BRICKSIZE), this.#BRICKSIZE, this.#BRICKSIZE, bricks[i].color);
-                        }
-                    }
-                }
-            }
-
+            this.drawBrickForm(bricks[i].blocks,ctx,bricks[i].x,bricks[i].y,bricks[i].color);
         }
         // NextBox field
         const BRICKSIZESCALE = 1.5;
-
-        const nextBrickX = (this.#BRICKSIZE / BRICKSIZESCALE) * 2;
-        const nextBrickY = (this.#BRICKSIZE / BRICKSIZESCALE) * 2;
 
         var bricksform = this.getBricksform();
 
         var colors = this.getColors();
 
-        for (var i1 in bricksform[this.nextRandom]) {
-            for (var i2 in bricksform[this.nextRandom][i1]) {
-                if (bricksform[this.nextRandom][i1][i2] == 1) {
-                    this.makeBrick(n_ctx, nextBrickX + (parseInt(i2) * (this.#BRICKSIZE / BRICKSIZESCALE)), nextBrickY + (parseInt(i1) * (this.#BRICKSIZE / BRICKSIZESCALE)), this.#BRICKSIZE / BRICKSIZESCALE, this.#BRICKSIZE / BRICKSIZESCALE, colors[this.nextRandom]);
-                }
-            }
-        }
+        var nextBrickForm = bricksform[this.nextRandom];
+        var nextBrickColor = colors[this.nextRandom];
+
+        this.drawBrickForm(nextBrickForm,n_ctx,2,2,nextBrickColor,BRICKSIZESCALE);
 
         // HoldingField
         h_ctx.lineWidth = 1;
         h_ctx.strokeStyle = "rgba(0,255,0,0.5)";
         h_ctx.fillStyle = "white";
 
-        const holdBrickX = 0;
-        const holdBrickY = 0;
-
         if (this.#HOLDING != null) {
-            for (var i1 in this.#HOLDING.blocks) {
-                for (var i2 in this.#HOLDING.blocks[i1]) {
-                    if (this.#HOLDING.blocks[i1][i2] == 1) {
-                        this.makeBrick(h_ctx, holdBrickX + (parseInt(i2) * (this.#BRICKSIZE / BRICKSIZESCALE)), holdBrickY + (parseInt(i1) * (this.#BRICKSIZE / BRICKSIZESCALE)), this.#BRICKSIZE / BRICKSIZESCALE, this.#BRICKSIZE / BRICKSIZESCALE, this.#HOLDING.color);
-                    }
+            this.drawBrickForm(this.#HOLDING.blocks,h_ctx,0,0,this.#HOLDING.color,BRICKSIZESCALE);
+        }
+    }
+
+    drawBrickForm(brickForm,ctx,x,y,color,scale = 1) {
+        var brickSize = this.#BRICKSIZE / scale;
+
+        for (var i1 in brickForm) {
+            for (var i2 in brickForm[i1]) {
+                if (brickForm[i1][i2] == 1) {
+                    this.makeBrick(ctx, (x * brickSize) + (parseInt(i2) * brickSize), (y * brickSize) + (parseInt(i1) * brickSize), brickSize, brickSize, color);
+                    // this.makeBrick(ctx, (bricks[i].x * brickSize) + (parseInt(i2) * brickSize), (bricks[i].y * brickSize) + (parseInt(i1) * brickSize), brickSize, brickSize, bricks[i].color);
                 }
             }
         }
