@@ -4,6 +4,8 @@ let playMusic;
 let context;
 let soundReady = false;
 const audioBuffers = [];
+let // [number/bool] If webaudio doesnt work, then skip download
+            webAudioApiFailed = 0;
 
 function init() {
     try {
@@ -103,7 +105,7 @@ function init() {
         console.error(e);
         context = false;
         webAudioApiFailed = 1;
-        WHERE = 0;
+        //WHERE = 0;
         playSound = playMusic = () => { };
     }
     //menuNav("menu");

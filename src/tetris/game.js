@@ -84,9 +84,6 @@ class TetrisGame {
             // [number] Unused (might be removed)
             FROM = 0;
 
-        const // [number/bool] If webaudio doesnt work, then skip download
-            webAudioApiFailed = 0;
-
         const // [number] Selected menu item
             SELECTED_MENU = 0;
 
