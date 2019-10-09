@@ -1,4 +1,4 @@
-window.addEventListener('mousedown', init, { once: true });
+window.addEventListener('load', init, { once: true });
 let SOUNDS;
 let playMusic;
 let context;
