@@ -1,6 +1,7 @@
 import Color from "./color.js";
 import Brick from "./brick.js";
 import { playSound } from "./sound.js";
+import { BinaryBrickForm } from "./brick-form.js";
 
 class TetrisGame {
     // [number] Bricks x count
