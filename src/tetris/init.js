@@ -1,3 +1,4 @@
+import { defaultGame } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
 
@@ -45,7 +46,7 @@ export function init(container) {
             )
     );
 
-    tetrisgame = new TetrisGame();
+    tetrisgame = new TetrisGame(defaultGame());
     tetrisgame.init(
         gameCanvas,
         holdingCanvas,

@@ -52,7 +52,7 @@ class TetrisGame {
     // bricks in game
     #bricks = [];
 
-    constructor() {
+    constructor(gameSetup) {
 
         let // [number] Board font size
             GRAPHIC_BOARD_FONTSIZE;
@@ -92,38 +92,10 @@ class TetrisGame {
 
         let SCORE = 0;
 
-        const brickforms = [
-            [[0, 1, 0],
-            [0, 1, 0],
-            [0, 1, 1]],
-
-            [[0, 1, 0],
-            [0, 1, 0],
-            [1, 1, 0]],
-
-            [[0, 1, 1],
-            [1, 1, 0],
-            [0, 0, 0]],
-
-            [[1, 1, 0],
-            [0, 1, 1],
-            [0, 0, 0]],
-
-            [[0, 1, 0],
-            [1, 1, 1],
-            [0, 0, 0]],
-
-            [[1, 1],
-            [1, 1]],
-
-            [[0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0],
-            [0, 1, 0, 0]]
-        ];
-
+        
+        this.brickforms = gameSetup.brickforms;
         const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
-        this.nextRandom = Math.round(Math.random() * (brickforms.length - 1));
+        this.nextRandom = Math.round(Math.random() * (this.brickforms.length - 1));
 
         var game = this;
 
@@ -136,7 +108,7 @@ class TetrisGame {
         //this.getMAYDROP=function () { return MAYDROP; };
         this.getRUNNING = () => RUNNING;
         this.getWIDTH = () => game.#WIDTH;
-        this.brickforms = brickforms;
+        
 
 
         function clearLine(l) {
