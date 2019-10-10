@@ -27,7 +27,10 @@ module.exports = function (env) {
                 {
                     test: /\.svg$/,
                     use: {
-                        loader: "file-loader"
+                        loader: "file-loader",
+                        options: {
+                            outputPath: "../img"
+                        }
                     }
                 }
             ]

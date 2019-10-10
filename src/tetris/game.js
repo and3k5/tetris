@@ -454,6 +454,10 @@ class TetrisGame {
                 }
             });
 
+            h.addEventListener("click",function () {
+                game.holdingShift();
+            });
+
             ctx = /*document.querySelector("canvas#game")*/
                 g.getContext("2d");
             h_ctx = /*document.querySelector("canvas#holding")*/
