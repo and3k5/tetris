@@ -47,7 +47,7 @@ class TetrisGame {
     #MAYDROP = true;
 
     // different type of bricks in game
-    #bricksforms;
+    #brickforms;
 
     // bricks in game
     #bricks = [];
@@ -92,7 +92,7 @@ class TetrisGame {
 
         let SCORE = 0;
 
-        const bricksform = [
+        const brickforms = [
             [[0, 1, 0],
             [0, 1, 0],
             [0, 1, 1]],
@@ -123,7 +123,7 @@ class TetrisGame {
         ];
 
         const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
-        this.nextRandom = Math.round(Math.random() * (bricksform.length - 1));
+        this.nextRandom = Math.round(Math.random() * (brickforms.length - 1));
 
         var game = this;
 
@@ -132,12 +132,11 @@ class TetrisGame {
             scoreelement.innerHTML = SCORE;
         }
 
-        this.getBricksform = () => bricksform;
         this.getColors = () => colors;
         //this.getMAYDROP=function () { return MAYDROP; };
         this.getRUNNING = () => RUNNING;
         this.getWIDTH = () => game.#WIDTH;
-        this.bricksform = bricksform;
+        this.brickforms = brickforms;
 
 
         function clearLine(l) {
@@ -413,11 +412,11 @@ class TetrisGame {
         // NextBox field
         const BRICKSIZESCALE = 1.5;
 
-        var bricksform = this.getBricksform();
+        var brickforms = this.brickforms;
 
         var colors = this.getColors();
 
-        var nextBrickForm = bricksform[this.nextRandom];
+        var nextBrickForm = brickforms[this.nextRandom];
         var nextBrickColor = colors[this.nextRandom];
 
         this.drawBrickForm(nextBrickForm, n_ctx, 2, 2, nextBrickColor, BRICKSIZESCALE);
@@ -529,12 +528,12 @@ class TetrisGame {
         this.getMovingBrick().movedown();
     }
 
-    get bricksform() {
-        return this._value;
+    get brickforms() {
+        return this.#brickforms;
     }
 
-    set bricksform(val) {
-        this._value = val;
+    set brickforms(val) {
+        this.#brickforms = val;
     }
 
     get HOLDINGCOUNT() {

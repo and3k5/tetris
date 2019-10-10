@@ -10,7 +10,7 @@ class Brick {
         this.ingame = o.ingame;
 
         if (this.ingame) {
-            const brfrm = this.game.bricksform;
+            const brfrm = this.game.brickforms;
             const rnd = this.game.nextRandom;
             this.color = this.game.getColors()[rnd].copy();
             this.blocks = brfrm[rnd].concat();
