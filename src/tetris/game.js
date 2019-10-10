@@ -333,19 +333,34 @@ class TetrisGame {
         function keyh(e) {
             switch (e.keyCode) {
                 case 37:
-                case 38:
-                case 39:
-                case 40:
-                case 32:
+                    // left
                     e.preventDefault();
-                    if (RUNNING) {
-                        // 32 = space brick.smashdown()
-                        // 37 = left brick.moveleft()
-                        // 38 = up brick.rotate()
-                        // 39 = right brick.moveright()
-                        // 40 = down brick.movedown()
-                        game.getMovingBrick()[Array(32).concat("smashdown", Array(4)).concat("moveleft,rotate,moveright,movedown".split(","))[e.keyCode]]();
-                    }
+                    if (RUNNING)
+                        game.action_moveleft();
+                    break;
+                case 38:
+                    // up
+                    e.preventDefault();
+                    if (RUNNING)
+                        game.action_rotate();
+                    break;
+                case 39:
+                    // right
+                    e.preventDefault();
+                    if (RUNNING)
+                        game.action_moveright();
+                    break;
+                case 40:
+                    // down
+                    e.preventDefault();
+                    if (RUNNING)
+                        game.action_movedown();
+                    break;
+                case 32:
+                    // space
+                    e.preventDefault();
+                    if (RUNNING)
+                        game.action_smashdown();
                     break;
                 case 27:
                     // escape
@@ -409,6 +424,35 @@ class TetrisGame {
 
             window.addEventListener("keydown", keyh, false);
             window.addEventListener("keyup", keyup, false);
+
+            var touchStart = null;
+
+            g.addEventListener("touchstart", function (event) {
+                var touch = event.changedTouches[0];
+                touchStart = { x: touch.screenX, y: touch.screenY };
+            });
+            g.addEventListener("touchend", function (event) {
+                var touch = event.changedTouches[0];
+                var touchEnd = { x: touch.screenX, y: touch.screenY };
+
+                var deltaX = touchEnd.x - touchStart.x;
+                var deltaY = touchEnd.y - touchStart.y;
+                var rad = Math.atan2(deltaY, deltaX);
+                var deg = rad * (180 / Math.PI);
+
+                while (deg < 0)
+                    deg += 360;
+
+                if (deg > 120 && deg < 220) {
+                    game.action_moveleft();
+                } else if (deg > 340 || deg < 40) {
+                    game.action_moveright();
+                } else if (deg < 115 && deg > 65) {
+                    game.action_smashdown();
+                } else {
+                    console.log(deg);
+                }
+            });
 
             ctx = /*document.querySelector("canvas#game")*/
                 g.getContext("2d");
@@ -539,6 +583,26 @@ class TetrisGame {
                 return this.bricks[i];
             }
         }
+    }
+
+    action_smashdown() {
+        this.getMovingBrick().smashdown();
+    }
+
+    action_moveleft() {
+        this.getMovingBrick().moveleft();
+    }
+
+    action_rotate() {
+        this.getMovingBrick().rotate();
+    }
+
+    action_moveright() {
+        this.getMovingBrick().moveright();
+    }
+
+    action_movedown() {
+        this.getMovingBrick().movedown();
     }
 
     get bricksform() {
