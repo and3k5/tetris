@@ -439,8 +439,8 @@ class TetrisGame {
         for (const brick of bricks) {
             var brickForm = brick.blocks;
             var x = brick.x;
-            var y = brick.x;
-
+            var y = brick.y;
+            
             for (var i1 in brickForm) {
                 for (var i2 in brickForm[i1]) {
                     if (brickForm[i1][i2] == 1) {

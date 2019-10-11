@@ -12,31 +12,38 @@ export function getBestMove(game) {
     var positions = [];
 
     var realMovingBrick = game.getMovingBrick();
+    var maxWidth = game.WIDTH*2;
 
-    for (var x = realMovingBrick.mostLeft; x < realMovingBrick.mostRight; x++) {
+    for (var x = realMovingBrick.mostLeft; x <= realMovingBrick.mostRight; x++) {
         var clone = cloneGame(game);
         //console.log(clone.bricks);
         var movingBrick = clone.getMovingBrick();
         if (movingBrick == null)
             throw new Error("No moving brick");
 
-        var oldX = movingBrick.innerX;
+        //var oldX = movingBrick.innerX;
 
+        var moveStep = 0;
         while (movingBrick.innerX > x) {
-            movingBrick.moveleft();
-            if (movingBrick.innerX === oldX)
-                throw new Error("brick is not moving");
-            oldX = movingBrick.innerX;
+            if (!movingBrick.moveleft())
+                throw new Error("brick is not moving left");
+            if (moveStep++>maxWidth)
+                throw new Error("moving out of view");
         }
+
+        moveStep = 0;
+        // oldX = movingBrick.innerX;
 
         while (movingBrick.innerX < x) {
-            movingBrick.moveright();
-            if (movingBrick.innerX === oldX)
-                throw new Error("brick is not moving");
-            oldX = movingBrick.innerX;
+            if (!movingBrick.moveright())
+                throw new Error("brick is not moving right");
+            if (moveStep++>maxWidth)
+                throw new Error("moving out of view");
         }
 
-        movingBrick.smashdown();
+        //movingBrick.smashdown();
+
+        movingBrick.y = movingBrick.getLowestPosition();
 
         var score = 0;
 
@@ -58,7 +65,7 @@ export function getBestMove(game) {
             }
         }
 
-        game.drawBrick(movingBrick);
+        //game.drawBrick(movingBrick);
     }
 
     return positions;

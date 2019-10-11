@@ -222,11 +222,12 @@ class Brick {
                 }
                 if (may_i_fall) {
                     this.x--;
-
+                    return true;
                 }
             }
 
         }
+        return false;
     }
 
     get innerX() {
@@ -268,11 +269,11 @@ class Brick {
                 }
                 if (may_i_fall) {
                     this.x++;
-
+                    return true;
                 }
             }
-
         }
+        return false;
     }
 
     smashdown() {
@@ -280,7 +281,7 @@ class Brick {
             if (this.ingame === true)
                 playSound("gamebump");
             this.moving = false;
-            this.y = this.getLowestPosition(this.game.bricks);
+            this.y = this.getLowestPosition();
             this.requestUpdate();
             if ((this.y + this.getBlockY()) >= 0) {
                 const sliced = this.slice_up();
@@ -347,7 +348,8 @@ class Brick {
         }
     }
 
-    getLowestPosition(br) {
+    getLowestPosition() {
+        const br = this.game.bricks;
         const h = this.getHeight();
         const this_x = this.x;
         let this_y = this.y;
