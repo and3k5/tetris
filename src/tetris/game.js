@@ -55,6 +55,9 @@ class TetrisGame {
     // game setup
     #setup;
 
+    // [Graphic Context] Game 2d context
+    #ctx;
+
     constructor(gameSetup, extra = null) {
         this.#setup = gameSetup;
         this.#WIDTH = gameSetup.width;
@@ -77,9 +80,6 @@ class TetrisGame {
 
         let // [bool] running
             RUNNING = true;
-
-        let // [Graphic Context] Game 2d context
-            ctx;
 
         let // [Graphic Context] Game holding brick 2d context
             h_ctx;
@@ -358,12 +358,12 @@ class TetrisGame {
                 game.holdingShift();
             });
 
-            ctx = g.getContext("2d");
+            this.#ctx = g.getContext("2d");
             h_ctx = h.getContext("2d");
             n_ctx = n.getContext("2d");
 
-            this.clearAndResize(ctx, h_ctx, n_ctx);
-            graphicControlLoop(this, ctx, h_ctx, n_ctx);
+            this.clearAndResize(this.#ctx, h_ctx, n_ctx);
+            graphicControlLoop(this, this.#ctx, h_ctx, n_ctx);
         }
     }
 
@@ -436,10 +436,10 @@ class TetrisGame {
             }
         }
         var bricks = this.bricks;
-        for (const i in bricks) {
-            var brickForm = bricks[i].blocks;
-            var x = bricks[i].x;
-            var y = bricks[i].x;
+        for (const brick of bricks) {
+            var brickForm = brick.blocks;
+            var x = brick.x;
+            var y = brick.x;
 
             for (var i1 in brickForm) {
                 for (var i2 in brickForm[i1]) {
@@ -453,6 +453,16 @@ class TetrisGame {
         }
 
         return result;
+    }
+
+    drawSingleBrick(x, y, color) {
+        var brickSize = this.#BRICKSIZE;
+        this.makeBrick(this.#ctx, (x * brickSize), (y * brickSize), brickSize, brickSize, color);
+    }
+
+    drawBrick(brick, color = null) {
+        var brickSize = this.#BRICKSIZE;
+        this.drawBrickForm(brick.blocks, this.#ctx, brick.x, brick.y, color || brick.color);
     }
 
     makeBrick(ctx, x, y, w, h, color) {

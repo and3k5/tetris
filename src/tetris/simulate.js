@@ -1,4 +1,5 @@
 import TetrisGame from "./game.js";
+import Color from "./color.js";
 
 export function cloneGame(game) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -10,30 +11,32 @@ export function cloneGame(game) {
 export function getBestMove(game) {
     var positions = [];
 
-    for (var x = 0; x < game.WIDTH; x++) {
+    var realMovingBrick = game.getMovingBrick();
+
+    for (var x = realMovingBrick.mostLeft; x < realMovingBrick.mostRight; x++) {
         var clone = cloneGame(game);
         //console.log(clone.bricks);
         var movingBrick = clone.getMovingBrick();
         if (movingBrick == null)
             throw new Error("No moving brick");
 
-        var oldX = movingBrick.x;
+        var oldX = movingBrick.innerX;
 
-        while (movingBrick.x > x) {
+        while (movingBrick.innerX > x) {
             movingBrick.moveleft();
-            if (movingBrick.x === oldX)
+            if (movingBrick.innerX === oldX)
                 throw new Error("brick is not moving");
-            oldX = movingBrick.x;
+            oldX = movingBrick.innerX;
         }
 
-        while (movingBrick.x < x) {
+        while (movingBrick.innerX < x) {
             movingBrick.moveright();
-            if (movingBrick.x === oldX)
+            if (movingBrick.innerX === oldX)
                 throw new Error("brick is not moving");
-            oldX = movingBrick.x;
+            oldX = movingBrick.innerX;
         }
 
-        //movingBrick.smashdown();
+        movingBrick.smashdown();
 
         var score = 0;
 
@@ -41,9 +44,21 @@ export function getBestMove(game) {
 
         var str = brickMatrix.map(x => x.map(y => y ? "X" : "0").join("")).join("\n");
 
-        console.log(str);
+        console.debug(str);
+
+        //console.debug(movingBrick.blocks.map(x => x.join("")).join("\r\n"));
+        //console.debug(brickMatrix.map(x => x.map(x => x ? "1" : "0").join("")).join("\r\n"));
 
         positions.push({ x: movingBrick.x, y: movingBrick.y, brickMatrix });
+
+        for (var _y = 0; _y < brickMatrix.length; _y++) {
+            for (var _x = 0; _x < brickMatrix[_y].length; _x++) {
+                if (brickMatrix[_y][_x] === true)
+                    game.drawSingleBrick(_x, _y, Color.Black());
+            }
+        }
+
+        game.drawBrick(movingBrick);
     }
 
     return positions;

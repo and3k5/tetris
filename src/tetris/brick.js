@@ -229,6 +229,28 @@ class Brick {
         }
     }
 
+    get innerX() {
+        return this.x - this.getBlockX();
+    }
+
+    get innerXfar() {
+        return this.innerX + this.innerWidth;
+    }
+
+    get mostLeft() {
+        return -this.getBlockX();
+    }
+
+    get mostRight() {
+        return this.game.WIDTH - this.getWidth();
+    }
+
+    get innerWidth() {
+        return this.getWidth();
+    }
+
+
+
     moveright() {
         if (this.game.getRUNNING()) {
             if (this.ingame === true)
@@ -381,6 +403,7 @@ class Brick {
                 return i;
             }
         }
+        console.warn("findMe could not find brick in game");
         return -1;
     }
 }
