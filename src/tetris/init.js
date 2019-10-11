@@ -1,6 +1,7 @@
 import { defaultGame } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
+import { getBestMove } from "./simulate.js";
 
 export function init(container) {
     var tetrisgame;
@@ -53,6 +54,10 @@ export function init(container) {
         nextCanvas,
         score
     )
+
+    // setInterval(function () {
+    //     console.log(getBestMove(tetrisgame));
+    // },1000)
 
     return tetrisgame;
 }

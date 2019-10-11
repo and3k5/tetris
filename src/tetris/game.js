@@ -52,7 +52,22 @@ class TetrisGame {
     // bricks in game
     #bricks = [];
 
-    constructor(gameSetup) {
+    // game setup
+    #setup;
+
+    constructor(gameSetup, extra = null) {
+        this.#setup = gameSetup;
+        this.#WIDTH = gameSetup.width;
+        this.#HEIGHT = gameSetup.height;
+
+        if (extra != null) {
+            if (Array.isArray(extra.bricks)) {
+                this.#bricks = extra.bricks.concat();
+                for (var brick of this.#bricks) {
+                    brick.game = this;
+                }
+            }
+        }
 
         let // [number] Board font size
             GRAPHIC_BOARD_FONTSIZE;
@@ -92,7 +107,7 @@ class TetrisGame {
 
         let SCORE = 0;
 
-        
+
         this.brickforms = gameSetup.brickforms;
         const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
         this.nextRandom = Math.round(Math.random() * (this.brickforms.length - 1));
@@ -108,7 +123,7 @@ class TetrisGame {
         //this.getMAYDROP=function () { return MAYDROP; };
         this.getRUNNING = () => RUNNING;
         this.getWIDTH = () => game.#WIDTH;
-        
+
 
 
         function clearLine(l) {
@@ -281,8 +296,6 @@ class TetrisGame {
             }
         }
         this.init = function (g, h, n, sc) {
-            this.#WIDTH = 10;
-            this.#HEIGHT = 20;
             this.#BRICKSIZE = 30;
 
             this.#CANVAS_WIDTH = this.#BRICKSIZE * this.#WIDTH;
@@ -345,12 +358,10 @@ class TetrisGame {
                 game.holdingShift();
             });
 
-            ctx = /*document.querySelector("canvas#game")*/
-                g.getContext("2d");
-            h_ctx = /*document.querySelector("canvas#holding")*/
-                h.getContext("2d");
-            n_ctx = /*document.querySelector("canvas#next")*/
-                n.getContext("2d");
+            ctx = g.getContext("2d");
+            h_ctx = h.getContext("2d");
+            n_ctx = n.getContext("2d");
+
             this.clearAndResize(ctx, h_ctx, n_ctx);
             graphicControlLoop(this, ctx, h_ctx, n_ctx);
         }
@@ -416,6 +427,34 @@ class TetrisGame {
         }
     }
 
+    renderBrickMatrix() {
+        var result = [];
+        for (var y = 0; y < this.HEIGHT; y++) {
+            result.push([]);
+            for (var x = 0; x < this.WIDTH; x++) {
+                result[result.length - 1].push(false);
+            }
+        }
+        var bricks = this.bricks;
+        for (const i in bricks) {
+            var brickForm = bricks[i].blocks;
+            var x = bricks[i].x;
+            var y = bricks[i].x;
+
+            for (var i1 in brickForm) {
+                for (var i2 in brickForm[i1]) {
+                    if (brickForm[i1][i2] == 1) {
+                        var cx = (x) + (parseInt(i2));
+                        var cy = (y) + (parseInt(i1));
+                        result[cy][cx] = true;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     makeBrick(ctx, x, y, w, h, color) {
         var fstyle = new RadialGradient(ctx, x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
         fstyle.addColor(0, color);
@@ -468,7 +507,6 @@ class TetrisGame {
     }
 
     getMovingBrick() {
-        var i;
         for (var i in this.bricks) {
             if (this.bricks[i].moving) {
                 return this.bricks[i];
@@ -580,6 +618,10 @@ class TetrisGame {
             }
         }
         return false;
+    }
+
+    get setup() {
+        return this.#setup;
     }
 }
 

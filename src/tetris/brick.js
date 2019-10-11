@@ -21,6 +21,16 @@ class Brick {
         }
     }
 
+    clone() {
+        var brick = new Brick();
+        brick.#x = this.#x;
+        brick.#y = this.#y;
+        brick.moving = this.moving;
+        brick.blocks = this.blocks.concat();
+        brick.color = this.color.copy();
+        return brick;
+    }
+
     get x() {
         return this.#x;
     }
@@ -197,7 +207,8 @@ class Brick {
 
     moveleft() {
         if (this.game.getRUNNING()) {
-            playSound("gamemove");
+            if (this.ingame === true)
+                playSound("gamemove");
             let may_i_fall = true;
             if (this.moving) {
                 for (const i1 in this.blocks) {
@@ -220,7 +231,8 @@ class Brick {
 
     moveright() {
         if (this.game.getRUNNING()) {
-            playSound("gamemove");
+            if (this.ingame === true)
+                playSound("gamemove");
             let may_i_fall = true;
             if (this.moving) {
                 for (const i1 in this.blocks) {
@@ -243,7 +255,8 @@ class Brick {
 
     smashdown() {
         if (this.game.getRUNNING() && this.game.MAYDROP) {
-            playSound("gamebump");
+            if (this.ingame === true)
+                playSound("gamebump");
             this.moving = false;
             this.y = this.getLowestPosition(this.game.bricks);
             this.requestUpdate();
@@ -261,7 +274,8 @@ class Brick {
                 this.game.HOLDINGCOUNT = 0;
             } else {
                 menuNav("gamelose");
-                playSound("gamelose");
+                if (this.ingame === true)
+                    playSound("gamelose");
             }
             this.game.MAYDROP = false;
 
@@ -287,7 +301,8 @@ class Brick {
 
                 } else {
                     this.moving = false;
-                    playSound("gamebump");
+                    if (this.ingame === true)
+                        playSound("gamebump");
                     if ((this.y + this.getBlockY()) >= 0) {
                         const sliced = this.slice_up();
                         this.game.bricks.splice(this.findMe(), 1);
@@ -302,7 +317,8 @@ class Brick {
                         this.game.HOLDINGCOUNT = 0;
                     } else {
                         menuNav("gamelose");
-                        playSound("gamelose");
+                        if (this.ingame === true)
+                            playSound("gamelose");
                     }
                 }
             }

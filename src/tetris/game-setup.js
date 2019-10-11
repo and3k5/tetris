@@ -1,18 +1,35 @@
 import "./brick-form.js"
 
 export class TetrisSetup {
+    // different types of bricks
     #brickforms;
+
+    // game width
+    #width;
+
+    // game height
+    #height;
 
     /**
      * 
      * @param {BrickFormBase[]} brickforms 
      */
-    constructor(brickforms) {
+    constructor(brickforms, width, height) {
         this.#brickforms = brickforms;
+        this.#width = width;
+        this.#height = height;
     }
 
     get brickforms() {
         return this.#brickforms;
+    }
+
+    get width() {
+        return this.#width;
+    }
+
+    get height() {
+        return this.#height;
     }
 }
 
@@ -46,5 +63,5 @@ export function defaultGame() {
         [0, 1, 0, 0],
         [0, 1, 0, 0]]
     ];
-    return new TetrisSetup(brickforms);
+    return new TetrisSetup(brickforms, 10, 20);
 }
