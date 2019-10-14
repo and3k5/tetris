@@ -63,13 +63,14 @@ export function init(container) {
             var lastBrick;
             var movement;
             setInterval(function () {
-                if (movement == null || lastBrick != tetrisgame.getMovingBrick()) {
-                    console.log("new brick");
+                var currentMovingBrick = tetrisgame.getMovingBrick();
+                if (movement == null || lastBrick != currentMovingBrick) {
+                    console.log("new brick", movement == null, lastBrick != currentMovingBrick);
                     movement = getBestMove(tetrisgame, () => lastBrick, (v) => lastBrick = v);
-                    lastBrick = tetrisgame.getMovingBrick();
+                    lastBrick = currentMovingBrick;
                 }
-                tetrisgame.moveTowards(movement.x);
-                console.log("move",movement.x);
+                tetrisgame.moveTowards(movement.x, movement.rotation);
+                console.log("move", movement.x);
 
             }, 100)
         })();

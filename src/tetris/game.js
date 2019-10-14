@@ -627,20 +627,24 @@ class TetrisGame {
         return this.#setup;
     }
 
-    moveTowards(x) {
+    moveTowards(x, r = null) {
+        console.debug("moving to", x, r);
         var movingBrick = this.getMovingBrick();
         if (movingBrick.x > x) {
-            console.log("left");
+            console.debug("left");
             this.action_moveleft();
-
         }
         else if (movingBrick.x < x) {
-            console.log("right");
+            console.debug("right");
             this.action_moveright();
         }
         else {
-            console.log("down");
+            console.debug("down");
             this.action_smashdown();
+        }
+        if (typeof (r) === "number") {
+            if (r != this.getMovingBrick().rotation)
+                this.action_rotate();
         }
     }
 }

@@ -3,6 +3,7 @@ import { playSound } from "./sound.js";
 class Brick {
     #x = undefined;
     #y = undefined;
+    #rotation = 0;
     constructor(options) {
         const o = options || { 'ingame': false, 'game': null };
 
@@ -28,6 +29,7 @@ class Brick {
         brick.moving = this.moving;
         brick.blocks = this.blocks.concat();
         brick.color = this.color.copy();
+        brick.#rotation = this.#rotation;
         return brick;
     }
 
@@ -159,7 +161,7 @@ class Brick {
         return true;
     }
 
-    rotate(way) {
+    rotate() {
         if (this.game.getRUNNING()) {
             const blocks2 = [];
             const w = this.blocks[0].length;
@@ -202,7 +204,20 @@ class Brick {
             }
 
             this.blocks = blocks2;
+            this.#rotation = (this.#rotation + 1)% 4;
         }
+
+
+    }
+
+    get rotation() {
+        return this.#rotation;
+    }
+
+    set rotation(v) {
+        for (var i = this.#rotation; i <= v; i++)
+            this.rotate();
+        this.#rotation = v;
     }
 
     canMoveLeft(Throw = false) {
@@ -222,7 +237,7 @@ class Brick {
                 if (this.blocks[i1][i2] == 1) {
                     if (((this.x + this.getBlockX()) <= 0)) {
                         if (Throw === true)
-                            throw new Error("The brick would be out of bounds");
+                            throw new Error("The brick would be out of bounds (x: " + (this.x + this.getBlockX()) + ")");
                         return false;
                     }
                     if ((this.checkCollision(this.x + parseInt(i2) - 1, this.y + parseInt(i1), this.game.bricks) == false)) {
