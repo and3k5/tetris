@@ -329,8 +329,17 @@ class Brick {
         return false;
     }
 
-    smashdown() {
-        if (this.game.getRUNNING() && this.game.MAYDROP) {
+    canSmashDown(Throw = false) {
+        if (this.game.getRUNNING() != true) {
+            if (Throw === true)
+                throw new Error("The game is not running");
+            return false;
+        }
+        return true;
+    }
+
+    smashdown(Throw = false) {
+        if (this.canSmashDown(Throw)) {
             if (this.ingame === true)
                 playSound("gamebump");
             this.moving = false;
@@ -353,7 +362,6 @@ class Brick {
                 if (this.ingame === true)
                     playSound("gamelose");
             }
-            this.game.MAYDROP = false;
 
         }
     }

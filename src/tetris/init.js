@@ -1,3 +1,5 @@
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import { defaultGame } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
@@ -55,22 +57,22 @@ export function init(container) {
         score
     );
 
-    /*
-    (function () {
-        var lastBrick;
-        var movement;
-        setInterval(function () {
-            if (movement == null || lastBrick != tetrisgame.getMovingBrick()) {
-                console.log("new brick");
-                movement = getBestMove(tetrisgame, () => lastBrick, (v) => lastBrick = v);
-                lastBrick = tetrisgame.getMovingBrick();
-            }
-            tetrisgame.moveTowards(movement.x);
-            console.log("move",movement.x);
+    var url = new URL(location.href);
+    if (url.searchParams.get("simulate") === "1")
+        (function () {
+            var lastBrick;
+            var movement;
+            setInterval(function () {
+                if (movement == null || lastBrick != tetrisgame.getMovingBrick()) {
+                    console.log("new brick");
+                    movement = getBestMove(tetrisgame, () => lastBrick, (v) => lastBrick = v);
+                    lastBrick = tetrisgame.getMovingBrick();
+                }
+                tetrisgame.moveTowards(movement.x);
+                console.log("move",movement.x);
 
-        }, 100)
-    })();
-    */
+            }, 100)
+        })();
 
 
     return tetrisgame;

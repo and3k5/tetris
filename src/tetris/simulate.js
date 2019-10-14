@@ -8,18 +8,18 @@ export function cloneGame(game) {
     return clone;
 }
 
-export function getBestMove(game,get,set) {
+export function getBestMove(game, get, set) {
     var positions = [];
 
     var realMovingBrick = game.getMovingBrick();
-    var maxWidth = game.WIDTH*2;
+    var maxWidth = game.WIDTH * 2;
 
     for (var x = realMovingBrick.mostLeft; x <= realMovingBrick.mostRight; x++) {
         var clone = cloneGame(game);
         //console.log(clone.bricks);
         var movingBrick = clone.getMovingBrick();
         if (x == realMovingBrick.mostLeft)
-            console.debug(movingBrick.x,movingBrick.y);
+            console.debug(movingBrick.x, movingBrick.y);
         if (movingBrick == null)
             throw new Error("No moving brick");
 
@@ -29,7 +29,7 @@ export function getBestMove(game,get,set) {
         while (movingBrick.innerX > x) {
             if (!movingBrick.moveleft(true))
                 throw new Error("brick is not moving left");
-            if (moveStep++>maxWidth)
+            if (moveStep++ > maxWidth)
                 throw new Error("moving out of view");
         }
 
@@ -39,7 +39,7 @@ export function getBestMove(game,get,set) {
         while (movingBrick.innerX < x) {
             if (!movingBrick.moveright(true))
                 throw new Error("brick is not moving right");
-            if (moveStep++>maxWidth)
+            if (moveStep++ > maxWidth)
                 throw new Error("moving out of view");
         }
 
@@ -74,25 +74,25 @@ export function getBestMove(game,get,set) {
         var matrix = setup.brickMatrix;
         setup.score = 0;
 
-        for (var x = 0;x<game.WIDTH;x++) {
+        for (var x = 0; x < game.WIDTH; x++) {
             var counting = false;
 
-            for (var y = 0;y<matrix.length;y++) {
+            for (var y = 0; y < matrix.length; y++) {
                 if (counting !== true) {
                     if (matrix[y][x] === true) {
                         counting = true;
                         continue;
                     }
-                }else{
+                } else {
                     if (matrix[y][x] !== true) {
                         setup.score--;
-                    }else{
-                        //setup.score++;
+                    } else {
+                        setup.score--;
                     }
                 }
             }
         }
     }
 
-    return positions.sort(x => x.score - x.score)[0];
+    return positions.sort((a, b) => b.score - a.score)[0];
 }

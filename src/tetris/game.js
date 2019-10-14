@@ -44,9 +44,6 @@ class TetrisGame {
     // next random brick pos
     #nextRandom;
 
-    // Fix to avoid Space to repeat keydown events
-    #MAYDROP = true;
-
     // different type of bricks in game
     #brickforms;
 
@@ -66,7 +63,7 @@ class TetrisGame {
         this.#setup = gameSetup;
         this.#WIDTH = gameSetup.width;
         this.#HEIGHT = gameSetup.height;
-        this.#gridColor = new Color(0,255,0,0.5);
+        this.#gridColor = new Color(0, 255, 0, 0.5);
 
         if (extra != null) {
             if (Array.isArray(extra.bricks)) {
@@ -125,7 +122,6 @@ class TetrisGame {
         }
 
         this.getColors = () => colors;
-        //this.getMAYDROP=function () { return MAYDROP; };
         this.getRUNNING = () => RUNNING;
         this.getWIDTH = () => game.#WIDTH;
 
@@ -267,7 +263,7 @@ class TetrisGame {
                 case 32:
                     // space
                     e.preventDefault();
-                    if (RUNNING)
+                    if (RUNNING && e.repeat !== true)
                         game.action_smashdown();
                     break;
                 case 27:
@@ -287,10 +283,6 @@ class TetrisGame {
                     }
                     break;
             }
-        }
-        function keyup({ keyCode }) {
-            if (keyCode == 32)
-                game.MAYDROP = true;
         }
         function graphicControlLoop(game, ctx, h_ctx, n_ctx) {
             // CTX GRAPHICS
@@ -328,7 +320,6 @@ class TetrisGame {
             gameControlDown();
 
             window.addEventListener("keydown", keyh, false);
-            window.addEventListener("keyup", keyup, false);
 
             var touchStart = null;
 
@@ -388,10 +379,10 @@ class TetrisGame {
         this.clearAndResize(ctx, h_ctx, n_ctx);
 
         const BRICKSIZESCALE = 1.5;
-        gameGraphic.drawGrid(ctx,this.#gridColor,this.#BRICKSIZE,this.#BRICKSIZE,this.WIDTH,this.HEIGHT);
+        gameGraphic.drawGrid(ctx, this.#gridColor, this.#BRICKSIZE, this.#BRICKSIZE, this.WIDTH, this.HEIGHT);
         var smallBrickSize = this.#BRICKSIZE / BRICKSIZESCALE;
-        gameGraphic.drawGrid(n_ctx,this.#gridColor,smallBrickSize,smallBrickSize,6,6);
-        gameGraphic.drawGrid(h_ctx,this.#gridColor,smallBrickSize,smallBrickSize,6,6);
+        gameGraphic.drawGrid(n_ctx, this.#gridColor, smallBrickSize, smallBrickSize, 6, 6);
+        gameGraphic.drawGrid(h_ctx, this.#gridColor, smallBrickSize, smallBrickSize, 6, 6);
         //tiles(ctx);
         var bricks = this.bricks;
         for (const i in bricks) {
@@ -450,7 +441,7 @@ class TetrisGame {
             var brickForm = brick.blocks;
             var x = brick.x;
             var y = brick.y;
-            
+
             for (var i1 in brickForm) {
                 for (var i2 in brickForm[i1]) {
                     if (brickForm[i1][i2] == 1) {
@@ -539,7 +530,7 @@ class TetrisGame {
     }
 
     action_smashdown() {
-        this.getMovingBrick().smashdown();
+        this.getMovingBrick().smashdown(true);
     }
 
     action_moveleft() {
@@ -590,14 +581,6 @@ class TetrisGame {
         this.#nextRandom = v;
     }
 
-    get MAYDROP() {
-        return this.#MAYDROP;
-    }
-
-    set MAYDROP(v) {
-        this.#MAYDROP = v;
-    }
-
     get WIDTH() {
         return this.#WIDTH;
     }
@@ -646,12 +629,19 @@ class TetrisGame {
 
     moveTowards(x) {
         var movingBrick = this.getMovingBrick();
-        if (movingBrick.x > x)
+        if (movingBrick.x > x) {
+            console.log("left");
             this.action_moveleft();
-        else if (movingBrick.x < x)
+
+        }
+        else if (movingBrick.x < x) {
+            console.log("right");
             this.action_moveright();
-        else
+        }
+        else {
+            console.log("down");
             this.action_smashdown();
+        }
     }
 }
 
