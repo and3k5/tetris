@@ -55,6 +55,7 @@ export function init(container) {
         score
     );
 
+    /*
     (function () {
         var lastBrick;
         var movement;
@@ -67,6 +68,7 @@ export function init(container) {
 
         }, 100)
     })();
+    */
 
 
     return tetrisgame;
