@@ -1,0 +1,22 @@
+@media (min-width: 992px) {
+    body {
+        margin:50px 10px;
+    }
+    
+    div#container {
+        width:600px;
+        margin:auto auto;
+        background:linear-gradient(rgb(50,50,50), rgb(60,60,60));
+        border-radius: 50px;
+        padding: 30px;
+    }
+
+    span.holding {
+        float: left;
+        text-align: left;
+    }
+    span.next {
+        float: right;
+        text-align: left;
+    }
+}
