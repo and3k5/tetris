@@ -205,38 +205,55 @@ class Brick {
         }
     }
 
+    canMoveLeft(Throw = false) {
+        if (this.game.getRUNNING() != true) {
+            if (Throw === true)
+                throw new Error("The game is not running");
+            return false;
+        }
+        if (this.moving != true) {
+            if (Throw === true)
+                throw new Error("The brick is not flagged as moving");
+            return false;
+        }
+
+        for (const i1 in this.blocks) {
+            for (const i2 in this.blocks[i1]) {
+                if (this.blocks[i1][i2] == 1) {
+                    if (((this.x + this.getBlockX()) <= 0)) {
+                        if (Throw === true)
+                            throw new Error("The brick would be out of bounds");
+                        return false;
+                    }
+                    if ((this.checkCollision(this.x + parseInt(i2) - 1, this.y + parseInt(i1), this.game.bricks) == false)) {
+                        if (Throw === true)
+                            throw new Error("The brick would collide with another brick");
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     moveleft(Throw = false) {
         if (this.game.getRUNNING()) {
             if (this.ingame === true)
                 playSound("gamemove");
-            let may_i_fall = true;
-            if (this.moving) {
-                collisionLoop:
-                for (const i1 in this.blocks) {
-                    for (const i2 in this.blocks[i1]) {
-                        if (this.blocks[i1][i2] == 1) {
-                            if ((this.checkCollision(this.x + parseInt(i2) - 1, this.y + parseInt(i1), this.game.bricks) == false) || ((this.x + this.getBlockX()) <= 0)) {
-                                may_i_fall = false;
-                                break collisionLoop;
-                            }
-                        }
-                    }
-                }
-                if (may_i_fall) {
-                    this.x--;
-                    return true;
-                }else{
-                    if (Throw === true)
-                        throw new Error("The brick cannot move because of collision");
-                }
-            }else{
+            if (this.canMoveLeft(Throw)) {
+                this.x--;
+                return true;
+            } else {
                 if (Throw === true)
-                    throw new Error("The brick is not flagged as moving");
+                    throw new Error("Unknown reason");
+                return false;
             }
-        }else{
+        } else {
             if (Throw === true)
                 throw new Error("The game is not running");
         }
+        console.debug("did not move right: out of conditions");
         return false;
     }
 
@@ -253,44 +270,58 @@ class Brick {
     }
 
     get mostRight() {
-        return this.game.WIDTH - this.getWidth();
+        return this.game.WIDTH - this.getWidth() - this.innerX;
     }
 
     get innerWidth() {
         return this.getWidth();
     }
 
+    canMoveRight(Throw = false) {
+        if (this.game.getRUNNING() != true) {
+            if (Throw === true)
+                throw new Error("The game is not running");
+            return false;
+        }
+        if (this.moving != true) {
+            if (Throw === true)
+                throw new Error("The brick is not flagged as moving");
+            return false;
+        }
 
+        for (const i1 in this.blocks) {
+            for (const i2 in this.blocks[i1]) {
+                if (this.blocks[i1][i2] == 1) {
+                    if (((this.x + this.getWidth() + this.getBlockX()) >= (this.game.getWIDTH()))) {
+                        if (Throw === true)
+                            throw new Error("The brick would be out of bounds");
+                        return false;
+                    }
+                    if ((this.checkCollision(this.x + parseInt(i2) + 1, this.y + parseInt(i1), this.game.bricks) == false)) {
+                        if (Throw === true)
+                            throw new Error("The brick would collide with another brick");
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
 
     moveright(Throw = false) {
         if (this.game.getRUNNING()) {
             if (this.ingame === true)
                 playSound("gamemove");
-            let may_i_fall = true;
-            if (this.moving) {
-                collisionLoop:
-                for (const i1 in this.blocks) {
-                    for (const i2 in this.blocks[i1]) {
-                        if (this.blocks[i1][i2] == 1) {
-                            if ((this.checkCollision(this.x + parseInt(i2) + 1, this.y + parseInt(i1), this.game.bricks) == false) || ((this.x + this.getWidth() + this.getBlockX()) >= (this.game.getWIDTH()))) {
-                                may_i_fall = false;
-                                break collisionLoop;
-                            }
-                        }
-                    }
-                }
-                if (may_i_fall) {
-                    this.x++;
-                    return true;
-                }else{
-                    if (Throw === true)
-                        throw new Error("The brick cannot move because of collision");
-                }
-            }else{
+            if (this.canMoveRight(Throw)) {
+                this.x++;
+                return true;
+            } else {
                 if (Throw === true)
-                    throw new Error("The brick is not flagged as moving");
+                    throw new Error("Unknown reason");
+                return false;
             }
-        }else{
+        } else {
             if (Throw === true)
                 throw new Error("The game is not running");
         }

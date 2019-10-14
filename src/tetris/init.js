@@ -61,10 +61,12 @@ export function init(container) {
         var movement;
         setInterval(function () {
             if (movement == null || lastBrick != tetrisgame.getMovingBrick()) {
+                console.log("new brick");
                 movement = getBestMove(tetrisgame, () => lastBrick, (v) => lastBrick = v);
                 lastBrick = tetrisgame.getMovingBrick();
             }
             tetrisgame.moveTowards(movement.x);
+            console.log("move",movement.x);
 
         }, 100)
     })();

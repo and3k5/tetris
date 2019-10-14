@@ -27,7 +27,7 @@ export function getBestMove(game,get,set) {
 
         var moveStep = 0;
         while (movingBrick.innerX > x) {
-            if (!movingBrick.moveleft())
+            if (!movingBrick.moveleft(true))
                 throw new Error("brick is not moving left");
             if (moveStep++>maxWidth)
                 throw new Error("moving out of view");
@@ -37,7 +37,7 @@ export function getBestMove(game,get,set) {
         // oldX = movingBrick.innerX;
 
         while (movingBrick.innerX < x) {
-            if (!movingBrick.moveright())
+            if (!movingBrick.moveright(true))
                 throw new Error("brick is not moving right");
             if (moveStep++>maxWidth)
                 throw new Error("moving out of view");
@@ -87,12 +87,12 @@ export function getBestMove(game,get,set) {
                     if (matrix[y][x] !== true) {
                         setup.score--;
                     }else{
-                        setup.score++;
+                        //setup.score++;
                     }
                 }
             }
         }
     }
 
-    return positions.sort(x => x.score - x.score);
+    return positions.sort(x => x.score - x.score)[0];
 }
