@@ -74,25 +74,35 @@ export function getBestMove(game, get, set) {
         var matrix = setup.brickMatrix;
         setup.score = 0;
 
+        var holes = 0;
+        var height = 0;
+
         for (var x = 0; x < game.WIDTH; x++) {
-            var counting = false;
+            var countingHoles = false;
 
             for (var y = 0; y < matrix.length; y++) {
-                if (counting !== true) {
-                    if (matrix[y][x] === true) {
-                        counting = true;
-                        continue;
-                    }
-                } else {
-                    if (matrix[y][x] !== true) {
-                        setup.score--;
-                    } else {
-                        setup.score--;
-                    }
+                if (matrix[y][x] === true && countingHoles != true) {
+                    countingHoles = true;
+                }
+
+                if (countingHoles === true && matrix[y][x] !== true) {
+                    holes++;
+                }
+
+                if (matrix[y][x] === true) {
+                    height = matrix.length - y;
                 }
             }
         }
-    }
 
+        setup.scores = {
+            holes,
+            height,
+        };
+
+        setup.score = 0 - (holes) - height;
+
+    }
+    console.log("POSITIONS", positions.length);
     return positions.sort((a, b) => b.score - a.score)[0];
 }
