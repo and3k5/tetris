@@ -211,11 +211,13 @@ class Brick {
                 playSound("gamemove");
             let may_i_fall = true;
             if (this.moving) {
+                collisionLoop:
                 for (const i1 in this.blocks) {
                     for (const i2 in this.blocks[i1]) {
                         if (this.blocks[i1][i2] == 1) {
                             if ((this.checkCollision(this.x + parseInt(i2) - 1, this.y + parseInt(i1), this.game.bricks) == false) || ((this.x + this.getBlockX()) <= 0)) {
                                 may_i_fall = false;
+                                break collisionLoop;
                             }
                         }
                     }
@@ -266,11 +268,13 @@ class Brick {
                 playSound("gamemove");
             let may_i_fall = true;
             if (this.moving) {
+                collisionLoop:
                 for (const i1 in this.blocks) {
                     for (const i2 in this.blocks[i1]) {
                         if (this.blocks[i1][i2] == 1) {
                             if ((this.checkCollision(this.x + parseInt(i2) + 1, this.y + parseInt(i1), this.game.bricks) == false) || ((this.x + this.getWidth() + this.getBlockX()) >= (this.game.getWIDTH()))) {
                                 may_i_fall = false;
+                                break collisionLoop;
                             }
                         }
                     }
