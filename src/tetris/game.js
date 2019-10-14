@@ -3,6 +3,7 @@ import { RadialGradient, LinearGradient } from "./gradient.js";
 import Brick from "./brick.js";
 import { playSound } from "./sound.js";
 import { BinaryBrickForm } from "./brick-form.js";
+import * as gameGraphic from "./game-graphic.js";
 
 window.BinaryBrickForm = BinaryBrickForm;
 
@@ -58,10 +59,14 @@ class TetrisGame {
     // [Graphic Context] Game 2d context
     #ctx;
 
+    // grid color
+    #gridColor;
+
     constructor(gameSetup, extra = null) {
         this.#setup = gameSetup;
         this.#WIDTH = gameSetup.width;
         this.#HEIGHT = gameSetup.height;
+        this.#gridColor = new Color(0,255,0,0.5);
 
         if (extra != null) {
             if (Array.isArray(extra.bricks)) {
@@ -381,6 +386,12 @@ class TetrisGame {
 
     inGameGraphic(ctx, h_ctx, n_ctx) {
         this.clearAndResize(ctx, h_ctx, n_ctx);
+
+        const BRICKSIZESCALE = 1.5;
+        gameGraphic.drawGrid(ctx,this.#gridColor,this.#BRICKSIZE,this.#BRICKSIZE,this.WIDTH,this.HEIGHT);
+        var smallBrickSize = this.#BRICKSIZE / BRICKSIZESCALE;
+        gameGraphic.drawGrid(n_ctx,this.#gridColor,smallBrickSize,smallBrickSize,6,6);
+        gameGraphic.drawGrid(h_ctx,this.#gridColor,smallBrickSize,smallBrickSize,6,6);
         //tiles(ctx);
         var bricks = this.bricks;
         for (const i in bricks) {
@@ -393,7 +404,6 @@ class TetrisGame {
             this.drawBrickForm(bricks[i].blocks, ctx, bricks[i].x, bricks[i].y, bricks[i].color);
         }
         // NextBox field
-        const BRICKSIZESCALE = 1.5;
 
         var brickforms = this.brickforms;
 
