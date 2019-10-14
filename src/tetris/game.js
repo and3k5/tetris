@@ -633,6 +633,16 @@ class TetrisGame {
     get setup() {
         return this.#setup;
     }
+
+    moveTowards(x) {
+        var movingBrick = this.getMovingBrick();
+        if (movingBrick.x > x)
+            this.action_moveleft();
+        else if (movingBrick.x < x)
+            this.action_moveright();
+        else
+            this.action_smashdown();
+    }
 }
 
 export default TetrisGame

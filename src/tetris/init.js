@@ -53,11 +53,21 @@ export function init(container) {
         holdingCanvas,
         nextCanvas,
         score
-    )
+    );
 
-    // setInterval(function () {
-    //     console.log(getBestMove(tetrisgame));
-    // },1000)
+    (function () {
+        var lastBrick;
+        var movement;
+        setInterval(function () {
+            if (movement == null || lastBrick != tetrisgame.getMovingBrick()) {
+                movement = getBestMove(tetrisgame, () => lastBrick, (v) => lastBrick = v);
+                lastBrick = tetrisgame.getMovingBrick();
+            }
+            tetrisgame.moveTowards(movement.x);
+
+        }, 100)
+    })();
+
 
     return tetrisgame;
 }

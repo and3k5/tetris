@@ -273,6 +273,7 @@ class Brick {
                 }
             }
         }
+        console.debug("did not move right: out of conditions");
         return false;
     }
 
