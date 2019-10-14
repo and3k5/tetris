@@ -205,7 +205,7 @@ class Brick {
         }
     }
 
-    moveleft() {
+    moveleft(Throw = false) {
         if (this.game.getRUNNING()) {
             if (this.ingame === true)
                 playSound("gamemove");
@@ -223,9 +223,17 @@ class Brick {
                 if (may_i_fall) {
                     this.x--;
                     return true;
+                }else{
+                    if (Throw === true)
+                        throw new Error("The brick cannot move because of collision");
                 }
+            }else{
+                if (Throw === true)
+                    throw new Error("The brick is not flagged as moving");
             }
-
+        }else{
+            if (Throw === true)
+                throw new Error("The game is not running");
         }
         return false;
     }
@@ -252,7 +260,7 @@ class Brick {
 
 
 
-    moveright() {
+    moveright(Throw = false) {
         if (this.game.getRUNNING()) {
             if (this.ingame === true)
                 playSound("gamemove");
@@ -270,8 +278,17 @@ class Brick {
                 if (may_i_fall) {
                     this.x++;
                     return true;
+                }else{
+                    if (Throw === true)
+                        throw new Error("The brick cannot move because of collision");
                 }
+            }else{
+                if (Throw === true)
+                    throw new Error("The brick is not flagged as moving");
             }
+        }else{
+            if (Throw === true)
+                throw new Error("The game is not running");
         }
         console.debug("did not move right: out of conditions");
         return false;
