@@ -3,7 +3,7 @@ import "regenerator-runtime/runtime";
 import { defaultGame } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
-import { getBestMove } from "./simulate.js";
+import { runSimulator } from "./simulate.js";
 
 export function init(container) {
     var tetrisgame;
@@ -59,21 +59,7 @@ export function init(container) {
 
     var url = new URL(location.href);
     if (url.searchParams.get("simulate") === "1")
-        (function () {
-            var lastBrick;
-            var movement;
-            setInterval(function () {
-                var currentMovingBrick = tetrisgame.getMovingBrick();
-                if (movement == null || lastBrick != currentMovingBrick) {
-                    console.log("new brick", movement == null, lastBrick != currentMovingBrick);
-                    movement = getBestMove(tetrisgame, () => lastBrick, (v) => lastBrick = v);
-                    lastBrick = currentMovingBrick;
-                }
-                tetrisgame.moveTowards(movement.x, movement.rotation);
-                console.log("move", movement.x);
-
-            }, 100)
-        })();
+        runSimulator(tetrisgame);
 
 
     return tetrisgame;

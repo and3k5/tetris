@@ -118,3 +118,19 @@ export function getBestMove(game, get, set) {
     console.log("POSITIONS", positions);
     return positions[0];
 }
+
+export function runSimulator(game) {
+    var lastBrick;
+    var movement;
+    setInterval(function () {
+        var currentMovingBrick = game.getMovingBrick();
+        if (movement == null || lastBrick != currentMovingBrick) {
+            console.log("new brick", movement == null, lastBrick != currentMovingBrick);
+            movement = getBestMove(game, () => lastBrick, (v) => lastBrick = v);
+            lastBrick = currentMovingBrick;
+        }
+        game.moveTowards(movement.x, movement.rotation);
+        console.log("move", movement.x);
+
+    }, 100);
+}
