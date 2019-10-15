@@ -4,6 +4,7 @@ import Brick from "./brick.js";
 import { playSound } from "./sound.js";
 import { BinaryBrickForm } from "./brick-form.js";
 import * as gameGraphic from "./game-graphic.js";
+import * as gameController from "./game-controller.js";
 
 window.BinaryBrickForm = BinaryBrickForm;
 
@@ -218,22 +219,6 @@ class TetrisGame {
             }
         }
 
-        let GAMECONTROLDOWN = false;
-        const MOVESPEED = 1000;
-        function gameControlDown() {
-            if (GAMECONTROLDOWN == false) {
-                const func = () => {
-                    GAMECONTROLDOWN = true;
-                    if (WHERE == 1) {
-                        game.getMovingBrick().movedown();
-                        setTimeout(func, MOVESPEED);
-                    } else {
-                        GAMECONTROLDOWN = false;
-                    }
-                };
-                func();
-            }
-        }
         function keyh(e) {
             switch (e.keyCode) {
                 case 37:
@@ -317,7 +302,7 @@ class TetrisGame {
                 ingame: true,
                 game: this
             }));
-            gameControlDown();
+            gameController.gameControlDown(this);
 
             window.addEventListener("keydown", keyh, false);
 
@@ -496,6 +481,10 @@ class TetrisGame {
         fstyle.addColor(1, Color.Black());
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
+    }
+
+    get movingSpeed() {
+        return 1000;
     }
 
     holdingShift() {
