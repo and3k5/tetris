@@ -19,6 +19,10 @@ export default class DocumentUtil {
         return element;
     }
 
+    querySelector(query) {
+        return new DocumentUtil(this.#element.querySelector(query));
+    }
+
     attr(name, value) {
         if (arguments.length == 1)
             return this.#element.getAttribute(name);

@@ -15,6 +15,15 @@ module.exports = function (env) {
                     use: ["style-loader","css-loader"]
                 },
                 {
+                    test: /\.html$/,
+                    use: {
+                        loader:"html-loader",
+                        options: {
+                            attrs: [":data-src"]
+                        }
+                    }
+                },
+                {
                     test: /\.js$/,
                     exclude: /node_modules/,
                     use: {

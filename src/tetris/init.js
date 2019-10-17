@@ -4,6 +4,8 @@ import { defaultGame } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
 
+import * as htmlLoad from "./game.html";
+
 export function init(container) {
     var tetrisgame;
 
@@ -13,40 +15,10 @@ export function init(container) {
 
     container = new DocumentUtil(container);
 
-    var holdingCanvas;
-    var gameCanvas;
-    var nextCanvas;
-    var score;
+    for (var element of DocumentUtil.stringToElement(htmlLoad)) {
+        container.append(element);
+    }
 
-    container.append(new DocumentUtil("div").attr("class", "tetris-logo"));
-    container.append(new DocumentUtil("p").attr("class", "scorelbl").text("Score: ").append(score = new DocumentUtil("span").attr("id", "score").text("0").el));
-    container.append(
-        new DocumentUtil("span").attr("class", "holding")
-            .append(
-                new DocumentUtil("p")
-                    .text("Hold:")
-            )
-            .append(
-                holdingCanvas = new DocumentUtil("canvas")
-                    .attr("id", "holding")
-                    .el,
-            )
-    );
-
-    container.append(gameCanvas = new DocumentUtil("canvas").attr("id", "game").el);
-
-    container.append(
-        new DocumentUtil("span").attr("class", "next")
-            .append(
-                new DocumentUtil("p")
-                    .text("Next:")
-            )
-            .append(
-                nextCanvas = new DocumentUtil("canvas")
-                    .attr("id", "next")
-                    .el,
-            )
-    );
     var setup = defaultGame();
 
     var url = new URL(location.href);
@@ -56,6 +28,10 @@ export function init(container) {
     if (url.searchParams.get("clickTick") === "1")
         setup.clickTick = true;
 
+    var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
+    var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
+    var nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
+    var score = container.querySelector("[data-target=score]").el;
 
     tetrisgame = new TetrisGame(setup);
     tetrisgame.init(
@@ -64,9 +40,6 @@ export function init(container) {
         nextCanvas,
         score
     );
-
-
-
 
     return tetrisgame;
 }
