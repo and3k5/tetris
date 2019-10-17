@@ -39,7 +39,7 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
     }
 }
 
-export function getBestMove(game) {
+export function getPossibleMoves(game) {
     var positions = [];
 
     var realMovingBrick = game.getMovingBrick();
@@ -75,7 +75,7 @@ export function getBestMove(game) {
             //console.debug(movingBrick.blocks.map(x => x.join("")).join("\r\n"));
             //console.debug(brickMatrix.map(x => x.map(x => x ? "1" : "0").join("")).join("\r\n"));
 
-            positions.push({ x: movingBrick.x, y: movingBrick.y, brickMatrix, rotation: movingBrick.rotation });
+            positions.push({ brick: movingBrick, x: movingBrick.x, y: movingBrick.y, brickMatrix, rotation: movingBrick.rotation });
 
             // for (var _y = 0; _y < brickMatrix.length; _y++) {
             //     for (var _x = 0; _x < brickMatrix[_y].length; _x++) {
@@ -128,12 +128,12 @@ export function getBestMove(game) {
     console.log("POSITIONS", positions);
     console.log("movingBrick", movingBrick);
     console.log("got", positions.length, "should get", (movingBrickBase.mostRight - movingBrickBase.mostLeft) * 4)
-    return positions[0];
+    return positions;
 }
 
 class SimulatorRunner {
     #lastBrick;
-    #movement;
+    #movements = [];
     #game;
     constructor() {
 
@@ -143,11 +143,21 @@ class SimulatorRunner {
         this.#game = game;
     }
 
+    drawMovements() {
+        if (this.#movements.length > 0) {
+            var brick = this.#movements[0].brick;
+            console.log("drawing",brick);
+            brick.color = this.#lastBrick.color.invert().brightness(0.5);;
+            setTimeout(() => this.#game.drawBrick(brick),50);
+        }
+    }
+
     start() {
         var runner = this;
         if (this.#game.setup.clickTick === true) {
             this.#game.addEvent("tick", function () {
                 runner.tick();
+                runner.drawMovements();
             })
         }else {
             const ticker = () => {
@@ -166,14 +176,13 @@ class SimulatorRunner {
         if (this.#game.getRUNNING() !== true)
             return;
         var currentMovingBrick = this.#game.getMovingBrick();
-        if (this.#movement == null || this.#lastBrick != currentMovingBrick) {
-            console.log("new brick", this.#movement == null, this.#lastBrick != currentMovingBrick);
-            var t = this;
-            this.#movement = getBestMove(this.#game);
+        if (this.#movements.length === 0 || this.#lastBrick != currentMovingBrick) {
+            console.log("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
+            this.#movements = getPossibleMoves(this.#game);
             this.#lastBrick = currentMovingBrick;
         }
-        this.#game.moveTowards(this.#movement.x, this.#movement.rotation);
-        console.log("move", this.#movement.x);
+        this.#game.moveTowards(this.#movements[0].x, this.#movements[0].rotation);
+        console.log("move", this.#movements[0].x);
     }
 }
 

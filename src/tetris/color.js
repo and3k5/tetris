@@ -14,6 +14,17 @@ class Color {
         return `rgba(${parseInt(this.r)},${parseInt(this.g)},${parseInt(this.b)},${parseFloat(this.a)})`;
     }
 
+    setInvert() {
+        this.r = 255 - this.r;
+        this.g = 255 - this.g;
+        this.b = 255 - this.b;
+        return this;
+    }
+
+    invert() {
+        return this.copy().setInvert();
+    }
+
     setAlpha(a) {
         this.a = a;
         return this;
@@ -21,6 +32,17 @@ class Color {
 
     alpha(a) {
         return this.copy().setAlpha(a);
+    }
+
+    setBrightness(b) {
+        this.r = this.r * b;
+        this.g = this.g * b;
+        this.b = this.b * b;
+        return this;
+    }
+
+    brightness(b) {
+        return this.copy().setBrightness(b);
     }
 
     setAlphaScale(s) {
