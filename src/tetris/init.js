@@ -3,7 +3,6 @@ import "regenerator-runtime/runtime";
 import { defaultGame } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
-import { runSimulator } from "./simulate.js";
 
 export function init(container) {
     var tetrisgame;
@@ -48,8 +47,17 @@ export function init(container) {
                     .el,
             )
     );
+    var setup = defaultGame();
 
-    tetrisgame = new TetrisGame(defaultGame());
+    var url = new URL(location.href);
+    if (url.searchParams.get("simulate") === "1")
+        setup.simulator = true;
+
+    if (url.searchParams.get("clickTick") === "1")
+        setup.clickTick = true;
+
+
+    tetrisgame = new TetrisGame(setup);
     tetrisgame.init(
         gameCanvas,
         holdingCanvas,
@@ -57,9 +65,7 @@ export function init(container) {
         score
     );
 
-    var url = new URL(location.href);
-    if (url.searchParams.get("simulate") === "1")
-        runSimulator(tetrisgame);
+
 
 
     return tetrisgame;

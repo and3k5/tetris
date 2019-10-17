@@ -119,10 +119,11 @@ export function getBestMove(game, get, set) {
     return positions[0];
 }
 
-export function runSimulator(game) {
+export function attachSimulator(game) {
     var lastBrick;
     var movement;
-    setInterval(function () {
+
+    game.addEvent("tick", function () {
         var currentMovingBrick = game.getMovingBrick();
         if (movement == null || lastBrick != currentMovingBrick) {
             console.log("new brick", movement == null, lastBrick != currentMovingBrick);
@@ -131,6 +132,5 @@ export function runSimulator(game) {
         }
         game.moveTowards(movement.x, movement.rotation);
         console.log("move", movement.x);
-
-    }, 100);
+    });
 }

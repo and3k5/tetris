@@ -5,6 +5,7 @@ import { playSound } from "./sound.js";
 import { BinaryBrickForm } from "./brick-form.js";
 import * as gameGraphic from "./game-graphic.js";
 import * as gameController from "./game-controller.js";
+import { attachSimulator } from "./simulate.js";
 
 window.BinaryBrickForm = BinaryBrickForm;
 
@@ -59,6 +60,9 @@ class TetrisGame {
 
     // grid color
     #gridColor;
+
+    // events
+    #events = [];
 
     constructor(gameSetup, extra = null) {
         this.#setup = gameSetup;
@@ -302,7 +306,20 @@ class TetrisGame {
                 ingame: true,
                 game: this
             }));
-            gameController.gameControlDown(this);
+
+            var runEvent = (function (name) {
+                for (var event of this.#events) {
+                    if (event.name === name) {
+                        event.handler();
+                    }
+                }
+            }).bind(this);
+
+            gameController.gameControlDown(this, g, runEvent);
+
+            if (this.setup.simulator === true) {
+                attachSimulator(this);
+            }
 
             window.addEventListener("keydown", keyh, false);
 
@@ -635,6 +652,13 @@ class TetrisGame {
             if (r != this.getMovingBrick().rotation)
                 this.action_rotate();
         }
+    }
+
+    addEvent(name, handler) {
+        this.#events.push({
+            name,
+            handler,
+        });
     }
 }
 
