@@ -16,7 +16,7 @@ function arrangeBrick(clone,movingBrick,x, maxWidth) {
         //var oldX = movingBrick.innerX;
         //console.log(movingBrick.blocks);
         var moveStep = 0;
-        while (movingBrick.innerX > x) {
+        while (movingBrick.x > x) {
             if (!movingBrick.moveleft(true))
                 throw new Error("brick is not moving left");
             if (moveStep++ > maxWidth)
@@ -26,7 +26,7 @@ function arrangeBrick(clone,movingBrick,x, maxWidth) {
         moveStep = 0;
         // oldX = movingBrick.innerX;
 
-        while (movingBrick.innerX < x) {
+        while (movingBrick.x < x) {
             if (!movingBrick.moveright(true))
                 throw new Error("brick is not moving right");
             if (moveStep++ > maxWidth)
