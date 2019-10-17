@@ -19,6 +19,14 @@ class Brick {
             this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
             this.y = Math.round(0 - (this.blocks.length));
             this.game.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
+        }else if (o.brickform != null) {
+            this.color = this.game.getColors()[0].copy();
+            this.blocks = o.brickform.concat();
+        }
+
+        if (typeof(o.x) === "number" && typeof(o.y) === "number") {
+            this.x = o.x;
+            this.y = o.y;
         }
     }
 
@@ -220,6 +228,14 @@ class Brick {
         this.#rotation = v;
     }
 
+    posInfo() {
+        return [
+            ["x", this.x],
+            ["y", this.y],
+            ["rotation", this.#rotation],
+        ].map(x => x.join(":")).join(",");
+    }
+
     canMoveLeft(Throw = false) {
         if (this.game.getRUNNING() != true) {
             if (Throw === true)
@@ -237,7 +253,7 @@ class Brick {
                 if (this.blocks[i1][i2] == 1) {
                     if (((this.x + this.getBlockX()) <= 0)) {
                         if (Throw === true)
-                            throw new Error("The brick would be out of bounds (x: " + (this.x + this.getBlockX()) + ")");
+                            throw new Error("The brick would be out of bounds:"+this.posInfo());
                         return false;
                     }
                     if ((this.checkCollision(this.x + parseInt(i2) - 1, this.y + parseInt(i1), this.game.bricks) == false)) {
@@ -281,11 +297,11 @@ class Brick {
     }
 
     get mostLeft() {
-        return -this.getBlockX();
+        return parseInt(-this.getBlockX());
     }
 
     get mostRight() {
-        return this.game.WIDTH - this.getWidth() - this.innerX;
+        return parseInt(this.game.WIDTH - this.innerWidth - this.getBlockX());
     }
 
     get innerWidth() {
@@ -309,7 +325,7 @@ class Brick {
                 if (this.blocks[i1][i2] == 1) {
                     if (((this.x + this.getWidth() + this.getBlockX()) >= (this.game.getWIDTH()))) {
                         if (Throw === true)
-                            throw new Error("The brick would be out of bounds");
+                            throw new Error("The brick would be out of bounds:"+this.posInfo());
                         return false;
                     }
                     if ((this.checkCollision(this.x + parseInt(i2) + 1, this.y + parseInt(i1), this.game.bricks) == false)) {
