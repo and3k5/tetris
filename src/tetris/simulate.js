@@ -89,7 +89,7 @@ export function getBestMove(game, get, set) {
     }
 
     for (var setup of positions) {
-        console.log(setup);
+        //console.log(setup);
         var matrix = setup.brickMatrix;
         setup.score = 0;
 
@@ -109,7 +109,9 @@ export function getBestMove(game, get, set) {
                 }
 
                 if (matrix[y][x] === true) {
-                    height = matrix.length - y;
+                    var currentHeight = matrix.length - y
+                    if (height < currentHeight)
+                        height = currentHeight;
                 }
             }
         }
@@ -119,7 +121,7 @@ export function getBestMove(game, get, set) {
             height,
         };
 
-        setup.score = (0 - holes * 1) + (0 - height);
+        setup.score = (0 - holes * 1) + (0 - height * 2);
 
     }
     positions = positions.sort((a, b) => b.score - a.score);
