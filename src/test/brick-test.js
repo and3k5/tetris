@@ -31,7 +31,7 @@ describe("brick", () => {
                     brick.moveleft();
 
                 expect(brick.x).toEqual(brick.mostLeft);
-                console.log(brick.x, brick.mostLeft);
+                console.debug(brick.x, brick.mostLeft);
             }.bind({ i, setup, brickform }))
 
             it(`has a proper moveRight property on brickform ${i} when rotated ${j} times`, function () {
@@ -54,7 +54,7 @@ describe("brick", () => {
                     brick.moveright();
 
                 expect(brick.x).toEqual(brick.mostRight);
-                console.log(brick.x, brick.mostRight);
+                console.debug(brick.x, brick.mostRight);
             }.bind({ i, setup, brickform }))
 
 
