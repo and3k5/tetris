@@ -1,5 +1,6 @@
 import TetrisGame from "./game.js";
 import Color from "./color.js";
+import * as console from "../utils/trace.js";
 
 export function cloneGame(game) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -14,7 +15,7 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
 
     try {
         //var oldX = movingBrick.innerX;
-        //console.log(movingBrick.blocks);
+        //console.debug(movingBrick.blocks);
         var moveStep = 0;
         while (movingBrick.x > x) {
             if (!movingBrick.moveleft(true))
@@ -89,7 +90,7 @@ export function getPossibleMoves(game) {
     }
 
     for (var setup of positions) {
-        //console.log(setup);
+        //console.debug(setup);
         var matrix = setup.brickMatrix;
         setup.score = 0;
 
@@ -139,9 +140,9 @@ export function getPossibleMoves(game) {
             return diff;
         return b.brick.y - a.brick.y;
     });
-    console.log("POSITIONS", positions);
-    console.log("movingBrick", movingBrick);
-    console.log("got", positions.length, "should get", (movingBrickBase.mostRight - movingBrickBase.mostLeft) * 4)
+    console.debug("POSITIONS", positions);
+    console.debug("movingBrick", movingBrick);
+    console.debug("got", positions.length, "should get", (movingBrickBase.mostRight - movingBrickBase.mostLeft) * 4)
     return positions;
 }
 
@@ -160,7 +161,7 @@ class SimulatorRunner {
     drawMovements() {
         if (this.#movements.length > 0) {
             var brick = this.#movements[0].brick;
-            console.log("drawing",brick);
+            console.debug("drawing",brick);
             var color = new Color(255, 255, 255, 0.2);
             // var color = this.#lastBrick.color.invert().brightness(0.5);;
             setTimeout(() => this.#game.drawBrick(brick,color),50);
@@ -193,12 +194,12 @@ class SimulatorRunner {
             return;
         var currentMovingBrick = this.#game.getMovingBrick();
         if (this.#movements.length === 0 || this.#lastBrick != currentMovingBrick) {
-            console.log("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
+            console.debug("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
             this.#movements = getPossibleMoves(this.#game);
             this.#lastBrick = currentMovingBrick;
         }
         this.#game.moveTowards(this.#movements[0].x, this.#movements[0].rotation);
-        console.log("move", this.#movements[0].x);
+        console.debug("move", this.#movements[0].x);
     }
 }
 

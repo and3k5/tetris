@@ -1,4 +1,5 @@
 import { playSound } from "./sound.js";
+import * as console from "../utils/trace.js";
 
 class Brick {
     #x = undefined;

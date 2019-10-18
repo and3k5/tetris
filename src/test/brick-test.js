@@ -1,6 +1,7 @@
 import Brick from "../tetris/brick.js";
 import TetrisGame from "../tetris/game.js";
 import { defaultGame, TetrisSetup } from "../tetris/game-setup.js";
+import * as console from "../utils/trace.js";
 
 var setup = defaultGame();
 

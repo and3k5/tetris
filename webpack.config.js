@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 
 module.exports = function (env) {
@@ -5,6 +6,13 @@ module.exports = function (env) {
 
     const commonConfig = {
         mode: mode,
+        plugins: [
+            new webpack.DefinePlugin({
+                "global.development": mode === "development",
+                "global.production": mode === "production",
+                "global.mode": mode
+            })
+        ]
     };
 
     const mainConfig = Object.assign({}, commonConfig, {

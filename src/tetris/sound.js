@@ -1,3 +1,5 @@
+import * as console from "../utils/trace.js";
+
 window.addEventListener('load', init, { once: true });
 let SOUNDS;
 let playMusic;
@@ -87,8 +89,8 @@ function init() {
                 source.start(0); // play the source now
                 toKill = source;
             } catch (e) {
-                console.log(e.message);
-                console.log(typeof (audioBuffers[id]));
+                console.debug(e.message);
+                console.debug(typeof (audioBuffers[id]));
             };
         }
 
@@ -96,7 +98,7 @@ function init() {
         for (const i in SOUNDS) {
             loadSound(SOUNDS[i], `sound/${SOUNDS[i]}.wav`);
         }
-        console.log("sound ready");
+        console.debug("sound ready");
 		/*for (var i in MUSIC) {
 			loadSound(MUSIC[i][0], MUSIC[i][1]);
 		}*/

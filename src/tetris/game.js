@@ -6,6 +6,7 @@ import { BinaryBrickForm } from "./brick-form.js";
 import * as gameGraphic from "./game-graphic.js";
 import * as gameController from "./game-controller.js";
 import { attachSimulator } from "./simulate.js";
+import * as console from "../utils/trace.js";
 
 window.BinaryBrickForm = BinaryBrickForm;
 
@@ -348,7 +349,7 @@ class TetrisGame {
                 } else if (deg < 115 && deg > 65) {
                     game.action_smashdown();
                 } else {
-                    console.log(deg);
+                    console.debug(deg);
                 }
             });
 
@@ -648,7 +649,7 @@ class TetrisGame {
         if (typeof (r) === "number") {
             if (r != this.getMovingBrick().rotation)
             {
-                console.log("rotating from "+this.getMovingBrick().rotation+" to "+r);
+                console.debug("rotating from "+this.getMovingBrick().rotation+" to "+r);
                 this.action_rotate();
                 return;
             }
