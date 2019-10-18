@@ -65,3 +65,11 @@ export function defaultGame() {
     ];
     return new TetrisSetup(brickforms, 10, 20);
 }
+
+export function easyGame() {
+    const brickforms = [
+        [[1, 1],
+        [1, 1]],
+    ];
+    return new TetrisSetup(brickforms, 10, 20);
+}

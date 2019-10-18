@@ -1,6 +1,6 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import { defaultGame } from "./game-setup.js";
+import { defaultGame, easyGame } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
 
@@ -23,6 +23,9 @@ export function init(container) {
 
     var url = new URL(location.href);
     switch (url.searchParams.get("setup")) {
+        case "ez":
+            setup = easyGame();
+            break;
         default:
             setup = defaultGame();
             break;
