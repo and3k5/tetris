@@ -21,7 +21,8 @@ class Brick {
             this.y = Math.round(0 - (this.blocks.length));
             this.game.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
         }else if (o.brickform != null) {
-            this.color = this.game.getColors()[0].copy();
+            if (this.game != null)
+                this.color = this.game.getColors()[0].copy();
             this.blocks = o.brickform.concat();
         }
 

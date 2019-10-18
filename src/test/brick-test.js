@@ -7,6 +7,13 @@ var setup = defaultGame();
 
 describe("brick", () => {
 
+    it("returns false when collision is detected",function () {
+        var brickA = new Brick({brickform: [[1,1],[1,1]],x:1,y:10});
+        var brickB = new Brick({brickform: [[1,1],[1,1]],x:2,y:10});
+        var result = brickA.willCollide(0,0,[brickB]);
+        expect(result).toEqual(true);
+    });
+
     for (var brickform of setup.brickforms) {
         var i = setup.brickforms.indexOf(brickform);
 
@@ -61,6 +68,5 @@ describe("brick", () => {
         }
 
     }
-    it("has a proper moveLeft property")
 
 });
