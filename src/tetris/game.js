@@ -454,6 +454,8 @@ class TetrisGame {
                     if (brickForm[i1][i2] == 1) {
                         var cx = (x) + (parseInt(i2));
                         var cy = (y) + (parseInt(i1));
+                        if (cy < 0)
+                            continue;
                         result[cy][cx] = true;
                     }
                 }
