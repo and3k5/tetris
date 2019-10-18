@@ -56,7 +56,7 @@ export function getPossibleMoves(game) {
                 throw new Error("not rotating");
         }
 
-        for (var x = movingBrickBase.mostLeft; x < movingBrickBase.mostRight; x++) {
+        for (var x = movingBrickBase.mostLeft; x <= movingBrickBase.mostRight; x++) {
             var clone = cloneGame(cloneBase);
 
             var movingBrick = clone.getMovingBrick();
