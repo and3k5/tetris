@@ -309,6 +309,19 @@ class Brick {
         return this.getWidth();
     }
 
+    willCollide(x,y,bricks = null) {
+        for (const i1 in this.blocks) {
+            for (const i2 in this.blocks[i1]) {
+                if (this.blocks[i1][i2] == 1) {
+                    if ((this.checkCollision(this.x + parseInt(i2) + x, this.y + parseInt(i1) + y, bricks || this.game.bricks) == false)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     canMoveRight(Throw = false) {
         if (this.game.getRUNNING() != true) {
             if (Throw === true)
