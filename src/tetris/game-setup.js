@@ -73,3 +73,22 @@ export function easyGame() {
     ];
     return new TetrisSetup(brickforms, 10, 20);
 }
+
+export function longPieceGame() {
+    const brickforms = [
+        [[0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0]]
+    ];
+    return new TetrisSetup(brickforms, 10, 20);
+}
+
+export function shitGame() {
+    const brickforms = [
+        [[0, 1, 1],
+        [1, 1, 0],
+        [0, 0, 0]],
+    ];
+    return new TetrisSetup(brickforms, 10, 20);
+}
