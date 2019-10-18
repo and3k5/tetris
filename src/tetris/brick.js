@@ -398,23 +398,43 @@ class Brick {
         }
     }
 
-    movedown() {
-        if (this.game.getRUNNING()) {
-            var i;
-            let may_i_fall = true;
-            if (this.moving) {
-                for (const i1 in this.blocks) {
-                    for (const i2 in this.blocks[i1]) {
-                        if (this.blocks[i1][i2] == 1) {
-                            if ((this.checkCollision(this.x + parseInt(i2), this.y + parseInt(i1) + 1, this.game.bricks) == false) || ((this.y + this.getHeight()) >= this.game.HEIGHT)) {
-                                may_i_fall = false;
-                            }
-                        }
+    canMoveDown(Throw = false) {
+        if (this.game.getRUNNING() != true) {
+            if (Throw === true)
+                throw new Error("The game is not running");
+            return false;
+        }
+        if (this.moving != true) {
+            if (Throw === true)
+                throw new Error("The brick is not flagged as moving");
+            return false;
+        }
+
+        for (const i1 in this.blocks) {
+            for (const i2 in this.blocks[i1]) {
+                if (this.blocks[i1][i2] == 1) {
+                    if ((this.y + this.getHeight()) >= this.game.HEIGHT) {
+                        if (Throw === true)
+                            throw new Error("The brick would be out of bounds:" + this.posInfo());
+                        return false;
+                    }
+                    if (this.checkCollision(this.x + parseInt(i2), this.y + parseInt(i1) + 1, this.game.bricks) == false) {
+                        if (Throw === true)
+                            throw new Error("The brick would collide with another brick");
+                        return false;
                     }
                 }
-                if (may_i_fall) {
-                    this.y++;
+            }
+        }
 
+        return true;
+    }
+
+    movedown(Throw = false) {
+        if (this.game.getRUNNING()) {
+            if (this.moving) {
+                if (this.canMoveDown(Throw)) {
+                    this.y++;
                 } else {
                     this.moving = false;
                     if (this.ingame === true)
