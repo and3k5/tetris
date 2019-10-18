@@ -147,14 +147,16 @@ class SimulatorRunner {
         if (this.#movements.length > 0) {
             var brick = this.#movements[0].brick;
             console.log("drawing",brick);
-            brick.color = this.#lastBrick.color.invert().brightness(0.5);;
-            setTimeout(() => this.#game.drawBrick(brick),50);
+            var color = new Color(255, 255, 255, 0.2);
+            // var color = this.#lastBrick.color.invert().brightness(0.5);;
+            setTimeout(() => this.#game.drawBrick(brick,color),50);
         }
     }
 
     start() {
         var runner = this;
         if (this.#game.setup.clickTick === true) {
+            this.#game.ghostDrawing = false;
             this.#game.addEvent("tick", function () {
                 runner.tick();
                 runner.drawMovements();

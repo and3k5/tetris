@@ -555,6 +555,14 @@ class TetrisGame {
         this.getMovingBrick().movedown();
     }
 
+    get ghostDrawing() {
+        return this.#SETTING_GHOST;
+    }
+
+    set ghostDrawing(v) {
+        this.#SETTING_GHOST = v;
+    }
+
     get brickforms() {
         return this.#brickforms;
     }
