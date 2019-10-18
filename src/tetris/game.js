@@ -644,6 +644,16 @@ class TetrisGame {
     moveTowards(x, r = null) {
         console.debug("moving to", x, r);
         var movingBrick = this.getMovingBrick();
+
+        if (typeof (r) === "number") {
+            if (r != this.getMovingBrick().rotation)
+            {
+                console.log("rotating from "+this.getMovingBrick().rotation+" to "+r);
+                this.action_rotate();
+                return;
+            }
+        }
+
         if (movingBrick.x > x) {
             console.debug("left");
             this.action_moveleft();
@@ -655,10 +665,6 @@ class TetrisGame {
         else {
             console.debug("down");
             this.action_smashdown();
-        }
-        if (typeof (r) === "number") {
-            if (r != this.getMovingBrick().rotation)
-                this.action_rotate();
         }
     }
 
