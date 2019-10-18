@@ -20,13 +20,13 @@ class Brick {
             this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
             this.y = Math.round(0 - (this.blocks.length));
             this.game.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
-        }else if (o.brickform != null) {
+        } else if (o.brickform != null) {
             if (this.game != null)
                 this.color = this.game.getColors()[0].copy();
             this.blocks = o.brickform.concat();
         }
 
-        if (typeof(o.x) === "number" && typeof(o.y) === "number") {
+        if (typeof (o.x) === "number" && typeof (o.y) === "number") {
             this.x = o.x;
             this.y = o.y;
         }
@@ -61,6 +61,14 @@ class Brick {
         this.requestUpdate();
     }
 
+    get containerWidth() {
+        return this.blocks[0].length;
+    }
+
+    get containerHeight() {
+        return this.blocks.length;
+    }
+
     requestUpdate() {
         if (this.ingame && (this.game != null)) {
             this.game.PENDINGUPDATE = true;
@@ -70,6 +78,26 @@ class Brick {
     resetPosition() {
         this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
         this.y = Math.round(0 - (this.blocks.length));
+    }
+
+    getAbsoluteBlocks(blocks = null, x = 0, y = 0) {
+        if (blocks == null)
+            blocks = this.blocks;
+
+        var result = [];
+
+        var offsetX = this.x + x;
+        var offsetY = this.y + y;
+
+        for (const i1 in blocks) {
+            for (const i2 in blocks[i1]) {
+                if (blocks[i1][i2] == 1) {
+                    result.push({ x: offsetX + parseInt(i2), y: offsetY + parseInt(i1) });
+                }
+            }
+        }
+
+        return result;
     }
 
     checkCollision(x, y, brcks) {
@@ -159,15 +187,19 @@ class Brick {
     }
 
     rotate_okay(brick, bl) {
-        for (const i1 in bl) {
-            for (const i2 in bl[i1]) {
-                if (bl[i1][i2] == 1) {
-                    if ((brick.checkCollision(brick.x + parseInt(i2), brick.y + parseInt(i1), this.game.bricks) == false) || ((brick.y + Brick.emulate(bl).getHeight()) >= this.game.HEIGHT) || ((brick.x + Brick.emulate(bl).getWidth() + Brick.emulate(bl).getBlockX()) > (this.game.getWIDTH())) || ((brick.x + Brick.emulate(bl).getBlockX()) < 0)) {
-                        return false;
-                    }
-                }
-            }
-        }
+        var emulatedBrick = Brick.emulate(bl);
+        if ((brick.y + emulatedBrick.getHeight()) >= this.game.HEIGHT)
+            return false;
+
+        if (((brick.x + emulatedBrick.getWidth() + emulatedBrick.getBlockX()) > (this.game.getWIDTH())))
+            return false;
+
+        if (((brick.x + emulatedBrick.getBlockX()) < 0))
+            return false;
+
+        if (this.willCollide(0, 0, null, bl))
+            return false;
+
         return true;
     }
 
@@ -250,21 +282,16 @@ class Brick {
             return false;
         }
 
-        for (const i1 in this.blocks) {
-            for (const i2 in this.blocks[i1]) {
-                if (this.blocks[i1][i2] == 1) {
-                    if (((this.x + this.getBlockX()) <= 0)) {
-                        if (Throw === true)
-                            throw new Error("The brick would be out of bounds:"+this.posInfo());
-                        return false;
-                    }
-                    if ((this.checkCollision(this.x + parseInt(i2) - 1, this.y + parseInt(i1), this.game.bricks) == false)) {
-                        if (Throw === true)
-                            throw new Error("The brick would collide with another brick");
-                        return false;
-                    }
-                }
-            }
+        if (((this.x + this.getBlockX()) <= 0)) {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds:" + this.posInfo());
+            return false;
+        }
+
+        if (this.willCollide(-1, 0)) {
+            if (Throw === true)
+                throw new Error("The brick would collide with another brick");
+            return false;
         }
 
         return true;
@@ -310,16 +337,28 @@ class Brick {
         return this.getWidth();
     }
 
-    willCollide(x,y,bricks = null) {
-        for (const i1 in this.blocks) {
-            for (const i2 in this.blocks[i1]) {
-                if (this.blocks[i1][i2] == 1) {
-                    if ((this.checkCollision(this.x + parseInt(i2) + x, this.y + parseInt(i1) + y, bricks || this.game.bricks) == false)) {
+    willCollide(x, y, bricks = null, blocks = null) {
+        if (blocks == null)
+            blocks = this.blocks;
+
+        var thisBlocks = this.getAbsoluteBlocks(blocks, x, y);
+
+        if (bricks == null)
+            bricks = this.game.bricks;
+
+        for (var brick of bricks) {
+            if (brick === this)
+                continue;
+
+            var opponentBlocks = brick.getAbsoluteBlocks();
+
+            for (var thisBlock of thisBlocks) {
+                for (var opponentBlock of opponentBlocks)
+                    if (opponentBlock.x === thisBlock.x && opponentBlock.y === thisBlock.y)
                         return true;
-                    }
-                }
             }
         }
+
         return false;
     }
 
@@ -335,21 +374,16 @@ class Brick {
             return false;
         }
 
-        for (const i1 in this.blocks) {
-            for (const i2 in this.blocks[i1]) {
-                if (this.blocks[i1][i2] == 1) {
-                    if (((this.x + this.getWidth() + this.getBlockX()) >= (this.game.getWIDTH()))) {
-                        if (Throw === true)
-                            throw new Error("The brick would be out of bounds:"+this.posInfo());
-                        return false;
-                    }
-                    if ((this.checkCollision(this.x + parseInt(i2) + 1, this.y + parseInt(i1), this.game.bricks) == false)) {
-                        if (Throw === true)
-                            throw new Error("The brick would collide with another brick");
-                        return false;
-                    }
-                }
-            }
+        if (((this.x + this.getWidth() + this.getBlockX()) >= (this.game.getWIDTH()))) {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds:" + this.posInfo());
+            return false;
+        }
+
+        if (this.willCollide(1, 0)) {
+            if (Throw === true)
+                throw new Error("The brick would collide with another brick");
+            return false;
         }
 
         return true;
@@ -424,21 +458,16 @@ class Brick {
             return false;
         }
 
-        for (const i1 in this.blocks) {
-            for (const i2 in this.blocks[i1]) {
-                if (this.blocks[i1][i2] == 1) {
-                    if ((this.y + this.getHeight()) >= this.game.HEIGHT) {
-                        if (Throw === true)
-                            throw new Error("The brick would be out of bounds:" + this.posInfo());
-                        return false;
-                    }
-                    if (this.checkCollision(this.x + parseInt(i2), this.y + parseInt(i1) + 1, this.game.bricks) == false) {
-                        if (Throw === true)
-                            throw new Error("The brick would collide with another brick");
-                        return false;
-                    }
-                }
-            }
+        if ((this.y + this.getHeight()) >= this.game.HEIGHT) {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds:" + this.posInfo());
+            return false;
+        }
+
+        if (this.willCollide(0, 1)) {
+            if (Throw === true)
+                throw new Error("The brick would collide with another brick");
+            return false;
         }
 
         return true;
@@ -476,30 +505,18 @@ class Brick {
     }
 
     getLowestPosition() {
-        const br = this.game.bricks;
         const h = this.getHeight();
-        const this_x = this.x;
-        let this_y = this.y;
-        let stillgood = true;
-        let isgood = true;
-        while ((stillgood)) {
-            isgood = true;
-            for (const i1 in this.blocks) {
-                for (const i2 in this.blocks[i1]) {
-                    if (this.blocks[i1][i2] == 1) {
-                        if ((this.checkCollision(this_x + parseInt(i2), this_y + parseInt(i1), br) == false) || ((this_y + h) > this.game.HEIGHT)) {
-                            isgood = false;
-                        } else { }
-                    }
-                }
-            }
-            if (isgood == true) {
-                this_y++;
-            } else {
-                stillgood = false;
-            }
+        let additionalY = 0;
+        while (true) {
+            if ((this.y + additionalY + h) > this.game.HEIGHT)
+                break;
+
+            if (this.willCollide(0, additionalY))
+                break;
+
+            additionalY++;
         }
-        return this_y - 1;
+        return (this.y + additionalY) - 1;
     }
 
     slice_up() {
