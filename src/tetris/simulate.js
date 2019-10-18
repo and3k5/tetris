@@ -4,8 +4,15 @@ import * as console from "../utils/trace.js";
 
 export function cloneGame(game) {
     var bricks = game.bricks.concat().map(b => b.clone());
-    var clone = new TetrisGame(game.setup, { bricks });
+
+    var extra = { bricks };
+
+    if (game.HOLDING != null)
+        extra.holding = game.HOLDING.clone();
+
+    var clone = new TetrisGame(game.setup, extra);
     clone.brickforms = game.brickforms;
+    clone.HOLDINGCOUNT = game.HOLDINGCOUNT;
     return clone;
 }
 
@@ -40,11 +47,10 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
     }
 }
 
-export function getPossibleMoves(game) {
-    var positions = [];
-
-    var realMovingBrick = game.getMovingBrick();
+function getPositions(game, usesHolding = false) {
     var maxWidth = game.WIDTH * 2;
+
+    var positions = [];
 
     for (var i = 0; i < 4; i++) {
         var cloneBase = cloneGame(game);
@@ -65,28 +71,35 @@ export function getPossibleMoves(game) {
 
             movingBrick.y = movingBrick.getLowestPosition();
 
-            var score = 0;
-
             var brickMatrix = clone.renderBrickMatrix();
-
-            var str = brickMatrix.map(x => x.map(y => y ? "X" : "0").join("")).join("\n");
-
-            //console.debug(str);
-
-            //console.debug(movingBrick.blocks.map(x => x.join("")).join("\r\n"));
-            //console.debug(brickMatrix.map(x => x.map(x => x ? "1" : "0").join("")).join("\r\n"));
-
-            positions.push({ brick: movingBrick, x: movingBrick.x, y: movingBrick.y, brickMatrix, rotation: movingBrick.rotation });
-
-            // for (var _y = 0; _y < brickMatrix.length; _y++) {
-            //     for (var _x = 0; _x < brickMatrix[_y].length; _x++) {
-            //         if (brickMatrix[_y][_x] === true)
-            //             game.drawSingleBrick(_x, _y, Color.Black());
-            //     }
-            // }
-
-            //game.drawBrick(movingBrick);
+            positions.push(
+                {
+                    brick: movingBrick,
+                    x: movingBrick.x,
+                    y: movingBrick.y,
+                    brickMatrix,
+                    rotation: movingBrick.rotation,
+                    needsHolding: usesHolding,
+                }
+            );
         }
+    }
+
+    return positions;
+}
+
+export function getPossibleMoves(game) {
+    var positions = [];
+
+    for (var pos of getPositions(game))
+        positions.push(pos);
+
+    if (game.canUseHolding) {
+        var clone = cloneGame(game);
+        clone.holdingShift();
+
+        for (var pos of getPositions(clone, true))
+            positions.push(pos);
     }
 
     for (var setup of positions) {
@@ -141,8 +154,6 @@ export function getPossibleMoves(game) {
         return b.brick.y - a.brick.y;
     });
     console.debug("POSITIONS", positions);
-    console.debug("movingBrick", movingBrick);
-    console.debug("got", positions.length, "should get", (movingBrickBase.mostRight - movingBrickBase.mostLeft) * 4)
     return positions;
 }
 
@@ -161,10 +172,10 @@ class SimulatorRunner {
     drawMovements() {
         if (this.#movements.length > 0) {
             var brick = this.#movements[0].brick;
-            console.debug("drawing",brick);
+            console.debug("drawing", brick);
             var color = new Color(255, 255, 255, 0.2);
             // var color = this.#lastBrick.color.invert().brightness(0.5);;
-            setTimeout(() => this.#game.drawBrick(brick,color),50);
+            setTimeout(() => this.#game.drawBrick(brick, color), 50);
         }
     }
 
@@ -186,19 +197,26 @@ class SimulatorRunner {
     }
 
     getTimeout() {
-        return 100 + (Math.random() * 150);
+        return 50;
     }
 
     tick() {
         if (this.#game.getRUNNING() !== true)
-            return;
+        return;
         var currentMovingBrick = this.#game.getMovingBrick();
         if (this.#movements.length === 0 || this.#lastBrick != currentMovingBrick) {
             console.debug("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
             this.#movements = getPossibleMoves(this.#game);
             this.#lastBrick = currentMovingBrick;
         }
-        this.#game.moveTowards(this.#movements[0].x, this.#movements[0].rotation);
+        console.log(this.#movements[0].score);
+        if (this.#movements[0].needsHolding === true) {
+            this.#game.holdingShift();
+            this.#movements[0].needsHolding = false;
+        }else {
+            this.#game.moveTowards(this.#movements[0].x, this.#movements[0].rotation);
+        }
+
         console.debug("move", this.#movements[0].x);
     }
 }

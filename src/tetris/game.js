@@ -78,6 +78,11 @@ class TetrisGame {
                     brick.game = this;
                 }
             }
+
+            if (extra.holding != null) {
+                this.#HOLDING = extra.holding;
+                this.#HOLDING.game = this;
+            }
         }
 
         let // [number] Board font size
@@ -302,7 +307,6 @@ class TetrisGame {
             scoreelement = sc;
             setScore(0);
             this.HOLDINGCOUNT = 0;
-            this.#HOLDING = null;
             this.bricks.push(new Brick({
                 ingame: true,
                 game: this
@@ -505,8 +509,12 @@ class TetrisGame {
         return 1000;
     }
 
+    get canUseHolding() {
+        return this.HOLDINGCOUNT < 1;
+    }
+
     holdingShift() {
-        if (this.HOLDINGCOUNT < 1) {
+        if (this.canUseHolding) {
             if (this.#HOLDING == null) {
                 this.#HOLDING = this.getMovingBrick();
                 this.bricks[this.getMovingBrick().findMe()] = new Brick({
@@ -570,6 +578,10 @@ class TetrisGame {
 
     set brickforms(val) {
         this.#brickforms = val;
+    }
+
+    get HOLDING() {
+        return this.#HOLDING;
     }
 
     get HOLDINGCOUNT() {
