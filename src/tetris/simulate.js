@@ -130,7 +130,7 @@ export function getPossibleMoves(game) {
             clearingLines,
         };
 
-        setup.score = (clearingLines * 3) + (0 - holes * 1) + (0 - height * 2);
+        setup.score = (clearingLines * 2) + (0 - holes * 1) + (0 - height * 2);
 
     }
     positions = positions.sort((a, b) => {
