@@ -95,6 +95,13 @@ export function getPossibleMoves(game) {
 
         var holes = 0;
         var height = 0;
+        var clearingLines = 0;
+
+        for (var y = matrix.length - 1; y >= 0; y--) {
+            if (matrix[y].filter(x => x !== true).length === 0) {
+                clearingLines++;
+            }
+        }
 
         for (var x = 0; x < game.WIDTH; x++) {
             var countingHoles = false;
@@ -120,9 +127,10 @@ export function getPossibleMoves(game) {
         setup.scores = {
             holes,
             height,
+            clearingLines,
         };
 
-        setup.score = (0 - holes * 1) + (0 - height * 2);
+        setup.score = (clearingLines * 3) + (0 - holes * 1) + (0 - height * 2);
 
     }
     positions = positions.sort((a, b) => {
