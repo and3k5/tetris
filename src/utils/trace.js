@@ -9,32 +9,10 @@ if (global.development === true) {
     _info = true;
 }
 
-export function debug(...args) {
-    if (_debug !== true)
-        return;
-    console.debug.apply(console, args);
-}
+function Void() { }
 
-export function info(...args) {
-    if (_info !== true)
-        return;
-    console.info.apply(console, args);
-}
-
-export function log(...args) {
-    if (_log !== true)
-        return;
-    console.log.apply(console, args);
-}
-
-export function warn(...args) {
-    if (_warn !== true)
-        return;
-    console.warn.apply(console, args);
-}
-
-export function error(...args) {
-    if (_error !== true)
-        return;
-    console.error.apply(console, args);
-}
+export const debug = _debug === true ? console.debug : Void;
+export const info = _info === true ? console.info : Void;
+export const log = _log === true ? console.log : Void;
+export const warn = _warn === true ? console.warn : Void;
+export const error = _error === true ? console.error : Void;
