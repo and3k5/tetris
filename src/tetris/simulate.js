@@ -98,7 +98,7 @@ export function getPossibleMoves(game) {
 
         for (var x = 0; x < game.WIDTH; x++) {
             var countingHoles = false;
-
+            var xHeight = 0;
             for (var y = matrix.length - 1; y >= 0; y--) {
                 if (matrix[y][x] === true && countingHoles != true) {
                     countingHoles = true;
@@ -110,10 +110,11 @@ export function getPossibleMoves(game) {
 
                 if (matrix[y][x] === true) {
                     var currentHeight = matrix.length - y
-                    if (height < currentHeight)
-                        height = currentHeight;
+                    if (xHeight < currentHeight)
+                        xHeight = currentHeight;
                 }
             }
+            height += xHeight;
         }
 
         setup.scores = {
@@ -124,7 +125,12 @@ export function getPossibleMoves(game) {
         setup.score = (0 - holes * 1) + (0 - height * 2);
 
     }
-    positions = positions.sort((a, b) => b.score - a.score);
+    positions = positions.sort((a, b) => {
+        var diff = b.score - a.score;
+        if (diff !== 0)
+            return diff;
+        return b.brick.y - a.brick.y;
+    });
     console.log("POSITIONS", positions);
     console.log("movingBrick", movingBrick);
     console.log("got", positions.length, "should get", (movingBrickBase.mostRight - movingBrickBase.mostLeft) * 4)
