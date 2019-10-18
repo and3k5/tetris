@@ -687,6 +687,14 @@ class TetrisGame {
             handler,
         });
     }
+
+    loseView() {
+        playSound("gamelose");
+        if (this.setup.simulator === true)
+        {
+            setTimeout(() => window.location.reload(),2000);
+        }
+    }
 }
 
 export default TetrisGame
