@@ -19,9 +19,15 @@ export function init(container) {
         container.append(element);
     }
 
-    var setup = defaultGame();
+    var setup;
 
     var url = new URL(location.href);
+    switch (url.searchParams.get("setup")) {
+        default:
+            setup = defaultGame();
+            break;
+    }
+
     if (url.searchParams.get("simulate") === "1")
         setup.simulator = true;
 
