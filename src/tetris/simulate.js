@@ -209,7 +209,7 @@ class SimulatorRunner {
             this.#movements = getPossibleMoves(this.#game);
             this.#lastBrick = currentMovingBrick;
         }
-        console.log(this.#movements[0].score);
+        console.debug(this.#movements[0].score);
         if (this.#movements[0].needsHolding === true) {
             this.#game.holdingShift();
             this.#movements[0].needsHolding = false;
