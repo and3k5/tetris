@@ -74,6 +74,7 @@ function getPositions(game, usesHolding = false) {
                 e.message += " (skipped)";
                 console.error(e);
                 continue;
+                // TODO game locks down, even if skipped
             }
 
             movingBrick.y = movingBrick.getLowestPosition();
