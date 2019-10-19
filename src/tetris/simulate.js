@@ -67,7 +67,14 @@ function getPositions(game, usesHolding = false) {
             var clone = cloneGame(cloneBase);
 
             var movingBrick = clone.getMovingBrick();
-            arrangeBrick(clone, movingBrick, x, maxWidth);
+            try {
+                arrangeBrick(clone, movingBrick, x, maxWidth);
+            }
+            catch (e) {
+                e.message += " (skipped)";
+                console.error(e);
+                continue;
+            }
 
             movingBrick.y = movingBrick.getLowestPosition();
 
