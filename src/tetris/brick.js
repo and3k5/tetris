@@ -495,7 +495,7 @@ class Brick {
                         }));
                         this.game.HOLDINGCOUNT = 0;
                     } else {
-                        menuNav("gamelose");
+                        this.game.loseView();
                         if (this.ingame === true)
                             playSound("gamelose");
                     }
