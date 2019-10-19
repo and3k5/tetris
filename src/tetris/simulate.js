@@ -197,7 +197,7 @@ class SimulatorRunner {
     }
 
     getTimeout() {
-        return 10;
+        return 100;
     }
 
     tick() {
