@@ -11,6 +11,7 @@ body {
 
 @import "tetris-large.css";
 @import "tetris-medium.css";
+@import "lite-view.css";
 
 canvas#game {
 	background: linear-gradient(rgb(100,100,100), rgb(80,80,80));

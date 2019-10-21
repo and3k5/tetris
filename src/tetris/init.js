@@ -43,6 +43,9 @@ export function init(container) {
     if (url.searchParams.get("clickTick") === "1")
         setup.clickTick = true;
 
+    if (url.searchParams.get("view") === "lite")
+        container.el.ownerDocument.body.classList.add("lite-view");
+
     var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
     var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
     var nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
