@@ -73,6 +73,7 @@ function getPositions(game, usesHolding = false) {
             catch (e) {
                 e.message += " (skipped)";
                 console.error(e);
+                window.location.reload();
                 continue;
                 // TODO game locks down, even if skipped
             }
