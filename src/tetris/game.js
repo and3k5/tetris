@@ -308,10 +308,7 @@ class TetrisGame {
             scoreelement = sc;
             setScore(0);
             this.HOLDINGCOUNT = 0;
-            this.bricks.push(new Brick({
-                ingame: true,
-                game: this
-            }));
+            this.addNewBrick();
 
             var runEvent = (function (name) {
                 for (var event of this.#events) {
@@ -517,14 +514,29 @@ class TetrisGame {
         return this.HOLDINGCOUNT < 1;
     }
 
+    addNewBrick(pos = -1) {
+        var brick = new Brick({ game: this, ingame: true });
+
+        const brfrm = this.brickforms;
+        const rnd = this.nextRandom;
+        brick.color = this.getColors()[rnd].copy();
+        brick.blocks = brfrm[rnd].concat();
+        brick.moving = true;
+        brick.resetPosition();
+        this.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
+
+        if (pos === -1) {
+            this.bricks.push(brick);
+        } else {
+            this.bricks[pos] = brick;
+        }
+    }
+
     holdingShift() {
         if (this.canUseHolding) {
             if (this.#HOLDING == null) {
                 this.#HOLDING = this.getMovingBrick();
-                this.bricks[this.getMovingBrick().findMe()] = new Brick({
-                    ingame: true,
-                    game: this
-                });
+                this.addNewBrick(this.getMovingBrick().findMe());
                 this.HOLDINGCOUNT++;
             } else {
                 const HOLDING2 = this.#HOLDING;

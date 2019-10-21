@@ -11,16 +11,7 @@ class Brick {
         this.game = o.game;
         this.ingame = o.ingame;
 
-        if (this.ingame) {
-            const brfrm = this.game.brickforms;
-            const rnd = this.game.nextRandom;
-            this.color = this.game.getColors()[rnd].copy();
-            this.blocks = brfrm[rnd].concat();
-            this.moving = true;
-            this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
-            this.y = Math.round(0 - (this.blocks.length));
-            this.game.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
-        } else if (o.brickform != null) {
+        if (o.brickform != null) {
             if (this.game != null)
                 this.color = this.game.getColors()[0].copy();
             this.blocks = o.brickform.concat();
@@ -457,10 +448,7 @@ class Brick {
                     this.game.bricks.push(sliced[i])
                 }
                 this.game.checkLines();
-                this.game.bricks.push(new Brick({
-                    ingame: true,
-                    game: this.game
-                }));
+                this.game.addNewBrick();
                 this.game.HOLDINGCOUNT = 0;
             } else {
                 this.game.loseView();
@@ -514,10 +502,7 @@ class Brick {
                             this.game.bricks.push(sliced[i]);
                         }
                         this.game.checkLines();
-                        this.game.bricks.push(new Brick({
-                            ingame: true,
-                            game: this.game
-                        }));
+                        this.game.addNewBrick();
                         this.game.HOLDINGCOUNT = 0;
                     } else {
                         this.game.loseView();
