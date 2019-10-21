@@ -226,7 +226,7 @@ class SimulatorRunner {
 
     tick() {
         if (this.#game.getRUNNING() !== true)
-        return;
+            return;
         var currentMovingBrick = this.#game.getMovingBrick();
         if (this.#movements.length === 0 || this.#lastBrick != currentMovingBrick) {
             console.debug("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
