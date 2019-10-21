@@ -186,39 +186,64 @@ class Brick {
         }
     }
 
-    rotate_okay(brick, bl) {
+    rotate_okay(brick, bl, Throw = false) {
         var emulatedBrick = Brick.emulate(bl);
         if ((brick.y + emulatedBrick.getHeight()) >= this.game.HEIGHT)
+        {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds:" + this.posInfo());
             return false;
+        }
 
         if (((brick.x + emulatedBrick.getWidth() + emulatedBrick.getBlockX()) > (this.game.getWIDTH())))
+        {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds:" + this.posInfo());
             return false;
+        }
 
         if (((brick.x + emulatedBrick.getBlockX()) < 0))
+        {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds:" + this.posInfo());
             return false;
+        }
 
         if (this.willCollide(0, 0, null, bl))
+        {
+            if (Throw === true)
+                throw new Error("The brick would collide with another brick");
             return false;
+        }
 
         return true;
     }
 
-    rotate() {
-        if (this.game.getRUNNING()) {
-            const blocks2 = [];
-            const w = this.blocks[0].length;
-            const h = this.blocks.length;
-            let x;
-            let y;
-            let row;
-            for (y = 0; y < h; y++) {
-                row = [];
-                for (x = 0; x < w; x++) {
-                    row[x] = this.blocks[w - x - 1][y];
-                }
-                blocks2[y] = row;
+    getRotatedBlocks() {
+        const blocks2 = [];
+        const w = this.blocks[0].length;
+        const h = this.blocks.length;
+        let x;
+        let y;
+        let row;
+        for (y = 0; y < h; y++) {
+            row = [];
+            for (x = 0; x < w; x++) {
+                row[x] = this.blocks[w - x - 1][y];
             }
-            if (this.rotate_okay(this, blocks2)) {
+            blocks2[y] = row;
+        }
+        return blocks2;
+    }
+
+    canRotate(Throw = false,blocks2 = null) {
+        return this.rotate_okay(this,blocks2 || this.getRotatedBlocks(),Throw);
+    }
+
+    rotate(Throw = false) {
+        if (this.game.getRUNNING()) {
+            const blocks2 = this.getRotatedBlocks();
+            if (this.canRotate(Throw, blocks2)) {
                 //yeah
                 this.requestUpdate();
             } else {

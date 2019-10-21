@@ -169,6 +169,7 @@ class SimulatorRunner {
     #lastBrick;
     #movements = [];
     #game;
+    #cancelled = false;
     constructor() {
 
     }
@@ -187,21 +188,36 @@ class SimulatorRunner {
         }
     }
 
+    cancel() {
+        this.#cancelled = true;
+    }
+
+    get isCancelled() {
+        return this.#cancelled;
+    }
+
     start() {
         var runner = this;
         if (this.#game.setup.clickTick === true) {
             this.#game.ghostDrawing = false;
             this.#game.addEvent("tick", function () {
+                if (runner.isCancelled !== false)
+                    return;
                 runner.tick();
                 runner.drawMovements();
             })
         }else {
             const ticker = () => {
+                if (runner.isCancelled !== false)
+                    return;
                 runner.tick();
                 setTimeout(ticker, runner.getTimeout());
             };
             setTimeout(ticker, 0);
         }
+        this.#game.addEvent("lose",function () {
+            runner.cancel();
+        });
     }
 
     getTimeout() {

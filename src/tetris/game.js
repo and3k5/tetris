@@ -65,6 +65,10 @@ class TetrisGame {
     // events
     #events = [];
 
+    #RUNNING = true;
+
+    #runEvent;
+
     constructor(gameSetup, extra = null) {
         this.#setup = gameSetup;
         this.#WIDTH = gameSetup.width;
@@ -90,9 +94,6 @@ class TetrisGame {
 
         let // [number] Score font size
             GRAPHIC_SCORE_FONTSIZE;
-
-        let // [bool] running
-            RUNNING = true;
 
         let // [Graphic Context] Game holding brick 2d context
             h_ctx;
@@ -133,13 +134,13 @@ class TetrisGame {
         }
 
         this.getColors = () => colors;
-        this.getRUNNING = () => RUNNING;
+        this.getRUNNING = () => this.#RUNNING;
         this.getWIDTH = () => game.#WIDTH;
 
 
 
         function clearLine(l) {
-            if (RUNNING) {
+            if (this.#RUNNING) {
                 setScore(SCORE + 1);
                 playSound("gamerow");
                 var bricks = game.bricks;
@@ -188,7 +189,7 @@ class TetrisGame {
         }
         this.checkLines = () => {
             //check for full lines
-            if (RUNNING) {
+            if (this.#RUNNING) {
                 let cx;
                 for (let i = this.#HEIGHT; i > 1; i--) {
                     let cnt = 0;
@@ -234,37 +235,37 @@ class TetrisGame {
                 case 37:
                     // left
                     e.preventDefault();
-                    if (RUNNING)
+                    if (game.getRUNNING())
                         game.action_moveleft();
                     break;
                 case 38:
                     // up
                     e.preventDefault();
-                    if (RUNNING)
+                    if (game.getRUNNING())
                         game.action_rotate();
                     break;
                 case 39:
                     // right
                     e.preventDefault();
-                    if (RUNNING)
+                    if (game.getRUNNING())
                         game.action_moveright();
                     break;
                 case 40:
                     // down
                     e.preventDefault();
-                    if (RUNNING)
+                    if (game.getRUNNING())
                         game.action_movedown();
                     break;
                 case 32:
                     // space
                     e.preventDefault();
-                    if (RUNNING && e.repeat !== true)
+                    if (game.getRUNNING() && e.repeat !== true)
                         game.action_smashdown();
                     break;
                 case 27:
                     // escape
                     e.preventDefault();
-                    if (RUNNING) {
+                    if (game.getRUNNING()) {
                         // ingame
                         menuNav("paused");
                         playSound("menuback");
@@ -273,7 +274,7 @@ class TetrisGame {
                 case 16:
                     // shift
                     e.preventDefault();
-                    if (RUNNING) {
+                    if (game.getRUNNING()) {
                         game.holdingShift();
                     }
                     break;
@@ -303,7 +304,7 @@ class TetrisGame {
             GRAPHIC_BOARD_FONTSIZE = this.#BRICKSIZE - 5;
             GRAPHIC_SCORE_FONTSIZE = this.#BRICKSIZE;
             WHERE = 1;
-            RUNNING = true;
+            this.#RUNNING = true;
             scoreelement = sc;
             setScore(0);
             this.HOLDINGCOUNT = 0;
@@ -321,6 +322,7 @@ class TetrisGame {
             }).bind(this);
 
             gameController.gameControlDown(this, g, runEvent);
+            this.#runEvent = runEvent;
 
             if (this.setup.simulator === true) {
                 attachSimulator(this);
@@ -692,6 +694,8 @@ class TetrisGame {
 
     loseView() {
         playSound("gamelose");
+        this.#RUNNING = false;
+        this.#runEvent("lose");
         if (this.setup.simulator === true)
         {
             setTimeout(() => window.location.reload(),2000);
