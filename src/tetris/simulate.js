@@ -171,6 +171,8 @@ class SimulatorRunner {
     #movements = [];
     #game;
     #cancelled = false;
+    #mode = "assist";
+    #simulation = [];
     constructor() {
 
     }
@@ -225,9 +227,26 @@ class SimulatorRunner {
         return 100;
     }
 
+    setMode(mode) {
+        this.#mode = mode;
+    }
+
+    setSimulation(simulation) {
+        this.#simulation = JSON.parse(JSON.stringify(simulation));
+    }
+
     tick() {
         if (this.#game.getRUNNING() !== true)
             return;
+        if (this.#mode === "assist")
+            this.assistTick();
+        else if (this.#mode === "playback")
+            this.playbackTick();
+        else
+            throw new Error("Mode is not supported: " + this.#mode);
+    }
+
+    assistTick() {
         var currentMovingBrick = this.#game.getMovingBrick();
         if (this.#movements.length === 0 || this.#lastBrick != currentMovingBrick) {
             console.debug("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
@@ -244,10 +263,18 @@ class SimulatorRunner {
 
         console.debug("move", this.#movements[0].x);
     }
+
+    playbackTick() {
+        // TODO read #simulation
+    }
 }
 
 export function attachSimulator(game) {
     var ticker = new SimulatorRunner();
     ticker.attach(game);
+    if (Array.isArray(game.setup.simulation)) {
+        ticker.setMode("playback");
+        ticker.setSimulation(game.setup.simulation);
+    }
     ticker.start();
 }

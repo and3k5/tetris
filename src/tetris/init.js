@@ -37,8 +37,19 @@ export function init(container) {
             break;
     }
 
-    if (url.searchParams.get("simulate") === "1")
-        setup.simulator = true;
+    switch (url.searchParams.get("simulate")) {
+        case "1":
+            setup.simulator = true;
+            break;
+        case "assistbug":
+            setup.simulator = true;
+            setup.simulation = [
+
+
+            ];
+            break;
+    }
+
 
     if (url.searchParams.get("clickTick") === "1")
         setup.clickTick = true;
