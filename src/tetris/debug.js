@@ -8,6 +8,14 @@ export function initDebug(parent, container, game) {
     var element = DocumentUtil.stringToElement(htmlLoad);
     debugContainer.append(element);
 
+    var clickTick = debugContainer.querySelector("[data-target='clickTick']");
+    clickTick.el.addEventListener("change", function (ev) {
+        game.setup.clickTick = ev.target.checked;
+    });
+    clickTick.react(() => game.setup.clickTick).addHandler(v => {
+        clickTick.el.checked = v
+    });
+
     var simulateCount = debugContainer.querySelector("[data-target='simulateCount']");
     var simulateButton = debugContainer.querySelector("[data-target='simulateButton']");
 
