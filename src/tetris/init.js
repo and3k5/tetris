@@ -3,7 +3,7 @@ import "regenerator-runtime/runtime";
 import { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
-import { initDebug } from "./init-debug.js";
+import { initDebug } from "./debug.js";
 
 import * as htmlLoad from "./game.html";
 
