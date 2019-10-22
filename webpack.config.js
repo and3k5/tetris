@@ -16,6 +16,7 @@ module.exports = function (env) {
     };
 
     const mainConfig = Object.assign({}, commonConfig, {
+        entry: "./src/index-browser.js",
         module: {
             rules: [
                 {
