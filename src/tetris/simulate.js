@@ -282,12 +282,14 @@ class SimulatorRunner {
     }
 }
 
-export function attachSimulator(game) {
+export function attachSimulator(game,start = true) {
     var ticker = new SimulatorRunner();
     ticker.attach(game);
     if (Array.isArray(game.setup.simulation)) {
         ticker.setMode("playback");
         ticker.setSimulation(game.setup.simulation);
     }
-    ticker.start();
+    if (start === true)
+        ticker.start();
+    return ticker;
 }

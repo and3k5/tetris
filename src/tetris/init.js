@@ -89,6 +89,10 @@ export function init(container) {
     var score = container.querySelector("[data-target=score]").el;
 
     tetrisgame = new TetrisGame(setup);
+
+    if (url.searchParams.get("debug") === "1")
+        initDebug(container.parentElement,container.el,tetrisgame);
+
     tetrisgame.init(
         gameCanvas,
         holdingCanvas,
