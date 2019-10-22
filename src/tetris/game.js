@@ -47,6 +47,8 @@ class TetrisGame {
     // next random brick pos
     #nextRandom;
 
+    #currentSequence = -1;
+
     // different type of bricks in game
     #brickforms;
 
@@ -124,7 +126,7 @@ class TetrisGame {
 
         this.brickforms = gameSetup.brickforms;
         const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
-        this.nextRandom = Math.round(Math.random() * (this.brickforms.length - 1));
+        this.setNextRandom();
 
         var game = this;
 
@@ -523,7 +525,7 @@ class TetrisGame {
         brick.blocks = brfrm[rnd].concat();
         brick.moving = true;
         brick.resetPosition();
-        this.nextRandom = Math.round(Math.random() * (brfrm.length - 1));
+        this.setNextRandom();
 
         if (pos === -1) {
             this.bricks.push(brick);
@@ -622,6 +624,15 @@ class TetrisGame {
 
     set nextRandom(v) {
         this.#nextRandom = v;
+    }
+
+    setNextRandom() {
+        if (Array.isArray(this.setup.sequence)) {
+            this.#currentSequence = (this.#currentSequence + 1) % this.setup.sequence.length;
+            this.nextRandom = this.setup.sequence[this.#currentSequence];
+        }else{
+            this.nextRandom = Math.round(Math.random() * (this.brickforms.length - 1));
+        }
     }
 
     get WIDTH() {

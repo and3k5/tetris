@@ -10,6 +10,9 @@ export class TetrisSetup {
     // game height
     #height;
 
+    // brick sequence
+    #sequence = null;
+
     /**
      * 
      * @param {BrickFormBase[]} brickforms 
@@ -30,6 +33,14 @@ export class TetrisSetup {
 
     get height() {
         return this.#height;
+    }
+
+    get sequence() {
+        return this.#sequence;
+    }
+
+    setSequence() {
+        this.#sequence = this.brickforms.concat().map((v,i) => i);
     }
 }
 
@@ -64,6 +75,26 @@ export function defaultGame() {
         [0, 1, 0, 0]]
     ];
     return new TetrisSetup(brickforms, 10, 20);
+}
+
+export function easyGame2() {
+    const brickforms = [
+        [[0, 1, 0],
+        [0, 1, 0],
+        [0, 1, 1]],
+
+        [[0, 1, 0],
+        [0, 1, 0],
+        [1, 1, 0]],
+
+        [[0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0]]
+    ];
+    var setup = new TetrisSetup(brickforms, 10, 20);
+    setup.setSequence();
+    return setup;
 }
 
 export function easyGame() {

@@ -1,8 +1,9 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import { defaultGame, easyGame, longPieceGame, shitGame } from "./game-setup.js";
+import { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
+import { initDebug } from "./init-debug.js";
 
 import * as htmlLoad from "./game.html";
 
@@ -26,6 +27,9 @@ export function init(container) {
         case "ez":
             setup = easyGame();
             break;
+        case "ez2":
+            setup = easyGame2();
+            break;
         case "long":
             setup = longPieceGame();
             break;
@@ -47,6 +51,28 @@ export function init(container) {
 
 
             ];
+
+            var time = 0;
+
+            for (var i = 0;i<5;i++) {
+                for (var j = 0;j<4;j++) {
+                    setup.simulation.push({
+                        type: "nextRandom",
+                        val: 0,
+                        time: time+=100,
+                    });
+                    setup.simulation.push({
+                        type: "nextRandom",
+                        val: 0,
+                        time: time+=100,
+                    });
+                }
+                setup.simulation.push({
+                    type: "nextRandom",
+                    val: 0,
+                    time: time+=100,
+                });
+            }
             break;
     }
 

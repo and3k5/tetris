@@ -173,6 +173,7 @@ class SimulatorRunner {
     #cancelled = false;
     #mode = "assist";
     #simulation = [];
+    #starttime = 0;
     constructor() {
 
     }
@@ -201,6 +202,7 @@ class SimulatorRunner {
 
     start() {
         var runner = this;
+        this.#starttime = new Date().getTime();
         if (this.#game.setup.clickTick === true) {
             this.#game.ghostDrawing = false;
             this.#game.addEvent("tick", function () {
@@ -265,7 +267,18 @@ class SimulatorRunner {
     }
 
     playbackTick() {
-        // TODO read #simulation
+        var time = new Date().getTime() - this.#starttime;
+        var simulations = this.#simulation.filter(s => s.done !== true && s.time < time);
+        console.log(simulations);
+        for (var simulation of simulations) {
+            if (simulation.type === "nextRandom") {
+                this.#game.nextRandom = simulation.val;
+            }else if (simulation.type === "smashdown") {
+                this.#game.action_smashdown();
+            }
+            this.#game.PENDINGUPDATE = true;
+            simulation.done = true;
+        }
     }
 }
 
