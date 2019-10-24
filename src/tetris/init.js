@@ -84,7 +84,7 @@ export function init(container) {
         setup.logger = true;
 
     if (url.searchParams.get("view") === "lite")
-        container.el.ownerDocument.body.classList.add("lite-view");
+        window.document.body.classList.add("lite-view");
 
     var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
     var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
