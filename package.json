@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/and3k5/tetris#readme",
   "dependencies": {
-    "axios": "^0.19.0"
+    "axios": "^0.19.0",
+    "sqlite": "^3.0.3",
+    "ws": "^7.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.6.3",

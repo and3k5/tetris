@@ -12,7 +12,19 @@ module.exports = function (env) {
                 "global.production": mode === "production",
                 "global.mode": mode
             })
-        ]
+        ],
+        watch: env.watch === "yes",
+    };
+
+    var jsLoader = {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+            loader: "babel-loader",
+            options: {
+                presets: ["@babel/preset-env"]
+            }
+        }
     };
 
     const mainConfig = Object.assign({}, commonConfig, {
@@ -32,16 +44,7 @@ module.exports = function (env) {
                         }
                     }
                 },
-                {
-                    test: /\.js$/,
-                    exclude: /node_modules/,
-                    use: {
-                        loader: "babel-loader",
-                        options: {
-                            presets: ["@babel/preset-env"]
-                        }
-                    }
-                },
+                jsLoader,
                 {
                     test: /\.svg$/,
                     use: {
@@ -53,7 +56,6 @@ module.exports = function (env) {
                 }
             ]
         },
-        watch: env.watch === "yes",
         output: {
             library: "tetris",
             path: path.resolve(__dirname, "js"),
@@ -61,7 +63,23 @@ module.exports = function (env) {
         }
     });
 
+    const logServerConfig = Object.assign({}, commonConfig, {
+        entry: "./src/index-logserver.js",
+        target: "node",
+        module: {
+            rules: [
+                jsLoader
+            ]
+        },
+        output: {
+            library: "tetris-logserver",
+            path: path.resolve(__dirname, "js"),
+            filename: "tetris-logserver.js",
+        }
+    });
+
     return [
         mainConfig,
+        //logServerConfig
     ];
 }
