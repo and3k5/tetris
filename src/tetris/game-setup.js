@@ -1,3 +1,4 @@
+import * as gameGraphic from "./graphics.js";
 import "./brick-form.js"
 
 export class TetrisSetup {
@@ -10,6 +11,8 @@ export class TetrisSetup {
     // game height
     #height;
 
+    #graphics;
+
     // brick sequence
     #sequence = null;
 
@@ -17,10 +20,11 @@ export class TetrisSetup {
      * 
      * @param {BrickFormBase[]} brickforms 
      */
-    constructor(brickforms, width, height) {
+    constructor(brickforms, width, height, extra = {}) {
         this.#brickforms = brickforms;
         this.#width = width;
         this.#height = height;
+        this.#graphics = extra.graphics;
     }
 
     get brickforms() {
@@ -39,8 +43,12 @@ export class TetrisSetup {
         return this.#sequence;
     }
 
+    get graphics() {
+        return this.#graphics;
+    }
+
     setSequence() {
-        this.#sequence = this.brickforms.concat().map((v,i) => i);
+        this.#sequence = this.brickforms.concat().map((v, i) => i);
     }
 }
 
@@ -74,7 +82,10 @@ export function defaultGame() {
         [0, 1, 0, 0],
         [0, 1, 0, 0]]
     ];
-    return new TetrisSetup(brickforms, 10, 20);
+
+    return new TetrisSetup(brickforms, 10, 20, {
+        graphics: gameGraphic.defaultGraphics()
+    });
 }
 
 export function easyGame2() {
@@ -92,7 +103,9 @@ export function easyGame2() {
         [0, 1, 0, 0],
         [0, 1, 0, 0]]
     ];
-    var setup = new TetrisSetup(brickforms, 10, 20);
+    var setup = new TetrisSetup(brickforms, 10, 20, {
+        graphics: gameGraphic.defaultGraphics()
+    });
     setup.setSequence();
     return setup;
 }
@@ -102,7 +115,9 @@ export function easyGame() {
         [[1, 1],
         [1, 1]],
     ];
-    return new TetrisSetup(brickforms, 10, 20);
+    return new TetrisSetup(brickforms, 10, 20, {
+        graphics: gameGraphic.defaultGraphics()
+    });
 }
 
 export function longPieceGame() {
@@ -112,7 +127,9 @@ export function longPieceGame() {
         [0, 1, 0, 0],
         [0, 1, 0, 0]]
     ];
-    return new TetrisSetup(brickforms, 10, 20);
+    return new TetrisSetup(brickforms, 10, 20, {
+        graphics: gameGraphic.defaultGraphics()
+    });
 }
 
 export function shitGame() {
@@ -121,5 +138,7 @@ export function shitGame() {
         [1, 1, 0],
         [0, 0, 0]],
     ];
-    return new TetrisSetup(brickforms, 10, 20);
+    return new TetrisSetup(brickforms, 10, 20, {
+        graphics: gameGraphic.defaultGraphics()
+    });
 }

@@ -1,9 +1,8 @@
 import Color from "./color.js";
-import { RadialGradient, LinearGradient } from "./gradient.js";
 import Brick from "./brick.js";
 import { playSound } from "./sound.js";
 import { BinaryBrickForm } from "./brick-form.js";
-import * as gameGraphic from "./game-graphic.js";
+import * as gameGraphic from "./graphics.js";
 import * as gameController from "./game-controller.js";
 import { attachSimulator } from "./simulate.js";
 import * as console from "../utils/trace.js";
@@ -71,10 +70,13 @@ class TetrisGame {
 
     #runEvent;
 
+    #graphics;
+
     constructor(gameSetup, extra = null) {
         this.#setup = gameSetup;
         this.#WIDTH = gameSetup.width;
         this.#HEIGHT = gameSetup.height;
+        this.#graphics = gameSetup.graphics;
         this.#gridColor = new Color(0, 255, 0, 0.5);
 
         if (extra != null) {
@@ -477,35 +479,7 @@ class TetrisGame {
     }
 
     makeBrick(ctx, x, y, w, h, color) {
-        var fstyle = new RadialGradient(ctx, x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
-        fstyle.addColor(0, color);
-        fstyle.addColor(1, color.alphaScale(0.5));
-        ctx.fillStyle = fstyle.compile();
-        ctx.fillRect(x, y, w, h);
-
-        var fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
-        fstyle.addColor(0.2, color.alpha(0.5));
-        fstyle.addColor(0, Color.Black().alpha(0.9));
-        ctx.fillStyle = fstyle.compile();
-        ctx.fillRect(x, y, w, h);
-
-        var fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
-        fstyle.addColor(0.3, color.scale(0.7).alpha(0));
-        fstyle.addColor(0, Color.Black().alpha(0.4));
-        ctx.fillStyle = fstyle.compile();
-        ctx.fillRect(x, y, w, h);
-
-        var fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
-        fstyle.addColor(0.8, color.scale(0.1).alpha(0));
-        fstyle.addColor(1, Color.Black());
-        ctx.fillStyle = fstyle.compile();
-        ctx.fillRect(x, y, w, h);
-
-        var fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
-        fstyle.addColor(0.8, color.scale(0.2).alpha(0));
-        fstyle.addColor(1, Color.Black());
-        ctx.fillStyle = fstyle.compile();
-        ctx.fillRect(x, y, w, h);
+        this.#graphics.drawSquare(ctx, x, y, w, h, color);
     }
 
     get movingSpeed() {
@@ -630,7 +604,7 @@ class TetrisGame {
         if (Array.isArray(this.setup.sequence)) {
             this.#currentSequence = (this.#currentSequence + 1) % this.setup.sequence.length;
             this.nextRandom = this.setup.sequence[this.#currentSequence];
-        }else{
+        } else {
             this.nextRandom = Math.round(Math.random() * (this.brickforms.length - 1));
         }
     }
@@ -686,9 +660,8 @@ class TetrisGame {
         var movingBrick = this.getMovingBrick();
 
         if (typeof (r) === "number") {
-            if (r != this.getMovingBrick().rotation)
-            {
-                console.debug("rotating from "+this.getMovingBrick().rotation+" to "+r);
+            if (r != this.getMovingBrick().rotation) {
+                console.debug("rotating from " + this.getMovingBrick().rotation + " to " + r);
                 this.action_rotate();
                 return;
             }
@@ -719,9 +692,8 @@ class TetrisGame {
         playSound("gamelose");
         this.#RUNNING = false;
         this.#runEvent("lose");
-        if (this.setup.simulator === true)
-        {
-            setTimeout(() => window.location.reload(),2000);
+        if (this.setup.simulator === true) {
+            setTimeout(() => window.location.reload(), 2000);
         }
     }
 }
