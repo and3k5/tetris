@@ -80,6 +80,9 @@ export function init(container) {
     if (url.searchParams.get("clickTick") === "1")
         setup.clickTick = true;
 
+    if (url.searchParams.get("logger") === "1")
+        setup.logger = true;
+
     if (url.searchParams.get("view") === "lite")
         container.el.ownerDocument.body.classList.add("lite-view");
 

@@ -60,6 +60,9 @@ module.exports = function (env) {
             library: "tetris",
             path: path.resolve(__dirname, "js"),
             filename: "tetris.js",
+        },
+        node: {
+            fs: "empty"
         }
     });
 
@@ -72,7 +75,7 @@ module.exports = function (env) {
             ]
         },
         output: {
-            library: "tetris-logserver",
+            library: "logserver",
             path: path.resolve(__dirname, "js"),
             filename: "tetris-logserver.js",
         }
@@ -80,6 +83,6 @@ module.exports = function (env) {
 
     return [
         mainConfig,
-        //logServerConfig
+        logServerConfig
     ];
 }

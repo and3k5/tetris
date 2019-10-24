@@ -6,6 +6,7 @@ import * as gameGraphic from "./graphics.js";
 import * as gameController from "./game-controller.js";
 import { attachSimulator } from "./simulate.js";
 import * as console from "../utils/trace.js";
+import { transmitter } from "./log-com.js";
 
 window.BinaryBrickForm = BinaryBrickForm;
 
@@ -72,11 +73,21 @@ class TetrisGame {
 
     #graphics;
 
+    #socket = null;
+
+    #gameGuid;
+
+    #logEntries = [];
+
     constructor(gameSetup, extra = null) {
+        if (gameSetup.logger === true) {
+            this.addLogEntry({name: "gameInit"});
+        }
         this.#setup = gameSetup;
         this.#WIDTH = gameSetup.width;
         this.#HEIGHT = gameSetup.height;
         this.#graphics = gameSetup.graphics;
+        this.#gameGuid = Math.round(Math.random()*10000000000000000);
         this.#gridColor = new Color(0, 255, 0, 0.5);
 
         if (extra != null) {
@@ -329,6 +340,23 @@ class TetrisGame {
                 attachSimulator(this);
             }
 
+            if (this.setup.logger === true) {
+                var socket = transmitter();
+                var game = this;
+                setInterval(function () {
+                    if (game.#socket != null && game.#socket.readyState === game.#socket.OPEN) {
+                        let items;
+                        while ((items = game.#logEntries.splice(0,1)).length > 0)
+                            for (var item of items)
+                                game.#socket.send(JSON.stringify(item));
+                    }
+                });
+                this.#socket = socket;
+                if (global.development === true) {
+                    this.socket = socket;
+                }
+            }
+
             window.addEventListener("keydown", keyh, false);
 
             var touchStart = null;
@@ -499,6 +527,9 @@ class TetrisGame {
         brick.blocks = brfrm[rnd].concat();
         brick.moving = true;
         brick.resetPosition();
+
+        this.logEvent({name: "newBrick",blocks: brick.blocks});
+
         this.setNextRandom();
 
         if (pos === -1) {
@@ -506,6 +537,23 @@ class TetrisGame {
         } else {
             this.bricks[pos] = brick;
         }
+    }
+
+    logEvent(logObj) {
+        if (this.setup.logger === true) {
+            var gameGuid = this.#gameGuid;
+            var time = new Date().getTime();
+            var obj = {
+                action: "log",
+                time,
+                data: Object.assign({gameGuid},logObj),
+            };
+            this.addLogEntry(obj)
+        }
+    }
+
+    addLogEntry(entry) {
+        this.#logEntries.push(entry);
     }
 
     holdingShift() {

@@ -1,3 +1,4 @@
-import {receiver} from "./tetris/log-receiver.js";
+import "regenerator-runtime";
+import {receiver} from "./tetris/log-com.js";
 
 receiver();
