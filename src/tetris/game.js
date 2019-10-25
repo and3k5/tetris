@@ -81,12 +81,21 @@ class TetrisGame {
 
     #graphicEngine;
 
+    get gridColor() {
+        return this.#gridColor;
+    }
+
     constructor(gameSetup, extra = null,graphicEngine = null) {
+        this.#setup = gameSetup;
+
         this.#graphicEngine = graphicEngine;
+        if (this.#graphicEngine != null) {
+            this.#graphicEngine.setGame(this);
+        }
         if (gameSetup.logger === true) {
             this.addLogEntry({name: "gameInit"});
         }
-        this.#setup = gameSetup;
+        
         this.#WIDTH = gameSetup.width;
         this.#HEIGHT = gameSetup.height;
         this.#graphics = gameSetup.graphics;
@@ -396,74 +405,22 @@ class TetrisGame {
             h_ctx = this.#graphicEngine.holdingCanvas.getContext("2d");
             n_ctx = this.#graphicEngine.nextCanvas.getContext("2d");
 
-            this.clearAndResize(this.#ctx, h_ctx, n_ctx);
+            this.#graphicEngine.clear();
             graphicControlLoop(this, this.#ctx, h_ctx, n_ctx);
         }
     }
 
-    clearAndResize(ctx, h_ctx, n_ctx) {
-        this.clearCanvas(ctx, this.#CANVAS_WIDTH, this.#CANVAS_HEIGHT);
-        this.clearCanvas(h_ctx, this.#BRICKSIZE * 4, this.#BRICKSIZE * 4);
-        this.clearCanvas(n_ctx, this.#BRICKSIZE * 4, this.#BRICKSIZE * 4);
-    }
-
-    clearCanvas(ctx, w, h) {
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.canvas.width = w;
-        ctx.canvas.height = h;
+    get colors() {
+        return this.getColors();
     }
 
     inGameGraphic(ctx, h_ctx, n_ctx) {
-        this.clearAndResize(ctx, h_ctx, n_ctx);
-
-        const BRICKSIZESCALE = 1.5;
-        gameGraphic.drawGrid(ctx, this.#gridColor, this.#BRICKSIZE, this.#BRICKSIZE, this.WIDTH, this.HEIGHT);
-        var smallBrickSize = this.#BRICKSIZE / BRICKSIZESCALE;
-        gameGraphic.drawGrid(n_ctx, this.#gridColor, smallBrickSize, smallBrickSize, 6, 6);
-        gameGraphic.drawGrid(h_ctx, this.#gridColor, smallBrickSize, smallBrickSize, 6, 6);
-        //tiles(ctx);
-        var bricks = this.bricks;
-        for (const i in bricks) {
-            if (this.#SETTING_GHOST && bricks[i].moving) {
-                var ghostColor = new Color(255, 255, 255, 0.2);
-                //ctx.fillStyle="rgba(255,255,255,0.5)";
-                const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
-                this.drawBrickForm(bricks[i].blocks, ctx, bricks[i].x, tmp_lowestPos, ghostColor)
-            }
-            this.drawBrickForm(bricks[i].blocks, ctx, bricks[i].x, bricks[i].y, bricks[i].color);
-        }
-        // NextBox field
-
-        var brickforms = this.brickforms;
-
-        var colors = this.getColors();
-
-        var nextBrickForm = brickforms[this.nextRandom];
-        var nextBrickColor = colors[this.nextRandom];
-
-        this.drawBrickForm(nextBrickForm, n_ctx, 2, 2, nextBrickColor, BRICKSIZESCALE);
-
-        // HoldingField
-        h_ctx.lineWidth = 1;
-        h_ctx.strokeStyle = "rgba(0,255,0,0.5)";
-        h_ctx.fillStyle = "white";
-
-        if (this.#HOLDING != null) {
-            this.drawBrickForm(this.#HOLDING.blocks, h_ctx, 0, 0, this.#HOLDING.color, BRICKSIZESCALE);
-        }
+        this.#graphicEngine.clear();
+        this.#graphicEngine.drawBricks();
     }
 
-    drawBrickForm(brickForm, ctx, x, y, color, scale = 1) {
-        var brickSize = this.#BRICKSIZE / scale;
-
-        for (var i1 in brickForm) {
-            for (var i2 in brickForm[i1]) {
-                if (brickForm[i1][i2] == 1) {
-                    this.makeBrick(ctx, (x * brickSize) + (parseInt(i2) * brickSize), (y * brickSize) + (parseInt(i1) * brickSize), brickSize, brickSize, color);
-                    // this.makeBrick(ctx, (bricks[i].x * brickSize) + (parseInt(i2) * brickSize), (bricks[i].y * brickSize) + (parseInt(i1) * brickSize), brickSize, brickSize, bricks[i].color);
-                }
-            }
-        }
+    get holding() {
+        return this.#HOLDING;
     }
 
     renderBrickMatrix() {
@@ -494,20 +451,6 @@ class TetrisGame {
         }
 
         return result;
-    }
-
-    drawSingleBrick(x, y, color) {
-        var brickSize = this.#BRICKSIZE;
-        this.makeBrick(this.#ctx, (x * brickSize), (y * brickSize), brickSize, brickSize, color);
-    }
-
-    drawBrick(brick, color = null) {
-        var brickSize = this.#BRICKSIZE;
-        this.drawBrickForm(brick.blocks, this.#ctx, brick.x, brick.y, color || brick.color);
-    }
-
-    makeBrick(ctx, x, y, w, h, color) {
-        this.#graphics.drawSquare(ctx, x, y, w, h, color);
     }
 
     get movingSpeed() {
@@ -655,6 +598,14 @@ class TetrisGame {
         } else {
             this.nextRandom = Math.round(Math.random() * (this.brickforms.length - 1));
         }
+    }
+
+    get width() {
+        return this.#WIDTH;
+    }
+
+    get height() {
+        return this.#HEIGHT;
     }
 
     get WIDTH() {
