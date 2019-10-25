@@ -33,6 +33,10 @@ export default class DocumentUtil {
     }
 
     append(element) {
+        if (Array.isArray(element)) {
+            for (var item of element)
+                this.append(item);
+        } else
         if (element instanceof DocumentUtil) {
             this.#element.appendChild(element.#element);
         } else {
