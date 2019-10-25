@@ -1,7 +1,5 @@
 export default class GraphicEngineBase {
-    #game;
-    constructor(game) {
-        this.#game = game;
+    constructor() {
     }
 
     initialize() {

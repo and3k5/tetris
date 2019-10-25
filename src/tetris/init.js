@@ -4,6 +4,7 @@ import { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } from "./gam
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
 import { initDebug } from "./debug.js";
+import GraphicEngine from "./graphics/default/engine.js";
 
 import * as htmlLoad from "./game.html";
 
@@ -15,10 +16,7 @@ export function init(container) {
     }
 
     container = new DocumentUtil(container);
-
-    for (var element of DocumentUtil.stringToElement(htmlLoad)) {
-        container.append(element);
-    }
+                //.append(DocumentUtil.stringToElement(htmlLoad));
 
     var setup;
 
@@ -86,22 +84,21 @@ export function init(container) {
     if (url.searchParams.get("view") === "lite")
         window.document.body.classList.add("lite-view");
 
-    var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
-    var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
-    var nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
-    var score = container.querySelector("[data-target=score]").el;
+    const graphicEngine = new GraphicEngine({
+        container: container,
+    });
 
-    tetrisgame = new TetrisGame(setup);
+    // var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
+    // var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
+    // var nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
+    // var score = container.querySelector("[data-target=score]").el;
+
+    tetrisgame = new TetrisGame(setup, null, graphicEngine);
 
     if (url.searchParams.get("debug") === "1")
         initDebug(container.parentElement,container.el,tetrisgame);
 
-    tetrisgame.init(
-        gameCanvas,
-        holdingCanvas,
-        nextCanvas,
-        score
-    );
+    tetrisgame.init();
 
     return tetrisgame;
 }

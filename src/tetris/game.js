@@ -79,7 +79,10 @@ class TetrisGame {
 
     #logEntries = [];
 
-    constructor(gameSetup, extra = null) {
+    #graphicEngine;
+
+    constructor(gameSetup, extra = null,graphicEngine = null) {
+        this.#graphicEngine = graphicEngine;
         if (gameSetup.logger === true) {
             this.addLogEntry({name: "gameInit"});
         }
@@ -132,8 +135,6 @@ class TetrisGame {
         const // [number] Selected menu item
             SELECTED_MENU = 0;
 
-        let scoreelement = null;
-
         let SCORE = 0;
 
 
@@ -145,7 +146,7 @@ class TetrisGame {
 
         function setScore(v) {
             SCORE = v;
-            scoreelement.innerHTML = SCORE;
+            game.#graphicEngine.score.innerHTML = SCORE;
         }
 
         this.getColors = () => colors;
@@ -303,8 +304,8 @@ class TetrisGame {
                 game.PENDINGUPDATE = false;
             }
         }
-        this.init = function (g, h, n, sc) {
-            this.#BRICKSIZE = 30;
+        this.init = function () {
+            this.#BRICKSIZE = this.#graphicEngine.brickSize;
 
             this.#CANVAS_WIDTH = this.#BRICKSIZE * this.#WIDTH;
             this.#CANVAS_HEIGHT = this.#BRICKSIZE * this.#HEIGHT;
@@ -320,7 +321,6 @@ class TetrisGame {
             GRAPHIC_SCORE_FONTSIZE = this.#BRICKSIZE;
             WHERE = 1;
             this.#RUNNING = true;
-            scoreelement = sc;
             setScore(0);
             this.HOLDINGCOUNT = 0;
             this.addNewBrick();
@@ -333,7 +333,7 @@ class TetrisGame {
                 }
             }).bind(this);
 
-            gameController.gameControlDown(this, g, runEvent);
+            gameController.gameControlDown(this, this.#graphicEngine.gameCanvas, runEvent);
             this.#runEvent = runEvent;
 
             if (this.setup.simulator === true) {
@@ -361,11 +361,11 @@ class TetrisGame {
 
             var touchStart = null;
 
-            g.addEventListener("touchstart", function (event) {
+            this.#graphicEngine.gameCanvas.addEventListener("touchstart", function (event) {
                 var touch = event.changedTouches[0];
                 touchStart = { x: touch.screenX, y: touch.screenY };
             });
-            g.addEventListener("touchend", function (event) {
+            this.#graphicEngine.gameCanvas.addEventListener("touchend", function (event) {
                 var touch = event.changedTouches[0];
                 var touchEnd = { x: touch.screenX, y: touch.screenY };
 
@@ -388,13 +388,13 @@ class TetrisGame {
                 }
             });
 
-            h.addEventListener("click", function () {
+            this.#graphicEngine.holdingCanvas.addEventListener("click", function () {
                 game.holdingShift();
             });
 
-            this.#ctx = g.getContext("2d");
-            h_ctx = h.getContext("2d");
-            n_ctx = n.getContext("2d");
+            this.#ctx = this.#graphicEngine.gameCanvas.getContext("2d");
+            h_ctx = this.#graphicEngine.holdingCanvas.getContext("2d");
+            n_ctx = this.#graphicEngine.nextCanvas.getContext("2d");
 
             this.clearAndResize(this.#ctx, h_ctx, n_ctx);
             graphicControlLoop(this, this.#ctx, h_ctx, n_ctx);
