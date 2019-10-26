@@ -1,4 +1,8 @@
 import "regenerator-runtime";
-import {receiver} from "./tetris/log-com.js";
+import { receiver, transmitter } from "./tetris/log-com.js";
 
-receiver();
+if (process.argv.filter(a => a === "--test").length > 0) {
+    transmitter();
+} else {
+    receiver();
+}

@@ -6,13 +6,6 @@ module.exports = function (env) {
 
     const commonConfig = {
         mode: mode,
-        plugins: [
-            new webpack.DefinePlugin({
-                "global.development": mode === "development",
-                "global.production": mode === "production",
-                "global.mode": mode
-            })
-        ],
         watch: env.watch === "yes",
     };
 
@@ -56,6 +49,14 @@ module.exports = function (env) {
                 }
             ]
         },
+        plugins: [
+            new webpack.DefinePlugin({
+                "global.development": mode === "development",
+                "global.production": mode === "production",
+                "global.mode": mode,
+                "global.browser": true
+            })
+        ],
         output: {
             library: "tetris",
             path: path.resolve(__dirname, "js"),
@@ -74,6 +75,13 @@ module.exports = function (env) {
                 jsLoader
             ]
         },
+        plugins: [
+            new webpack.DefinePlugin({
+                "global.development": mode === "development",
+                "global.production": mode === "production",
+                "global.mode": mode
+            })
+        ],
         output: {
             library: "logserver",
             path: path.resolve(__dirname, "js"),
