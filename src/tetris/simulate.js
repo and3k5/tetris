@@ -1,6 +1,7 @@
 import TetrisGame from "./game.js";
 import Color from "./color.js";
 import * as console from "../utils/trace.js";
+import { StaticNextBrick } from "./logic/next-brick.js";
 
 export function cloneGame(game,setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -163,14 +164,18 @@ export function getPossibleMoves(game,setupChanges) {
         setup.score = (clearingLines * 3) + (0 - holes * 0.25) + (0 - height * 2);
 
     }
-    positions = positions.sort((a, b) => {
+    positions = sortMovements(positions);
+    console.debug("POSITIONS", positions);
+    return positions;
+}
+
+export function sortMovements(positions) {
+    return positions.concat().sort((a, b) => {
         var diff = b.score - a.score;
         if (diff !== 0)
             return diff;
         return b.brick.y - a.brick.y;
     });
-    console.debug("POSITIONS", positions);
-    return positions;
 }
 
 class SimulatorRunner {
@@ -259,7 +264,7 @@ class SimulatorRunner {
         var currentMovingBrick = this.#game.getMovingBrick();
         if (this.#movements.length === 0 || this.#lastBrick != currentMovingBrick) {
             console.debug("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
-            this.#movements = getPossibleMoves(this.#game);
+            this.#movements = getPossibleMoves(this.#game,{nextBrick: new StaticNextBrick(0)});
             this.#lastBrick = currentMovingBrick;
         }
         console.debug(this.#movements[0].score);

@@ -473,6 +473,7 @@ class TetrisGame {
         const rnd = this.nextRandom;
         brick.color = this.getColors()[rnd].copy();
         brick.blocks = brfrm[rnd].concat();
+        brick.index = rnd;
         brick.moving = true;
         brick.resetPosition();
 

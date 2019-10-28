@@ -31,6 +31,7 @@ class Brick {
         brick.blocks = this.blocks.concat();
         brick.color = this.color.copy();
         brick.#rotation = this.#rotation;
+        brick.index = this.index;
         return brick;
     }
 
