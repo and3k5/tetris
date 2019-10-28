@@ -23,6 +23,14 @@ export function transmitter() {
         var socket = new WebSocket("ws://127.0.0.1:8085", {});
         socket.on("open", function () {
             console.log("socket open");
+            socket.send(JSON.stringify({
+                action:"log",
+                time: new Date().getTime(),
+                gameGuid: 1337,
+                data: {
+                    text: "foo",
+                }
+            }));
         });
         socket.on("message", function () {
             console.log("got message");
