@@ -2,7 +2,7 @@ import TetrisGame from "./game.js";
 import Color from "./color.js";
 import * as console from "../utils/trace.js";
 
-export function cloneGame(game) {
+export function cloneGame(game,setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
 
     var extra = { bricks };
@@ -10,7 +10,14 @@ export function cloneGame(game) {
     if (game.HOLDING != null)
         extra.holding = game.HOLDING.clone();
 
-    var clone = new TetrisGame(game.setup, extra);
+    var setup = Object.assign({},game.setup, setupChanges,{
+        brickforms: game.setup.brickforms,
+        width: game.setup.width,
+        height: game.setup.height,
+        sequence: game.setup.sequence
+    });
+
+    var clone = new TetrisGame(setup, extra);
     clone.brickforms = game.brickforms;
     clone.HOLDINGCOUNT = game.HOLDINGCOUNT;
     return clone;
@@ -47,13 +54,13 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
     }
 }
 
-function getPositions(game, usesHolding = false) {
+function getPositions(game, usesHolding = false,setupChanges = {}) {
     var maxWidth = game.WIDTH * 2;
 
     var positions = [];
 
     for (var i = 0; i < 4; i++) {
-        var cloneBase = cloneGame(game);
+        var cloneBase = cloneGame(game,setupChanges);
         var movingBrickBase = cloneBase.getMovingBrick();
 
         var oldRotation = movingBrickBase.rotation;
@@ -64,7 +71,7 @@ function getPositions(game, usesHolding = false) {
         }
 
         for (var x = movingBrickBase.mostLeft; x <= movingBrickBase.mostRight; x++) {
-            var clone = cloneGame(cloneBase);
+            var clone = cloneGame(cloneBase,setupChanges);
 
             var movingBrick = clone.getMovingBrick();
             try {
@@ -97,17 +104,17 @@ function getPositions(game, usesHolding = false) {
     return positions;
 }
 
-export function getPossibleMoves(game) {
+export function getPossibleMoves(game,setupChanges) {
     var positions = [];
 
-    for (var pos of getPositions(game))
+    for (var pos of getPositions(game,false,setupChanges))
         positions.push(pos);
 
     if (game.canUseHolding) {
-        var clone = cloneGame(game);
+        var clone = cloneGame(game,setupChanges);
         clone.holdingShift();
 
-        for (var pos of getPositions(clone, true))
+        for (var pos of getPositions(clone, true, setupChanges))
             positions.push(pos);
     }
 

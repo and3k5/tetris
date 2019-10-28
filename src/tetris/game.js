@@ -7,6 +7,7 @@ import * as gameController from "./game-controller.js";
 import { attachSimulator } from "./simulate.js";
 import * as console from "../utils/trace.js";
 import { transmitter } from "./log-com.js";
+import { NextBrick } from "./logic/next-brick.js";
 
 window.BinaryBrickForm = BinaryBrickForm;
 
@@ -81,12 +82,16 @@ class TetrisGame {
 
     #graphicEngine;
 
+    #nextRandomGenerator;
+
     get gridColor() {
         return this.#gridColor;
     }
 
     constructor(gameSetup, extra = null,graphicEngine = null) {
         this.#setup = gameSetup;
+
+        this.#nextRandomGenerator = gameSetup.nextBrick || new NextBrick();
 
         this.#graphicEngine = graphicEngine;
         if (this.#graphicEngine != null) {
@@ -596,7 +601,7 @@ class TetrisGame {
             this.#currentSequence = (this.#currentSequence + 1) % this.setup.sequence.length;
             this.nextRandom = this.setup.sequence[this.#currentSequence];
         } else {
-            this.nextRandom = Math.round(Math.random() * (this.brickforms.length - 1));
+            this.nextRandom = this.#nextRandomGenerator.nextBrick(this);
         }
     }
 

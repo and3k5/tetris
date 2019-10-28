@@ -7,6 +7,7 @@ import { initDebug } from "./debug.js";
 import GraphicEngine from "./graphics/default/engine.js";
 
 import * as htmlLoad from "./game.html";
+import { EasyNextBrick } from "./logic/next-brick.js";
 
 export function init(container) {
     var tetrisgame;
@@ -36,6 +37,14 @@ export function init(container) {
             break;
         default:
             setup = defaultGame();
+            break;
+    }
+
+    switch (url.searchParams.get("next")) {
+        case "ez":
+            setup.nextBrick = new EasyNextBrick();
+            break;
+        default:
             break;
     }
 
