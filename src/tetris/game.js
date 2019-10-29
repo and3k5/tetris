@@ -466,14 +466,23 @@ class TetrisGame {
         return this.HOLDINGCOUNT < 1;
     }
 
+    getBrickId() {
+        var max = this.bricks.length > 0 ? this.bricks.map(b => b.id).sort((a,b) => b-a)[0] : 0;
+        
+        return max+1;
+    }
+
     addNewBrick(pos = -1) {
         var brick = new Brick({ game: this, ingame: true });
+        
+        brick.id = this.getBrickId();
 
         const brfrm = this.brickforms;
         const rnd = this.nextRandom;
         brick.color = this.getColors()[rnd].copy();
         brick.blocks = brfrm[rnd].concat();
         brick.index = rnd;
+        
         brick.moving = true;
         brick.resetPosition();
 

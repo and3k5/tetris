@@ -5,6 +5,7 @@ class Brick {
     #x = undefined;
     #y = undefined;
     #rotation = 0;
+    #index = undefined;
     constructor(options) {
         const o = options || { 'ingame': false, 'game': null };
 
@@ -21,6 +22,14 @@ class Brick {
             this.x = o.x;
             this.y = o.y;
         }
+    }
+
+    get index() {
+        return this.#index;
+    }
+
+    set index(v) {
+        this.#index = v;
     }
 
     clone() {
@@ -539,15 +548,17 @@ class Brick {
         for (var i1 in this.blocks) {
             for (var i2 in this.blocks[i1]) {
                 if (this.blocks[i1][i2] == 1) {
-                    rtn.push(((x, y) => {
+                    rtn.push(((x, y, origin) => {
                         const tmp = new Brick();
                         tmp.moving = false;
                         tmp.blocks = [[1]];
                         tmp.color = this_color;
                         tmp.x = x;
                         tmp.y = y;
+                        tmp.id = origin.id;
+                        tmp.index = origin.index;
                         return tmp;
-                    })(parseInt(i2) + this.x, parseInt(i1) + this.y));
+                    })(parseInt(i2) + this.x, parseInt(i1) + this.y, this));
                 }
             }
         }

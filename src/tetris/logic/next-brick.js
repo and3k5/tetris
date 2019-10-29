@@ -30,10 +30,8 @@ export class EasyNextBrick extends NextBrick {
     }
 
     nextBrick(game) {
-        var latestBricks = game.bricks.filter(b => typeof(b.index) === "number");
-
-        var latestBrick = latestBricks[latestBricks.length-1];
-
+        
+        var latestBrick = game.bricks.concat().sort((a,b) => b.id - a.id)[0];
         var movements = [];
         for (var i = 0;i<game.brickforms.length;i++) {
             if (latestBrick != null && i == latestBrick.index)
