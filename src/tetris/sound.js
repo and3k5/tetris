@@ -113,9 +113,17 @@ function init() {
     //menuNav("menu");
 }
 
+export let activated = true;
 
+export function deactivate() {
+    activated = false;
+}
 
 export function playSound(id) {
+    if (activated !== true) {
+        console.debug("sound deactivated");
+        return false;
+    }
     console.debug("playSound:" + id);
     if (soundReady !== true) {
         console.debug("tried to play sound before ready");

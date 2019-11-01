@@ -8,6 +8,7 @@ import GraphicEngine from "./graphics/default/engine.js";
 
 import * as htmlLoad from "./game.html";
 import { EasyNextBrick } from "./logic/next-brick.js";
+import * as sound from "./sound.js";
 
 export function init(container) {
     var tetrisgame;
@@ -37,6 +38,14 @@ export function init(container) {
             break;
         default:
             setup = defaultGame();
+            break;
+    }
+
+    switch (url.searchParams.get("sound")) {
+        case "off":
+            sound.deactivate();
+            break;
+        default:
             break;
     }
 
