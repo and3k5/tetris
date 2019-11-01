@@ -84,6 +84,8 @@ class TetrisGame {
 
     #nextRandomGenerator;
 
+    #score = 0;
+
     get gridColor() {
         return this.#gridColor;
     }
@@ -121,47 +123,17 @@ class TetrisGame {
             }
         }
 
-        let // [number] Board font size
-            GRAPHIC_BOARD_FONTSIZE;
-
-        let // [number] Score font size
-            GRAPHIC_SCORE_FONTSIZE;
-
         let // [Graphic Context] Game holding brick 2d context
             h_ctx;
 
         let // [Graphic Context] Game next brick 2d context
             n_ctx;
 
-        let // [number] Current showing screen
-            WHERE = -1;
-
-        const // 0 = menu
-            // 1 = ingame
-            // 2 = paused
-            // 3 = tutorial
-            // 4 = about
-            // 5 = lost game
-            // 6 = Settings
-            // [number] Unused (might be removed)
-            FROM = 0;
-
-        const // [number] Selected menu item
-            SELECTED_MENU = 0;
-
-        let SCORE = 0;
-
-
         this.brickforms = gameSetup.brickforms;
         const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
         this.setNextRandom();
 
         var game = this;
-
-        function setScore(v) {
-            SCORE = v;
-            game.#graphicEngine.score.innerHTML = SCORE;
-        }
 
         this.getColors = () => colors;
         this.getRUNNING = () => this.#RUNNING;
@@ -171,7 +143,7 @@ class TetrisGame {
 
         function clearLine(l) {
             if (this.#RUNNING) {
-                setScore(SCORE + 1);
+                this.setScore(this.#score + 1);
                 playSound("gamerow");
                 var bricks = game.bricks;
                 const toDelete = (line => {
@@ -327,15 +299,8 @@ class TetrisGame {
             this.#GRID_WIDTH = this.#WIDTH * this.#BRICKSIZE;
             this.#GRID_HEIGHT = this.#HEIGHT * this.#BRICKSIZE;
 
-            // GRAPHIC_FONT = "Verdana";
-            // GRAPHIC_MENU_FONTSIZE = this.#BRICKSIZE * 0.75;
-            // GRAPHIC_MENUDESC_FONTSIZE = this.#BRICKSIZE;
-            // GRAPHIC_MENU_DISTANCE = GRAPHIC_MENU_FONTSIZE * 1.5;
-            GRAPHIC_BOARD_FONTSIZE = this.#BRICKSIZE - 5;
-            GRAPHIC_SCORE_FONTSIZE = this.#BRICKSIZE;
-            WHERE = 1;
             this.#RUNNING = true;
-            setScore(0);
+            this.setScore(0);
             this.HOLDINGCOUNT = 0;
             this.addNewBrick();
 
@@ -413,6 +378,11 @@ class TetrisGame {
             this.#graphicEngine.clear();
             graphicControlLoop(this, this.#ctx, h_ctx, n_ctx);
         }
+    }
+
+    setScore(v) {
+        this.#score = v;
+        this.#graphicEngine.score.innerHTML = this.#score;
     }
 
     get colors() {
@@ -637,7 +607,7 @@ class TetrisGame {
 
     set bricks(v) {
         if ((v == "") && (typeof ([]) == "object")) {
-            setScore(0);
+            this.setScore(0);
             this.HOLDINGCOUNT = 0;
             this.#HOLDING = null;
             this.#bricks = [];
