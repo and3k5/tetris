@@ -16,3 +16,4 @@ export const info = _info === true ? console.info : Void;
 export const log = _log === true ? console.log : Void;
 export const warn = _warn === true ? console.warn : Void;
 export const error = _error === true ? console.error : Void;
+export const count = console.count;
