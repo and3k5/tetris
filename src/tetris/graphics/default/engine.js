@@ -157,3 +157,35 @@ export class DefaultGraphicEngine extends GraphicEngineBase {
 
 
 }
+
+import * as flame from "../../flame.js";
+
+export class BurningGraphicEngine extends DefaultGraphicEngine {
+    constructor(options) {
+        super(options);
+    }
+
+    drawSquare(ctx, x, y, w, h, color) {
+        var image = ctx.createImageData(w,h);
+        
+        
+
+        for (var _x = 0;_x<w;_x++) {
+            for (var _y = 0;_y<w;_y++) {
+                var pos = (_x + ~~(_y * w)) * 4;
+
+                var col = {};
+                flame.mainImage(col,new flame.vec2(_x,_y))
+
+                image.data[pos+0] = col.r;
+                image.data[pos+1] = col.g;
+                image.data[pos+2] = col.b;
+                image.data[pos+3] = 255;
+            }
+        }
+
+
+
+        ctx.putImageData(image,x,y);
+    }
+}
