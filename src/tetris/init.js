@@ -4,7 +4,7 @@ import { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } from "./gam
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
 import { initDebug } from "./debug.js";
-import GraphicEngine from "./graphics/default/engine.js";
+import { DefaultGraphicEngine } from "./graphics/default/engine.js";
 
 import * as htmlLoad from "./game.html";
 import { EasyNextBrick } from "./logic/next-brick.js";
@@ -102,7 +102,7 @@ export function init(container) {
     if (url.searchParams.get("view") === "lite")
         window.document.body.classList.add("lite-view");
 
-    const graphicEngine = new GraphicEngine({
+    const graphicEngine = new DefaultGraphicEngine({
         container: container,
     });
 
