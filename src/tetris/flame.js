@@ -23,6 +23,10 @@ export class vec2 {
     get xy() {
         return new vec2(this.x,this.y);
     }
+
+    dot(b) {
+        return this.x * b.x + this.y * b.y;
+    }
 }
 
 export class vec3 {
@@ -51,11 +55,59 @@ export class vec3 {
     get xy() {
         return new vec2(this.x,this.y);
     }
+
+    dot(b) {
+        return this.x * b.x + this.y * b.y + this.z * b.z;
+    }
 }
 
 class mat2 {
     constructor(a,b,c,d) {
         this.data = [a,b,c,d];
+    }
+}
+
+function add(a,b) {
+    if (a instanceof vec2 && b instanceof vec2) {
+        return a.add(b);
+    }
+    else if (a instanceof vec3 && b instanceof vec3) {
+        return a.add(b);
+    }else if (typeof(a) === "number" && typeof(b) === "number")
+    {
+        return a+b;
+    }else{
+        var aType = typeof(a);
+        if (aType == "object")
+            aType = a.constructor.name;
+
+        var bType = typeof(b);
+        if (bType == "object")
+            bType = b.constructor.name;
+
+        throw new Error("unsupported: "+aType+ " + "+bType);
+    }
+}
+
+function mul(a,b) {
+    if (a instanceof vec2 && b instanceof vec2) {
+        return a.mul(b);
+    }
+    else if (a instanceof vec3 && b instanceof vec3) {
+        return a.mul(b);
+    }else if (typeof(a) === "number" && typeof(b) === "number")
+    {
+        return a*b;
+    }else{
+        var aType = typeof(a);
+        if (aType == "object")
+            aType = a.constructor.name;
+
+        var bType = typeof(b);
+        if (bType == "object")
+            bType = b.constructor.name;
+
+        throw new Error("unsupported: "+aType+ " + "+bType);
     }
 }
 
@@ -79,14 +131,19 @@ function dot() {
         x2 = arguments[0];
         y2 = arguments[1];
     }
-    //else if (arguments.length === 2 && arguments[0] instanceof vec2)
+    else if (arguments.length === 2 && arguments[0] instanceof vec2 && arguments[1] instanceof vec2) {
+        return arguments[0].dot(arguments[1]);
+    }
+    else if (arguments.length === 2 && arguments[0] instanceof vec3 && arguments[1] instanceof vec3) {
+        return arguments[0].dot(arguments[1]);
+    }
     else 
-    throw new Error("not implemented");
+    throw new Error("not implemented: "+arguments[0]);
 
     var a = x1 - x2;
     var b = y1 - y2;
 
-    return a*a + b*b
+    return a*a + b*b;
 }
 
 /**
@@ -97,7 +154,7 @@ function dot() {
 function hash(p) {
     p = new vec2(dot(p, new vec2(127.1, 311.7)),
         dot(p, new vec2(269.5, 183.3)));
-    return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+    return add(-1.0,mul(2.0, fract(sin(p) * 43758.5453123)));
 }
 
 /**
@@ -111,12 +168,12 @@ function noise(p) {
     /**
      * @type {vec2}
      */
-    var i = floor(p + (p.x + p.y) * K1);
+    var i = floor(add(p,mul(add(p.x,p.y),K1)));
 
     /**
      * @type {vec2}
      */
-    var a = p - i + (i.x + i.y) * K2;
+    var a = p - add(i , mul(add(i.x , i.y), K2));
 
     /**
      * @type {vec2}
@@ -191,7 +248,7 @@ export function mainImage(fragColor, fragCoord) {
     q.x = mod(q.x, 1.) - 0.5;
     q.y -= 0.25;
 
-    var n = fbm(strength * q - new vec2(0, T3));
+    var n = fbm(mul(strength , q).sub(new vec2(0, T3)));
     var c = 1. - 16. * pow(max(0., length(q * new vec2(1.8 + q.y * 1.5, .75)) - n * max(0., q.y + .25)), 1.2);
     //	var c1 = n * c * (1.5-pow(1.25*uv.y,4.));
     var c1 = n * c * (1.5 - pow(2.50 * uv.y, 4.));
