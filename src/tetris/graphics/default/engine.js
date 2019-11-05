@@ -187,9 +187,9 @@ export class BurningGraphicEngine extends DefaultGraphicEngine {
                 }
                     
 
-                image.data[pos+0] = col.x * 255;
-                image.data[pos+1] = col.y * 255;
-                image.data[pos+2] = col.z * 255;
+                image.data[pos+0] = col[0] * 255;
+                image.data[pos+1] = col[1] * 255;
+                image.data[pos+2] = col[2] * 255;
                 image.data[pos+3] = 255;
             }
         }
