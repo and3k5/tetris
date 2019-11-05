@@ -44,6 +44,28 @@ export class vec2 {
         return new vec2(a.x / b.x, a.y / b.y);
     }
 
+    static operator(a,b,fnc) {
+        if (typeof(a) === "number") {
+            return new vec2(fnc(a,b.x), fnc(a, b.y));
+        }
+        if (typeof(b) === "number") {
+            return new vec2(fnc(a.x , b), fnc(a.y , b));
+        }
+        return new vec2(fnc(a.x , b.x), fnc(a.y , b.y));
+    }
+
+    static clamp(x, minVal, maxVal) {
+        return vec2.operator(vec2.operator(x,minVal,(a,b) => Math.max(a,b)),maxVal,(a,b) => Math.min(a,b));
+    }
+
+    length() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    static pow(a,b) {
+        return vec2.operator(a,b,(a,b) => Math.pow(a,b));
+    }
+
     floor() {
         return new vec2(floor(this.x), floor(this.y));
     }
@@ -108,6 +130,28 @@ export class vec3 {
         return new vec3(a.x / b.x, a.y / b.y, a.z / b.z);
     }
 
+    static operator(a,b,fnc) {
+        if (typeof(a) === "number") {
+            return new vec3(fnc(a,b.x), fnc(a, b.y), fnc(a , b.z));
+        }
+        if (typeof(b) === "number") {
+            return new vec3(fnc(a.x , b), fnc(a.y , b), fnc(a.z , b));
+        }
+        return new vec3(fnc(a.x , b.x), fnc(a.y , b.y), fnc(a.z , b.z));
+    }
+
+    static clamp(x, minVal, maxVal) {
+        return vec3.operator(vec3.operator(x,minVal,(a,b) => Math.max(a,b)),maxVal,(a,b) => Math.min(a,b));
+    }
+
+    length() {
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    }
+
+    static pow(a,b) {
+        return vec3.operator(a,b,(a,b) => Math.pow(a,b));
+    }
+
     floor() {
         return new vec3(floor(this.x), floor(this.y), floor(this.z));
     }
@@ -156,6 +200,26 @@ function add(a,b) {
     }
 }
 
+function length(x) {
+    if (typeof(x) === "number")
+        return Math.abs(x);
+    else if (x instanceof vec2)
+        return x.length();
+    else if (x instanceof vec3)
+        return x.length();
+    throw new Error("unsupported length");
+}
+
+function clamp(x, minVal, maxVal) {
+    if (typeof(x) === "number")
+        return Math.max(minVal,Math.min(maxVal,x));
+    else if (x instanceof vec2)
+        return vec2.clamp(x,minVal,maxVal);
+    else if (x instanceof vec3)
+        return vec3.clamp(x,minVal,maxVal);
+    throw new Error("unsupported length");
+}
+
 function mul(a,b) {
     if (a instanceof vec2 && b instanceof vec2) {
         return vec2.mul(a,b);
@@ -195,6 +259,32 @@ function sub(a,b) {
         return vec2.sub(a,b);
     } else if (a instanceof vec2 && typeof (b) === "number") {
         return vec2.sub(a,b);
+    }else{
+        var aType = typeof(a);
+        if (aType == "object")
+            aType = a.constructor.name;
+
+        var bType = typeof(b);
+        if (bType == "object")
+            bType = b.constructor.name;
+
+        throw new Error("unsupported: "+aType+ " + "+bType);
+    }
+}
+
+function pow(a,b) {
+    if (a instanceof vec2 && b instanceof vec2) {
+        return vec2.pow(a,b);
+    }
+    else if (a instanceof vec3 && b instanceof vec3) {
+        return vec3.pow(a,b);
+    }else if (typeof(a) === "number" && typeof(b) === "number")
+    {
+        return Math.pow(a,b);
+    } else if (typeof (a) === "number" && b instanceof vec2) {
+        return vec2.pow(a,b);
+    } else if (a instanceof vec2 && typeof (b) === "number") {
+        return vec2.pow(a,b);
     }else{
         var aType = typeof(a);
         if (aType == "object")
@@ -281,7 +371,8 @@ function dot() {
 function hash(p) {
     p = new vec2(dot(p, new vec2(127.1, 311.7)),
         dot(p, new vec2(269.5, 183.3)));
-    return add(-1.0,mul(2.0, fract(sin(p) * 43758.5453123)));
+    var out = add(-1.0,mul(2.0, fract(mul(sin(p), 43758.5453123))));
+    return out;
 }
 
 /**
@@ -300,7 +391,7 @@ function noise(p) {
     /**
      * @type {vec2}
      */
-    var a = p - add(i , mul(add(i.x , i.y), K2));
+    var a = vec2.sub(p,add(i , mul(add(i.x , i.y), K2)));
 
     /**
      * @type {vec2}
@@ -331,6 +422,12 @@ function noise(p) {
     return dot(n, new vec3(70.0));
 }
 
+function mix(x,y,a) {
+    if (typeof(x) === "number" && typeof(y) === "number" && typeof(a) === "number") {
+        // TODO implement
+    }
+}
+
 /**
  * 
  * @param {vec2} uv 
@@ -358,7 +455,7 @@ function fbm(uv) {
  * @param {vec4} fragColor 
  * @param {vec2} fragCoord 
  */
-export function mainImage(fragColor, fragCoord) {
+export function mainImage(fragCoord) {
     /**
      * @type {vec2}
      */
@@ -395,5 +492,5 @@ export function mainImage(fragColor, fragCoord) {
     // #endif
 
     var a = c * (1. - pow(uv.y, 3.));
-    fragColor = vec4(mix(new vec3(0.), col, a), 1.0);
+    return mix(new vec3(0.), col, a);
 }

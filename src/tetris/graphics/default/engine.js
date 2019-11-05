@@ -174,12 +174,11 @@ export class BurningGraphicEngine extends DefaultGraphicEngine {
             for (var _y = 0;_y<w;_y++) {
                 var pos = (_x + ~~(_y * w)) * 4;
 
-                var col = {};
-                flame.mainImage(col,new flame.vec2(_x,_y))
+                var col = flame.mainImage(new flame.vec2(_x,_y))
 
-                image.data[pos+0] = col.r;
-                image.data[pos+1] = col.g;
-                image.data[pos+2] = col.b;
+                image.data[pos+0] = col.x;
+                image.data[pos+1] = col.y;
+                image.data[pos+2] = col.z;
                 image.data[pos+3] = 255;
             }
         }
