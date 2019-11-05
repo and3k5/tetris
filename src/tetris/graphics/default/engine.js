@@ -27,6 +27,10 @@ export class DefaultGraphicEngine extends GraphicEngineBase {
         return this.#brickSize;
     }
 
+    set brickSize(v) {
+        this.#brickSize = v;
+    }
+
     get gameCanvas() {
         return this.#gameCanvas;
     }
@@ -163,6 +167,7 @@ import * as flame from "../../flame.js";
 export class BurningGraphicEngine extends DefaultGraphicEngine {
     constructor(options) {
         super(options);
+        //this.brickSize = 190;
     }
 
     drawSquare(ctx, x, y, w, h, color) {
@@ -174,11 +179,17 @@ export class BurningGraphicEngine extends DefaultGraphicEngine {
             for (var _y = 0;_y<w;_y++) {
                 var pos = (_x + ~~(_y * w)) * 4;
 
-                var col = flame.mainImage(new flame.vec2(_x,_y))
+                var col = flame.mainImage(_x/w,_y/h);
 
-                image.data[pos+0] = col.x;
-                image.data[pos+1] = col.y;
-                image.data[pos+2] = col.z;
+                if (window.loq != true) {
+                    console.log(col)
+                    window.loq = true;
+                }
+                    
+
+                image.data[pos+0] = col.x * 255;
+                image.data[pos+1] = col.y * 255;
+                image.data[pos+2] = col.z * 255;
                 image.data[pos+3] = 255;
             }
         }
