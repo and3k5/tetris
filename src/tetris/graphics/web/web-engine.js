@@ -1,12 +1,11 @@
 import * as htmlLoad from "./game.html";
 import GraphicEngineBase from "../graphic-engine-base/graphic-engine-base.js";
 import DocumentUtil from "../../document-util.js";
-import * as gameGraphic from "../../graphics.js";
 import Color from "../../color";
 import { RadialGradient, LinearGradient } from "../../gradient.js"; 
-import { defaultGraphics } from "../../graphics.js";
+import { drawGrid } from "../../graphics-grid.js";
 
-export class DefaultGraphicEngine extends GraphicEngineBase {
+export class WebGraphicEngine extends GraphicEngineBase {
     #brickSize = 30;
 
     #gameCanvas;
@@ -16,8 +15,6 @@ export class DefaultGraphicEngine extends GraphicEngineBase {
     #holdingCtx;
     #nextCtx;
     #score;
-
-    #legacyGraphics;
 
     get score() {
         return this.#score;
@@ -61,8 +58,93 @@ export class DefaultGraphicEngine extends GraphicEngineBase {
         this.#gameCtx = this.#gameCanvas.getContext("2d");
         this.#holdingCtx = this.#holdingCanvas.getContext("2d");
         this.#nextCtx = this.#nextCanvas.getContext("2d");
+    }
 
-        this.#legacyGraphics = defaultGraphics();
+    initializeInput() {
+        var game = this.game;
+
+        window.addEventListener("keydown", function (e) {
+            switch (e.keyCode) {
+                case 37:
+                    // left
+                    e.preventDefault();
+                    if (game.getRUNNING())
+                        game.action_moveleft();
+                    break;
+                case 38:
+                    // up
+                    e.preventDefault();
+                    if (game.getRUNNING())
+                        game.action_rotate();
+                    break;
+                case 39:
+                    // right
+                    e.preventDefault();
+                    if (game.getRUNNING())
+                        game.action_moveright();
+                    break;
+                case 40:
+                    // down
+                    e.preventDefault();
+                    if (game.getRUNNING())
+                        game.action_movedown();
+                    break;
+                case 32:
+                    // space
+                    e.preventDefault();
+                    if (game.getRUNNING() && e.repeat !== true)
+                        game.action_smashdown();
+                    break;
+                case 27:
+                    // escape
+                    e.preventDefault();
+                    if (game.getRUNNING()) {
+                        // ingame
+                        menuNav("paused");
+                        playSound("menuback");
+                    }
+                    break;
+                case 16:
+                    // shift
+                    e.preventDefault();
+                    if (game.getRUNNING()) {
+                        game.holdingShift();
+                    }
+                    break;
+            }
+        }, false);
+
+        var touchStart = null;
+
+        this.gameCanvas.addEventListener("touchstart", function (event) {
+            var touch = event.changedTouches[0];
+            touchStart = { x: touch.screenX, y: touch.screenY };
+        });
+        this.gameCanvas.addEventListener("touchend", function (event) {
+            var touch = event.changedTouches[0];
+            var touchEnd = { x: touch.screenX, y: touch.screenY };
+
+            var deltaX = touchEnd.x - touchStart.x;
+            var deltaY = touchEnd.y - touchStart.y;
+            var rad = Math.atan2(deltaY, deltaX);
+            var deg = rad * (180 / Math.PI);
+
+            while (deg < 0)
+                deg += 360;
+
+            if (deg > 120 && deg < 220) {
+                game.action_moveleft();
+            } else if (deg > 340 || deg < 40) {
+                game.action_moveright();
+            } else if (deg < 115 && deg > 65) {
+                game.action_smashdown();
+            } else {
+                console.debug(deg);
+            }
+        });
+        this.holdingCanvas.addEventListener("click", function () {
+            game.holdingShift();
+        });
     }
 
     clear() {
@@ -74,10 +156,10 @@ export class DefaultGraphicEngine extends GraphicEngineBase {
 
     drawGrid() {
         const BRICKSIZESCALE = 1.5;
-        gameGraphic.drawGrid(this.#gameCtx, this.game.gridColor, this.brickSize, this.brickSize, this.game.width, this.game.height);
+        drawGrid(this.#gameCtx, this.game.gridColor, this.brickSize, this.brickSize, this.game.width, this.game.height);
         var smallBrickSize = this.brickSize / BRICKSIZESCALE;
-        gameGraphic.drawGrid(this.#nextCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
-        gameGraphic.drawGrid(this.#holdingCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
+        drawGrid(this.#nextCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
+        drawGrid(this.#holdingCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
     }
 
     drawBricks() {
@@ -102,18 +184,23 @@ export class DefaultGraphicEngine extends GraphicEngineBase {
     }
 
     drawBrickForm(brickForm, ctx, x, y, color, scale = 1) {
-        var brickSize = this.brickSize / scale;
-
         for (var i1 in brickForm) {
             for (var i2 in brickForm[i1]) {
                 if (brickForm[i1][i2] == 1) {
-                    this.drawSquare(ctx, (x * brickSize) + (parseInt(i2) * brickSize), (y * brickSize) + (parseInt(i1) * brickSize), brickSize, brickSize, color);
+                    this.drawSquare(ctx, (x) + (parseInt(i2)), (y) + (parseInt(i1)), color, scale);
                 }
             }
         }
     }
 
-    drawSquare(ctx, x, y, w, h, color) {
+    drawSquare(ctx, bx, by, color, scale = 1) {
+        var brickSize = this.brickSize / scale;
+
+        var x = (bx * brickSize);
+        var y = (by *  brickSize);
+        var w = brickSize;
+        var h = brickSize;
+
         var fstyle = new RadialGradient(ctx, x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
         fstyle.addColor(0, color);
         fstyle.addColor(1, color.alphaScale(0.5));
@@ -159,12 +246,29 @@ export class DefaultGraphicEngine extends GraphicEngineBase {
         return this.brickSize * this.game.height;
     }
 
+    initRender() {
+        this.render(true,true);
+    }
 
+    render(force = false,loop = false) {
+        // CTX GRAPHICS
+        var game = this.game;
+        if (force === true || game.PENDINGUPDATE) {
+            this.clear();
+            this.drawBricks();
+            game.PENDINGUPDATE = false;
+        }
+        if (loop === true)
+        {
+            var $this = this;
+            requestAnimationFrame(() => $this.render(false, loop));
+        }
+    }
 }
 
 import * as flame from "../../flame.js";
 
-export class BurningGraphicEngine extends DefaultGraphicEngine {
+export class BurningGraphicEngine extends WebGraphicEngine {
     constructor(options) {
         super(options);
         //this.brickSize = 190;

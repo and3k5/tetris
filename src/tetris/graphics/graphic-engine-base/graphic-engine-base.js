@@ -6,11 +6,19 @@ export default class GraphicEngineBase {
     }
 
     initialize() {
-        throw new Exception("Missing implementation");
+        throw new Error("Missing implementation");
+    }
+
+    initializeInput() {
+        // virtual
+    }
+
+    initRender() {
+        throw new Error("Missing implementation")
     }
 
     clear() {
-        throw new Exception("Missing implementation");
+        throw new Error("Missing implementation");
     }
 
     setGame(game) {

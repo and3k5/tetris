@@ -2,7 +2,6 @@ import Color from "./color.js";
 import Brick from "./brick.js";
 import { playSound } from "./sound.js";
 import { BinaryBrickForm } from "./brick-form.js";
-import * as gameGraphic from "./graphics.js";
 import * as gameController from "./game-controller.js";
 import { attachSimulator } from "./simulate.js";
 import * as console from "../utils/trace.js";
@@ -59,9 +58,6 @@ class TetrisGame {
     // game setup
     #setup;
 
-    // [Graphic Context] Game 2d context
-    #ctx;
-
     // grid color
     #gridColor;
 
@@ -71,8 +67,6 @@ class TetrisGame {
     #RUNNING = true;
 
     #runEvent;
-
-    #graphics;
 
     #socket = null;
 
@@ -105,7 +99,6 @@ class TetrisGame {
         
         this.#WIDTH = gameSetup.width;
         this.#HEIGHT = gameSetup.height;
-        this.#graphics = gameSetup.graphics;
         this.#gameGuid = Math.round(Math.random()*10000000000000000);
         this.#gridColor = new Color(0, 255, 0, 0.5);
 
@@ -122,12 +115,6 @@ class TetrisGame {
                 this.#HOLDING.game = this;
             }
         }
-
-        let // [Graphic Context] Game holding brick 2d context
-            h_ctx;
-
-        let // [Graphic Context] Game next brick 2d context
-            n_ctx;
 
         this.brickforms = gameSetup.brickforms;
         const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
@@ -232,64 +219,7 @@ class TetrisGame {
             }
         }
 
-        function keyh(e) {
-            switch (e.keyCode) {
-                case 37:
-                    // left
-                    e.preventDefault();
-                    if (game.getRUNNING())
-                        game.action_moveleft();
-                    break;
-                case 38:
-                    // up
-                    e.preventDefault();
-                    if (game.getRUNNING())
-                        game.action_rotate();
-                    break;
-                case 39:
-                    // right
-                    e.preventDefault();
-                    if (game.getRUNNING())
-                        game.action_moveright();
-                    break;
-                case 40:
-                    // down
-                    e.preventDefault();
-                    if (game.getRUNNING())
-                        game.action_movedown();
-                    break;
-                case 32:
-                    // space
-                    e.preventDefault();
-                    if (game.getRUNNING() && e.repeat !== true)
-                        game.action_smashdown();
-                    break;
-                case 27:
-                    // escape
-                    e.preventDefault();
-                    if (game.getRUNNING()) {
-                        // ingame
-                        menuNav("paused");
-                        playSound("menuback");
-                    }
-                    break;
-                case 16:
-                    // shift
-                    e.preventDefault();
-                    if (game.getRUNNING()) {
-                        game.holdingShift();
-                    }
-                    break;
-            }
-        }
-        function graphicControlLoop(game, ctx, h_ctx, n_ctx) {
-            // CTX GRAPHICS
-            requestAnimationFrame(() => graphicControlLoop(game, ctx, h_ctx, n_ctx));
-            if (game.PENDINGUPDATE) {
-                game.inGameGraphic(ctx, h_ctx, n_ctx);
-                game.PENDINGUPDATE = false;
-            }
-        }
+        
         this.init = function () {
             this.#BRICKSIZE = this.#graphicEngine.brickSize;
 
@@ -336,47 +266,9 @@ class TetrisGame {
                 }
             }
 
-            window.addEventListener("keydown", keyh, false);
+            this.#graphicEngine.initializeInput();
 
-            var touchStart = null;
-
-            this.#graphicEngine.gameCanvas.addEventListener("touchstart", function (event) {
-                var touch = event.changedTouches[0];
-                touchStart = { x: touch.screenX, y: touch.screenY };
-            });
-            this.#graphicEngine.gameCanvas.addEventListener("touchend", function (event) {
-                var touch = event.changedTouches[0];
-                var touchEnd = { x: touch.screenX, y: touch.screenY };
-
-                var deltaX = touchEnd.x - touchStart.x;
-                var deltaY = touchEnd.y - touchStart.y;
-                var rad = Math.atan2(deltaY, deltaX);
-                var deg = rad * (180 / Math.PI);
-
-                while (deg < 0)
-                    deg += 360;
-
-                if (deg > 120 && deg < 220) {
-                    game.action_moveleft();
-                } else if (deg > 340 || deg < 40) {
-                    game.action_moveright();
-                } else if (deg < 115 && deg > 65) {
-                    game.action_smashdown();
-                } else {
-                    console.debug(deg);
-                }
-            });
-
-            this.#graphicEngine.holdingCanvas.addEventListener("click", function () {
-                game.holdingShift();
-            });
-
-            this.#ctx = this.#graphicEngine.gameCanvas.getContext("2d");
-            h_ctx = this.#graphicEngine.holdingCanvas.getContext("2d");
-            n_ctx = this.#graphicEngine.nextCanvas.getContext("2d");
-
-            this.#graphicEngine.clear();
-            graphicControlLoop(this, this.#ctx, h_ctx, n_ctx);
+            this.#graphicEngine.initRender();
         }
     }
 
@@ -387,11 +279,6 @@ class TetrisGame {
 
     get colors() {
         return this.getColors();
-    }
-
-    inGameGraphic(ctx, h_ctx, n_ctx) {
-        this.#graphicEngine.clear();
-        this.#graphicEngine.drawBricks();
     }
 
     get holding() {
