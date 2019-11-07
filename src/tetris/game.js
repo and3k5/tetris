@@ -126,11 +126,11 @@ class TetrisGame {
                 this.score++;
                 playSound("gamerow");
                 var bricks = game.bricks;
-                const toDelete = (line => {
+                (line => {
                     const rtn = [];
                     const tx = 0;
                     let times = 0;
-                    for (times = 0; times <= this.#width; times++) {
+                    for (times = 0; times <= this.width; times++) {
                         for (const i in bricks) {
                             for (const i1 in bricks[i].blocks) {
                                 for (const i2 in bricks[i].blocks[i1]) {
@@ -147,7 +147,7 @@ class TetrisGame {
                     }
                     return rtn;
                 })(l);
-                const movedown = (line => {
+                (line => {
                     const rtn = [];
                     const tx = 0;
                     const times = 0;
@@ -173,14 +173,14 @@ class TetrisGame {
             //check for full lines
             if (this.#RUNNING) {
                 let cx;
-                for (let i = this.#height; i > 1; i--) {
+                for (let i = this.height; i > 1; i--) {
                     let cnt = 0;
-                    for (cx = 0; cx <= this.#width - 1; cx++) {
+                    for (cx = 0; cx <= this.width - 1; cx++) {
                         if (this.checkXY(cx, i)) {
                             cnt++;
                         }
                     }
-                    if (cnt == this.#width) {
+                    if (cnt == this.width) {
                         clearLine.call(this, i++);
                     }
                 }
