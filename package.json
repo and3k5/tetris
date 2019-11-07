@@ -6,6 +6,7 @@
     "build": "node node_modules/webpack/bin/webpack.js --env.mode=production",
     "watch": "node node_modules/webpack/bin/webpack.js --env.mode=development --env.watch=yes",
     "build-dev": "node node_modules/webpack/bin/webpack.js --env.mode=development",
+    "host": "http-server -a 127.0.0.1",
     "test": "node node_modules/karma/bin/karma start karma.conf.js"
   },
   "repository": {
