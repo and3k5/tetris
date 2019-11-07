@@ -12,10 +12,10 @@ window.BinaryBrickForm = BinaryBrickForm;
 
 class TetrisGame {
     // [number] Bricks x count
-    #WIDTH;
+    #width;
 
     // [number] Bricks y count
-    #HEIGHT;
+    #height;
 
     // [bool] ghost option
     #SETTING_GHOST = true;
@@ -92,8 +92,8 @@ class TetrisGame {
             this.addLogEntry({name: "gameInit"});
         }
         
-        this.#WIDTH = gameSetup.width;
-        this.#HEIGHT = gameSetup.height;
+        this.#width = gameSetup.width;
+        this.#height = gameSetup.height;
         this.#gameGuid = Math.round(Math.random()*10000000000000000);
         this.#gridColor = new Color(0, 255, 0, 0.5);
 
@@ -130,7 +130,7 @@ class TetrisGame {
                     const rtn = [];
                     const tx = 0;
                     let times = 0;
-                    for (times = 0; times <= this.#WIDTH; times++) {
+                    for (times = 0; times <= this.#width; times++) {
                         for (const i in bricks) {
                             for (const i1 in bricks[i].blocks) {
                                 for (const i2 in bricks[i].blocks[i1]) {
@@ -173,14 +173,14 @@ class TetrisGame {
             //check for full lines
             if (this.#RUNNING) {
                 let cx;
-                for (let i = this.#HEIGHT; i > 1; i--) {
+                for (let i = this.#height; i > 1; i--) {
                     let cnt = 0;
-                    for (cx = 0; cx <= this.#WIDTH - 1; cx++) {
+                    for (cx = 0; cx <= this.#width - 1; cx++) {
                         if (this.checkXY(cx, i)) {
                             cnt++;
                         }
                     }
-                    if (cnt == this.#WIDTH) {
+                    if (cnt == this.#width) {
                         clearLine.call(this, i++);
                     }
                 }
@@ -432,11 +432,11 @@ class TetrisGame {
     }
 
     get width() {
-        return this.#WIDTH;
+        return this.#width;
     }
 
     get height() {
-        return this.#HEIGHT;
+        return this.#height;
     }
 
     get bricks() {
