@@ -77,7 +77,7 @@ class Brick {
     }
 
     resetPosition() {
-        this.x = Math.round(((this.game.getWIDTH()) / 2) - (this.blocks[0].length / 2));
+        this.x = Math.round(((this.game.width) / 2) - (this.blocks[0].length / 2));
         this.y = Math.round(0 - (this.blocks.length));
     }
 
@@ -189,14 +189,14 @@ class Brick {
 
     rotate_okay(brick, bl, Throw = false) {
         var emulatedBrick = Brick.emulate(bl);
-        if ((brick.y + emulatedBrick.getHeight()) >= this.game.HEIGHT)
+        if ((brick.y + emulatedBrick.getHeight()) >= this.game.height)
         {
             if (Throw === true)
                 throw new Error("The brick would be out of bounds:" + this.posInfo());
             return false;
         }
 
-        if (((brick.x + emulatedBrick.getWidth() + emulatedBrick.getBlockX()) > (this.game.getWIDTH())))
+        if (((brick.x + emulatedBrick.width + emulatedBrick.getBlockX()) > (this.game.width)))
         {
             if (Throw === true)
                 throw new Error("The brick would be out of bounds:" + this.posInfo());
@@ -242,13 +242,13 @@ class Brick {
     }
 
     rotate(Throw = false) {
-        if (this.game.getRUNNING()) {
+        if (this.game.running) {
             const blocks2 = this.getRotatedBlocks();
             if (this.canRotate(Throw, blocks2)) {
                 //yeah
                 this.requestUpdate();
             } else {
-                if (((this.x + Brick.emulate(blocks2).getWidth() + Brick.emulate(blocks2).getBlockX()) > (this.game.getWIDTH()))) {
+                if (((this.x + Brick.emulate(blocks2).getWidth() + Brick.emulate(blocks2).getBlockX()) > (this.game.width))) {
                     this.x--;
                     if (this.rotate_okay(this, blocks2)) {
                         // yeah
@@ -297,7 +297,7 @@ class Brick {
     }
 
     canMoveLeft(Throw = false) {
-        if (this.game.getRUNNING() != true) {
+        if (this.game.running != true) {
             if (Throw === true)
                 throw new Error("The game is not running");
             return false;
@@ -324,7 +324,7 @@ class Brick {
     }
 
     moveleft(Throw = false) {
-        if (this.game.getRUNNING()) {
+        if (this.game.running) {
             if (this.ingame === true)
                 playSound("gamemove");
             if (this.canMoveLeft(Throw)) {
@@ -356,7 +356,7 @@ class Brick {
     }
 
     get mostRight() {
-        return parseInt(this.game.WIDTH - this.innerWidth - this.getBlockX());
+        return parseInt(this.game.width - this.innerWidth - this.getBlockX());
     }
 
     get innerWidth() {
@@ -389,7 +389,7 @@ class Brick {
     }
 
     canMoveRight(Throw = false) {
-        if (this.game.getRUNNING() != true) {
+        if (this.game.running != true) {
             if (Throw === true)
                 throw new Error("The game is not running");
             return false;
@@ -400,7 +400,7 @@ class Brick {
             return false;
         }
 
-        if (((this.x + this.getWidth() + this.getBlockX()) >= (this.game.getWIDTH()))) {
+        if (((this.x + this.getWidth() + this.getBlockX()) >= (this.game.width))) {
             if (Throw === true)
                 throw new Error("The brick would be out of bounds:" + this.posInfo());
             return false;
@@ -416,7 +416,7 @@ class Brick {
     }
 
     moveright(Throw = false) {
-        if (this.game.getRUNNING()) {
+        if (this.game.running) {
             if (this.ingame === true)
                 playSound("gamemove");
             if (this.canMoveRight(Throw)) {
@@ -436,7 +436,7 @@ class Brick {
     }
 
     canSmashDown(Throw = false) {
-        if (this.game.getRUNNING() != true) {
+        if (this.game.running != true) {
             if (Throw === true)
                 throw new Error("The game is not running");
             return false;
@@ -470,7 +470,7 @@ class Brick {
     }
 
     canMoveDown(Throw = false) {
-        if (this.game.getRUNNING() != true) {
+        if (this.game.running != true) {
             if (Throw === true)
                 throw new Error("The game is not running");
             return false;
@@ -481,7 +481,7 @@ class Brick {
             return false;
         }
 
-        if ((this.y + this.getHeight()) >= this.game.HEIGHT) {
+        if ((this.y + this.getHeight()) >= this.game.height) {
             if (Throw === true)
                 throw new Error("The brick would be out of bounds:" + this.posInfo());
             return false;
@@ -497,7 +497,7 @@ class Brick {
     }
 
     movedown(Throw = false) {
-        if (this.game.getRUNNING()) {
+        if (this.game.running) {
             if (this.moving) {
                 if (this.canMoveDown(Throw)) {
                     this.y++;
@@ -528,7 +528,7 @@ class Brick {
         const h = this.getHeight();
         let additionalY = 0;
         while (true) {
-            if ((this.y + additionalY + h) > this.game.HEIGHT)
+            if ((this.y + additionalY + h) > this.game.height)
                 break;
 
             if (this.willCollide(0, additionalY))

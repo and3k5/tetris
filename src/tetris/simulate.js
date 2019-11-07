@@ -56,7 +56,7 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
 }
 
 function getPositions(game, usesHolding = false,setupChanges = {}) {
-    var maxWidth = game.WIDTH * 2;
+    var maxWidth = game.width * 2;
 
     var positions = [];
 
@@ -134,7 +134,7 @@ export function getPossibleMoves(game,setupChanges) {
             }
         }
 
-        for (var x = 0; x < game.WIDTH; x++) {
+        for (var x = 0; x < game.width; x++) {
             var countingHoles = false;
             var xHeight = 0;
             for (var y = matrix.length - 1; y >= 0; y--) {
@@ -250,7 +250,7 @@ class SimulatorRunner {
     }
 
     tick() {
-        if (this.#game.getRUNNING() !== true)
+        if (this.#game.running !== true)
             return;
         if (this.#mode === "assist")
             this.assistTick();

@@ -118,8 +118,6 @@ class TetrisGame {
         var game = this;
 
         this.getColors = () => colors;
-        this.getRUNNING = () => this.#RUNNING;
-        this.getWIDTH = () => game.#WIDTH;
 
 
 
@@ -244,9 +242,9 @@ class TetrisGame {
 
     renderBrickMatrix() {
         var result = [];
-        for (var y = 0; y < this.HEIGHT; y++) {
+        for (var y = 0; y < this.height; y++) {
             result.push([]);
-            for (var x = 0; x < this.WIDTH; x++) {
+            for (var x = 0; x < this.width; x++) {
                 result[result.length - 1].push(false);
             }
         }
@@ -429,19 +427,15 @@ class TetrisGame {
         }
     }
 
+    get running() {
+        return this.#RUNNING;
+    }
+
     get width() {
         return this.#WIDTH;
     }
 
     get height() {
-        return this.#HEIGHT;
-    }
-
-    get WIDTH() {
-        return this.#WIDTH;
-    }
-
-    get HEIGHT() {
         return this.#HEIGHT;
     }
 

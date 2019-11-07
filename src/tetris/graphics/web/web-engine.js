@@ -74,37 +74,37 @@ export class WebGraphicEngine extends GraphicEngineBase {
                 case 37:
                     // left
                     e.preventDefault();
-                    if (game.getRUNNING())
+                    if (game.running)
                         game.action_moveleft();
                     break;
                 case 38:
                     // up
                     e.preventDefault();
-                    if (game.getRUNNING())
+                    if (game.running)
                         game.action_rotate();
                     break;
                 case 39:
                     // right
                     e.preventDefault();
-                    if (game.getRUNNING())
+                    if (game.running)
                         game.action_moveright();
                     break;
                 case 40:
                     // down
                     e.preventDefault();
-                    if (game.getRUNNING())
+                    if (game.running)
                         game.action_movedown();
                     break;
                 case 32:
                     // space
                     e.preventDefault();
-                    if (game.getRUNNING() && e.repeat !== true)
+                    if (game.running && e.repeat !== true)
                         game.action_smashdown();
                     break;
                 case 27:
                     // escape
                     e.preventDefault();
-                    if (game.getRUNNING()) {
+                    if (game.running) {
                         // ingame
                         menuNav("paused");
                         playSound("menuback");
@@ -113,7 +113,7 @@ export class WebGraphicEngine extends GraphicEngineBase {
                 case 16:
                     // shift
                     e.preventDefault();
-                    if (game.getRUNNING()) {
+                    if (game.running) {
                         game.holdingShift();
                     }
                     break;
