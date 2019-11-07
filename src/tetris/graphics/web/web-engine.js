@@ -4,6 +4,7 @@ import DocumentUtil from "../../document-util.js";
 import Color from "../../color";
 import { RadialGradient, LinearGradient } from "../../gradient.js"; 
 import { drawGrid } from "../../graphics-grid.js";
+import { executeTick } from "../../game-controller.js";
 
 export class WebGraphicEngine extends GraphicEngineBase {
     #brickSize = 30;
@@ -60,8 +61,13 @@ export class WebGraphicEngine extends GraphicEngineBase {
         this.#nextCtx = this.#nextCanvas.getContext("2d");
     }
 
-    initializeInput() {
+    initializeInput(runEvent) {
         var game = this.game;
+
+        this.gameCanvas.addEventListener("click", function () {
+            if (game.setup.clickTick === true)
+                executeTick(game, runEvent);
+        });
 
         window.addEventListener("keydown", function (e) {
             switch (e.keyCode) {
@@ -248,6 +254,9 @@ export class WebGraphicEngine extends GraphicEngineBase {
 
     initRender() {
         this.render(true,true);
+        this.game.addEvent("update-score",(score) => {
+            this.score.innerHTML = score;
+        });
     }
 
     render(force = false,loop = false) {

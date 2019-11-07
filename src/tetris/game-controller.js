@@ -3,12 +3,7 @@ export function executeTick(game, runEvent) {
     brick.movedown();
     runEvent("tick");
 }
-export function gameControlDown(game, g, runEvent) {
-    g.addEventListener("click", function () {
-        if (game.setup.clickTick === true)
-            executeTick(game, runEvent);
-    });
-
+export function gameControlDown(game, runEvent) {
     const func = () => {
         if (game.setup.clickTick !== true)
             executeTick(game, runEvent);

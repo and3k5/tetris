@@ -17,23 +17,8 @@ class TetrisGame {
     // [number] Bricks y count
     #HEIGHT;
 
-    // [number] Size of a brick (in pixels)
-    #BRICKSIZE;
-
-    // [number] canvas width (soon to be deleted)
-    #CANVAS_WIDTH;
-
-    // [number] canvas height (soon to be deleted)
-    #CANVAS_HEIGHT;
-
     // [bool] ghost option
     #SETTING_GHOST = true;
-
-    // [number] Width of grid
-    #GRID_WIDTH;
-
-    // [number] Height of grid
-    #GRID_HEIGHT;
 
     // [Brick] current holding brick
     #HOLDING = null;
@@ -86,6 +71,16 @@ class TetrisGame {
 
     constructor(gameSetup, extra = null,graphicEngine = null) {
         this.#setup = gameSetup;
+
+        var runEvent = (function (name,data) {
+            for (var event of this.#events) {
+                if (event.name === name) {
+                    event.handler(data);
+                }
+            }
+        }).bind(this);
+
+        this.#runEvent = runEvent;
 
         this.#nextRandomGenerator = gameSetup.nextBrick || new NextBrick();
 
@@ -195,55 +190,13 @@ class TetrisGame {
             }
         }
 
-        function tiles(ctx) {
-            // Grid
-            return 0;
-            var ix = 0;
-            var iy = 0;
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = "rgba(0,255,0,0.5)";
-            ctx.fillStyle = "white";
-            for (var ix = 0; ix <= (this.#GRID_WIDTH); ix += this.#BRICKSIZE) {
-                ctx.beginPath();
-                ctx.lineTo(ix, 0);
-                ctx.lineTo(ix, this.#GRID_HEIGHT);
-                ctx.closePath();
-                ctx.stroke();
-            }
-            for (var iy = 0; iy <= (this.#GRID_HEIGHT); iy += this.#BRICKSIZE) {
-                ctx.beginPath();
-                ctx.lineTo(0, iy);
-                ctx.lineTo(this.#GRID_WIDTH, iy);
-                ctx.closePath();
-                ctx.stroke();
-            }
-        }
-
-        
         this.init = function () {
-            this.#BRICKSIZE = this.#graphicEngine.brickSize;
-
-            this.#CANVAS_WIDTH = this.#BRICKSIZE * this.#WIDTH;
-            this.#CANVAS_HEIGHT = this.#BRICKSIZE * this.#HEIGHT;
-
-            this.#GRID_WIDTH = this.#WIDTH * this.#BRICKSIZE;
-            this.#GRID_HEIGHT = this.#HEIGHT * this.#BRICKSIZE;
-
             this.#RUNNING = true;
             this.setScore(0);
             this.HOLDINGCOUNT = 0;
             this.addNewBrick();
 
-            var runEvent = (function (name) {
-                for (var event of this.#events) {
-                    if (event.name === name) {
-                        event.handler();
-                    }
-                }
-            }).bind(this);
-
-            gameController.gameControlDown(this, this.#graphicEngine.gameCanvas, runEvent);
-            this.#runEvent = runEvent;
+            gameController.gameControlDown(this, this.#runEvent);
 
             if (this.setup.simulator === true) {
                 attachSimulator(this);
@@ -266,7 +219,7 @@ class TetrisGame {
                 }
             }
 
-            this.#graphicEngine.initializeInput();
+            this.#graphicEngine.initializeInput(this.#runEvent);
 
             this.#graphicEngine.initRender();
         }
@@ -274,7 +227,11 @@ class TetrisGame {
 
     setScore(v) {
         this.#score = v;
-        this.#graphicEngine.score.innerHTML = this.#score;
+        this.#runEvent("update-score",v);
+    }
+
+    get score() {
+        return this.#score;
     }
 
     get colors() {
