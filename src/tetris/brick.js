@@ -1,12 +1,15 @@
 import { playSound } from "./sound.js";
 import * as console from "../utils/trace.js";
+import {createUniqueGuid} from "../utils/guid.js";
 
 class Brick {
     #x = undefined;
     #y = undefined;
     #rotation = 0;
     #index = undefined;
+    #guid;
     constructor(options) {
+        this.#guid = createUniqueGuid();
         const o = options || { 'ingame': false, 'game': null };
 
         this.game = o.game;
@@ -22,6 +25,10 @@ class Brick {
             this.x = o.x;
             this.y = o.y;
         }
+    }
+
+    get guid() {
+        return this.guid;
     }
 
     get index() {

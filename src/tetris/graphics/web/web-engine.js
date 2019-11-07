@@ -5,6 +5,7 @@ import Color from "../../color";
 import { RadialGradient, LinearGradient } from "../../gradient.js"; 
 import { drawGrid } from "../../graphics-grid.js";
 import { executeTick } from "../../game-controller.js";
+import Brick from "../../brick.js";
 
 export class WebGraphicEngine extends GraphicEngineBase {
     #brickSize = 30;
@@ -16,6 +17,8 @@ export class WebGraphicEngine extends GraphicEngineBase {
     #holdingCtx;
     #nextCtx;
     #score;
+
+    #state = null;
 
     get score() {
         return this.#score;
@@ -153,11 +156,14 @@ export class WebGraphicEngine extends GraphicEngineBase {
         });
     }
 
-    clear() {
+    clearCanvases() {
         this.clearCanvas(this.#gameCtx, this.canvasWidth, this.canvasHeight);
         this.clearCanvas(this.#holdingCtx, this.brickSize * 4, this.brickSize * 4);
         this.clearCanvas(this.#nextCtx, this.brickSize * 4, this.brickSize * 4);
-        this.drawGrid();
+    }
+
+    clear() {
+        this.clearState();
     }
 
     drawGrid() {
@@ -168,7 +174,76 @@ export class WebGraphicEngine extends GraphicEngineBase {
         drawGrid(this.#holdingCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
     }
 
+    clearState() {
+        if (this.#state == null) {
+            this.#state = {};
+            this.#state.bricks = {
+                holding: [],
+                game: [],
+                next: [],
+            };
+        }
+        this.clearArray(this.#state.bricks.holding);
+        var removedGameItems = this.clearArray(this.#state.bricks.game);
+        this.clearArray(this.#state.bricks.next);
+        return removedGameItems;
+    }
+
+    clearArray(array) {
+        return array.splice(0,array.length);
+    }
+
+    addToState(bricks, brick,x,y,color,scale) {
+        var old = bricks;
+        var entries = bricks;
+        if (typeof(bricks) === "object" && !Array.isArray(bricks)) {
+            old = bricks.old;
+            entries = bricks.state;
+        }
+        if (typeof(x) === "undefined") {
+            x = brick.x;
+            y = brick.y;
+        }
+        if (typeof(color) === "undefined") {
+            color = brick.color;
+        }
+        var blocks;
+        if (brick instanceof Brick) {
+            blocks = brick.blocks;
+        }else{
+            blocks = brick;
+            brick = null;
+        }
+        if (typeof(scale) !== "number")
+            scale = 1;
+        var entry = brick != null ? old.filter(b => b.brick === brick)[0] : null;
+        if (entry == null) {
+            entry = {brick};
+            entries.push(entry);
+            entry.fromX = x;
+            entry.fromY = y;
+            if (brick != null && brick.moving === true)
+                console.log("new entry",x,y);
+        }else{
+            if (entries.indexOf(entry) === -1)
+                entries.push(entry);
+            entry.fromX = entry.currentX;
+            entry.fromY = entry.currentY;
+            if (brick != null && brick.moving === true)
+                console.log("existing");
+        }
+        entry.toX = x;
+        entry.toY = y;
+        entry.blocks = blocks;
+        entry.color = color;
+        entry.scale = scale;
+        entry.fromStamp = new Date().getTime();
+        if (brick != null && brick.moving === true)
+            console.log(entry);
+    }
+
     drawBricks() {
+        var removedGameEntries = this.clearState();
         const BRICKSIZESCALE = 1.5;
 
         var bricks = this.game.bricks;
@@ -176,18 +251,61 @@ export class WebGraphicEngine extends GraphicEngineBase {
             if (this.game.ghostDrawing && bricks[i].moving) {
                 var ghostColor = new Color(255, 255, 255, 0.2);
                 const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
-                this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, tmp_lowestPos, ghostColor)
+                //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, tmp_lowestPos, ghostColor)
+                this.addToState(this.#state.bricks.game,bricks[i].blocks, bricks[i].x, tmp_lowestPos, ghostColor);
             }
-            this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, bricks[i].y, bricks[i].color);
+            //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, bricks[i].y, bricks[i].color);
+            this.addToState({state: this.#state.bricks.game, old: removedGameEntries},bricks[i]);
         }
 
         
-        this.drawBrickForm(this.game.brickforms[this.game.nextRandom], this.#nextCtx,2,2,this.game.colors[this.game.nextRandom],BRICKSIZESCALE);
+        //this.drawBrickForm(this.game.brickforms[this.game.nextRandom], this.#nextCtx,2,2,this.game.colors[this.game.nextRandom],BRICKSIZESCALE);
+        this.addToState(this.#state.bricks.next,this.game.brickforms[this.game.nextRandom],2,2,this.game.colors[this.game.nextRandom],BRICKSIZESCALE);
 
         if (this.game.holding != null) {
-            this.drawBrickForm(this.game.holding.blocks, this.#holdingCtx, 2, 2, this.game.holding.color, BRICKSIZESCALE);
+            //this.drawBrickForm(this.game.holding.blocks, this.#holdingCtx, 2, 2, this.game.holding.color, BRICKSIZESCALE);
+            this.addToState(this.#state.bricks.holding,this.game.holding,2,2,undefined,BRICKSIZESCALE);
         }
     }
+
+    drawStates() {
+        this.drawState(this.#state.bricks.holding,this.#holdingCtx);
+        this.drawState(this.#state.bricks.game,this.#gameCtx);
+        this.drawState(this.#state.bricks.next,this.#nextCtx);
+    }
+
+    mix(min,max,percent) {
+        return min*(1 - percent)+max*percent;
+    }
+
+    updateBrickState(entry) {
+        if (
+            typeof(entry.fromX) === "number" && typeof(entry.fromY) === "number" &&
+            typeof(entry.toX) === "number" && typeof(entry.toY) === "number" &&
+            typeof(entry.fromStamp) === "number"
+        )
+        {
+            var stamp = new Date().getTime() - entry.fromStamp;
+            var percX = (stamp / 100);
+            if (percX > 1) percX = 1;
+            var percY = (stamp / 1000);
+            if (percY > 1) percY = 1;
+            entry.currentX = this.mix(entry.fromX,entry.toX,percX);
+            entry.currentY = this.mix(entry.fromY,entry.toY,percY);
+        }else{
+            entry.currentX = entry.toX;
+            entry.currentY = entry.toY;
+        }
+    }
+
+    drawState(entries,ctx) {
+        for (var entry of entries) {
+            this.updateBrickState(entry);
+            this.drawBrickForm(entry.blocks,ctx,entry.currentX,entry.currentY,entry.color,entry.scale);
+        }
+    }
+
+
 
     drawBrickForm(brickForm, ctx, x, y, color, scale = 1) {
         for (var i1 in brickForm) {
@@ -263,10 +381,12 @@ export class WebGraphicEngine extends GraphicEngineBase {
         // CTX GRAPHICS
         var game = this.game;
         if (force === true || game.PENDINGUPDATE) {
-            this.clear();
             this.drawBricks();
             game.PENDINGUPDATE = false;
         }
+        this.clearCanvases();
+        this.drawGrid();
+        this.drawStates();
         if (loop === true)
         {
             var $this = this;

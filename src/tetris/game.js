@@ -123,7 +123,7 @@ class TetrisGame {
 
         function clearLine(l) {
             if (this.#RUNNING) {
-                this.setScore(this.#score + 1);
+                this.score++;
                 playSound("gamerow");
                 var bricks = game.bricks;
                 const toDelete = (line => {
@@ -190,7 +190,7 @@ class TetrisGame {
 
         this.init = function () {
             this.#RUNNING = true;
-            this.setScore(0);
+            this.score = 0;
             this.HOLDINGCOUNT = 0;
             this.addNewBrick();
 
@@ -223,13 +223,13 @@ class TetrisGame {
         }
     }
 
-    setScore(v) {
-        this.#score = v;
-        this.#runEvent("update-score",v);
-    }
-
     get score() {
         return this.#score;
+    }
+
+    set score(v) {
+        this.#score = v;
+        this.#runEvent("update-score",v);
     }
 
     get colors() {
@@ -445,7 +445,7 @@ class TetrisGame {
 
     set bricks(v) {
         if ((v == "") && (typeof ([]) == "object")) {
-            this.setScore(0);
+            this.score = 0;
             this.HOLDINGCOUNT = 0;
             this.#HOLDING = null;
             this.#bricks = [];
@@ -456,13 +456,13 @@ class TetrisGame {
 
     checkXY(x, y) {
         var bricks = this.bricks;
-        for (let i = 0, bri_len = bricks.length; i < bri_len; i++) {
-            for (let j = 0, blo_len = bricks[i].blocks.length; j < blo_len; j++) {
-                for (let k = 0, brl_len = bricks[i].blocks[j].length; k < brl_len; k++) {
-                    if (bricks[i].blocks[j][k] == 1) {
-                        const cond1 = (x == bricks[i].x + parseInt(k));
-                        const cond2 = (y == bricks[i].y + parseInt(j));
-                        const cond3 = (bricks[i].moving == false);
+        for (var brick of bricks) {
+            for (let j = 0, blo_len = brick.blocks.length; j < blo_len; j++) {
+                for (let k = 0, brl_len = brick.blocks[j].length; k < brl_len; k++) {
+                    if (brick.blocks[j][k] == 1) {
+                        const cond1 = (x == brick.x + parseInt(k));
+                        const cond2 = (y == brick.y + parseInt(j));
+                        const cond3 = (brick.moving == false);
                         if (cond1 && cond2 && cond3) {
                             return true;
                         }
