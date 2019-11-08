@@ -203,7 +203,7 @@ class Brick {
             return false;
         }
 
-        if (((brick.x + emulatedBrick.width + emulatedBrick.getBlockX()) > (this.game.width)))
+        if (((brick.x + emulatedBrick.getWidth() + emulatedBrick.getBlockX()) > (this.game.width)))
         {
             if (Throw === true)
                 throw new Error("The brick would be out of bounds:" + this.posInfo());
