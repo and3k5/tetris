@@ -280,6 +280,8 @@ export class WebGraphicEngine extends GraphicEngineBase {
 
     updateBrickState(entry) {
         if (
+            // disable
+            false &&
             typeof(entry.fromX) === "number" && typeof(entry.fromY) === "number" &&
             typeof(entry.toX) === "number" && typeof(entry.toY) === "number" &&
             typeof(entry.fromStamp) === "number"
