@@ -20,7 +20,7 @@ module.exports = function (env) {
         }
     };
 
-    const mainConfig = Object.assign({}, commonConfig, {
+    const webConfig = Object.assign({}, commonConfig, {
         entry: "./src/index-browser.js",
         module: {
             rules: [
@@ -54,16 +54,41 @@ module.exports = function (env) {
                 "global.development": mode === "development",
                 "global.production": mode === "production",
                 "global.mode": mode,
-                "global.browser": true
+                "global.browser": true,
+                "global.node": false
             })
         ],
         output: {
             library: "tetris",
             path: path.resolve(__dirname, "js"),
-            filename: "tetris.js",
+            filename: "tetris-web.js",
         },
         node: {
             fs: "empty"
+        }
+    });
+
+    const nodeConfig = Object.assign({}, commonConfig, {
+        entry: "./src/index-node.js",
+        target: "node",
+        module: {
+            rules: [
+                jsLoader,
+            ]
+        },
+        plugins: [
+            new webpack.DefinePlugin({
+                "global.development": mode === "development",
+                "global.production": mode === "production",
+                "global.mode": mode,
+                "global.browser": false,
+                "global.node": true
+            })
+        ],
+        output: {
+            library: "tetris",
+            path: path.resolve(__dirname, "js"),
+            filename: "tetris-node.js",
         }
     });
 
@@ -90,7 +115,8 @@ module.exports = function (env) {
     });
 
     return [
-        mainConfig,
+        webConfig,
+        nodeConfig,
         logServerConfig
     ];
 }

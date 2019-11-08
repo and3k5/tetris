@@ -8,8 +8,6 @@ import * as console from "../utils/trace.js";
 import { transmitter } from "./log-com.js";
 import { NextBrick } from "./logic/next-brick.js";
 
-window.BinaryBrickForm = BinaryBrickForm;
-
 class TetrisGame {
     // [number] Bricks x count
     #width;

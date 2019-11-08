@@ -3,12 +3,25 @@ import "regenerator-runtime/runtime";
 import { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } from "./game-setup.js";
 import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
-import { initDebug } from "./debug.js";
-import { WebGraphicEngine, BurningGraphicEngine } from "./graphics/web/web-engine.js";
 
-import * as htmlLoad from "./game.html";
 import { EasyNextBrick } from "./logic/next-brick.js";
 import * as sound from "./sound.js";
+
+function optionParser() {
+    var options = {};
+    if (global.browser === true) {
+        var url = new URL(location.href);
+        options.setup = url.searchParams.get("setup");
+        options.sound = url.searchParams.get("sound");
+        options.next = url.searchParams.get("next");
+        options.simulate = url.searchParams.get("simulate");
+        options.clickTick = url.searchParams.get("clickTick");
+        options.logger = url.searchParams.get("logger");
+        options.view = url.searchParams.get("view");
+        options.debug = url.searchParams.get("debug");
+    }
+    return options;
+}
 
 export function init(container) {
     var tetrisgame;
@@ -17,13 +30,14 @@ export function init(container) {
         container = window.document.body.querySelector(container);
     }
 
+    var options = optionParser();
+
     container = new DocumentUtil(container);
                 //.append(DocumentUtil.stringToElement(htmlLoad));
 
     var setup;
 
-    var url = new URL(location.href);
-    switch (url.searchParams.get("setup")) {
+    switch (options.setup) {
         case "ez":
             setup = easyGame();
             break;
@@ -41,7 +55,7 @@ export function init(container) {
             break;
     }
 
-    switch (url.searchParams.get("sound")) {
+    switch (options.sound) {
         case "off":
             sound.deactivate();
             break;
@@ -49,7 +63,7 @@ export function init(container) {
             break;
     }
 
-    switch (url.searchParams.get("next")) {
+    switch (options.next) {
         case "ez":
             setup.nextBrick = new EasyNextBrick();
             break;
@@ -57,7 +71,7 @@ export function init(container) {
             break;
     }
 
-    switch (url.searchParams.get("simulate")) {
+    switch (options.simulate) {
         case "1":
             setup.simulator = true;
             break;
@@ -93,18 +107,29 @@ export function init(container) {
     }
 
 
-    if (url.searchParams.get("clickTick") === "1")
+    if (options.clickTick === "1")
         setup.clickTick = true;
 
-    if (url.searchParams.get("logger") === "1")
+    if (options.logger === "1")
         setup.logger = true;
 
-    if (url.searchParams.get("view") === "lite")
+    if (options.view === "lite")
         window.document.body.classList.add("lite-view");
 
-    const graphicEngine = new WebGraphicEngine({
-        container: container,
-    });
+    let graphicEngine = null;
+
+    if (global.browser === true) {
+        var wge = require("./graphics/web/web-engine.js").WebGraphicEngine;
+        graphicEngine = new wge({
+            container: container,
+        });
+    }
+    else if (global.node === true) {
+        var nge = new require("./graphics/node/node-engine.js").NodeGraphicEngine;
+        graphicEngine = new nge();
+    }
+
+    
 
     // var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
     // var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
@@ -113,8 +138,8 @@ export function init(container) {
 
     tetrisgame = new TetrisGame(setup, null, graphicEngine);
 
-    if (url.searchParams.get("debug") === "1")
-        initDebug(container.parentElement,container.el,tetrisgame);
+    if (global.browser === true && options.debug === "1")
+        require("./debug.js").initDebug(container.parentElement,container.el,tetrisgame);
 
     tetrisgame.init();
 

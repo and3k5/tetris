@@ -1,6 +1,8 @@
 import * as console from "../utils/trace.js";
 
-window.addEventListener('load', init, { once: true });
+if (global.browser) {
+    window.addEventListener('load', init, { once: true });
+}
 let SOUNDS;
 let playMusic;
 let context;
