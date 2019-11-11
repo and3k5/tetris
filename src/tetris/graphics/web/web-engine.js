@@ -222,15 +222,11 @@ export class WebGraphicEngine extends GraphicEngineBase {
             entries.push(entry);
             entry.fromX = x;
             entry.fromY = y;
-            if (brick != null && brick.moving === true)
-                console.log("new entry",x,y);
         }else{
             if (entries.indexOf(entry) === -1)
                 entries.push(entry);
             entry.fromX = entry.currentX;
             entry.fromY = entry.currentY;
-            if (brick != null && brick.moving === true)
-                console.log("existing");
         }
         entry.toX = x;
         entry.toY = y;
@@ -238,8 +234,6 @@ export class WebGraphicEngine extends GraphicEngineBase {
         entry.color = color;
         entry.scale = scale;
         entry.fromStamp = new Date().getTime();
-        if (brick != null && brick.moving === true)
-            console.log(entry);
     }
 
     drawBricks() {
@@ -417,7 +411,6 @@ export class BurningGraphicEngine extends WebGraphicEngine {
                 var col = flame.mainImage(_x/w,_y/h);
 
                 if (window.loq != true) {
-                    console.log(col)
                     window.loq = true;
                 }
                     
