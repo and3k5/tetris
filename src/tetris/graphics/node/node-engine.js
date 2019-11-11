@@ -166,7 +166,7 @@ export class NodeGraphicEngine extends GraphicEngineBase {
             TermUtil.write("|").set(TermUtil.FgGreen,TermUtil.Bright).write()
             for (var cell of row) {
                 if (cell.state === true) {
-                    process.stdout.write("X");
+                    TermUtil.write("X").set(this.getMatchingFg(cell.color)).write();
                 }else{
                     process.stdout.write(" ");
                 }
@@ -175,6 +175,42 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         }
 
         TermUtil.write(border+eol).set(TermUtil.FgGreen,TermUtil.Bright).write();
+    }
+
+    getMatchingFg(color) {
+        return TermUtil[this.getMatchingFgName(color)];
+    }
+
+    getMatchingFgName(color) {
+
+        var hsla = color.toHSLA();
+
+        //console.log(hsla);
+
+        var h = hsla.h % 360;
+        while (h < 0)
+            h += 360;
+
+
+
+        if (hsla.l > 0.7)
+            return "FgWhite";
+
+        //TermUtil.FgBlack
+        if (h > 210 && h <= 240)
+            return "FgBlue";
+        if (h > 140 && h <= 210)
+            return "FgCyan";
+        if (h > 100 && h <= 140)
+            return "FgGreen";
+        if (h > 240 && h <= 330)
+            return "FgMagenta";
+        if (h > 330 || h <= 30)
+            return "FgRed";
+        if (h > 30 && h <= 100)
+            return "FgYellow";
+
+        return "FgWhite";
     }
 
     setDisplay(display, brick, color, x, y) {
