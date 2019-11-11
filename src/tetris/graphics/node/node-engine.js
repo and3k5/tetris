@@ -277,21 +277,25 @@ export class NodeGraphicEngine extends GraphicEngineBase {
 
                 switch (key.name) {
                     case "left":
+                    case "a":
                         // left
                         if (game.running)
                             game.action_moveleft();
                         break;
                     case "up":
+                    case "w":
                         // up
                         if (game.running)
                             game.action_rotate();
                         break;
                     case "right":
+                    case "d":
                         // right
                         if (game.running)
                             game.action_moveright();
                         break;
                     case "down":
+                    case "s":
                         // down
                         if (game.running)
                             game.action_movedown();
