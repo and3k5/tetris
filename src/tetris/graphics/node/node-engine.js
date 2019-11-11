@@ -178,15 +178,22 @@ export class NodeGraphicEngine extends GraphicEngineBase {
     }
 
     setDisplay(display, brick, color, x, y) {
-        x = x || brick.x;
-        y = y || brick.y;
-        color = color || brick.color;
+        if (typeof(x) !== "number")
+            x = brick.x;
+        if (typeof(y) !== "number")
+            y = brick.y;
+        if (color == null)
+            color = brick.color;
         var blocks = brick instanceof Brick ? brick.blocks : brick;
 
         this.drawBrickForm(blocks,display, x, y, color);
     }
 
     drawBrickForm(brickForm, display, x, y, color) {
+        if (typeof(x) !== "number")
+            throw new Error("x is not number: "+x);
+        if (typeof(y) !== "number")
+            throw new Error("y is not number: "+x);
         for (var i1 in brickForm) {
             for (var i2 in brickForm[i1]) {
                 if (brickForm[i1][i2] == 1) {
@@ -196,12 +203,26 @@ export class NodeGraphicEngine extends GraphicEngineBase {
                     if (_y < 0)
                         continue;
 
+                    if (_x < 0)
+                        continue;
+
+                    if (isNaN(_y))
+                        throw new Error("Y parsed as NaN: "+y+" + "+i1);
+
+                    if (isNaN(_x))
+                        throw new Error("X parsed as NaN: "+x+" + "+i2);
+
                     var row = display[_y];
                     if (row == undefined) 
                         throw new Error("Row not found: "+_y);
 
-                    row[_x].state = true;
-                    row[_x].color = color;
+                    var cell = row[_x];
+
+                    if (cell == undefined)
+                        throw new Error("Cell not found: "+_x);
+
+                    cell.state = true;
+                    cell.color = color;
                 }
             }
         }
