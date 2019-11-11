@@ -109,7 +109,7 @@ export class NodeGraphicEngine extends GraphicEngineBase {
 
         this.render(true,true);
         this.game.addEvent("update-score",(score) => {
-            this.score.innerHTML = score;
+            //this.score.innerHTML = score;
         });
     }
 
