@@ -6,7 +6,13 @@ export class NextBrick {
     }
 
     nextBrick(game) {
-        return Math.round(Math.random() * (game.brickforms.length - 1));
+        var previousRandom = game.nextRandom;
+        var nextRandom = previousRandom;
+
+        while (nextRandom === previousRandom)
+            nextRandom = Math.round(Math.random() * (game.brickforms.length - 1));
+
+        return nextRandom;
     }
 }
 
