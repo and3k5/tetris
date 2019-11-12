@@ -5,6 +5,26 @@ import readline from "readline";
 import size from "window-size";
 import * as console from "../../../utils/trace.js";
 
+class TermWriter {
+    constructor() {
+        this.items = [];
+    }
+
+    addNew(txt = "") {
+        var item = new TermUtil(txt);
+        this.items.push(item);
+        return item;
+    }
+
+    getString() {
+        return this.items.map(x => x.getString()).join("");
+    }
+
+    write() {
+        process.stdout.write(this.getString());
+    }
+}
+
 class TermUtil {
     
     constructor(text) {
@@ -18,13 +38,22 @@ class TermUtil {
         return this;
     }
 
+    text(text) {
+        this.text = text;
+        return this;
+    }
+
     log() {
         console.log(this.codes.join("")+"%s"+TermUtil.Reset,this.text);
         return this;
     }
 
+    getString() {
+        return this.codes.join("")+this.text+TermUtil.Reset;
+    }
+
     write() {
-        process.stdout.write(this.codes.join("")+this.text+TermUtil.Reset);
+        process.stdout.write(this.getString());
     }
 
     static write(txt) {
@@ -102,6 +131,28 @@ class TermUtil {
     static get BgWhite() {
         return "\x1b[47m";
     }
+
+    static get TwoLineFrame() {
+        return {
+            topLeft: "╔",
+            topRight: "╗",
+            bottomLeft: "╚",
+            bottomRight: "╝",
+            vertical: "║",
+            horizontal: "═",
+        };
+    }
+
+    static get SingleLineFrame() {
+        return {
+            topLeft: "┏",
+            topRight: "┓",
+            bottomLeft: "┗",
+            bottomRight: "┛",
+            vertical: "┃",
+            horizontal: "━",
+        };
+    }
 }
 
 export class NodeGraphicEngine extends GraphicEngineBase {
@@ -153,11 +204,13 @@ export class NodeGraphicEngine extends GraphicEngineBase {
             this.setDisplay(display,bricks[i]);
         }
 
+        this.drawDisplay(display);
+    }
+
+    drawDisplay(display) {
         var gameWidth = display[0].length*2 + 2;
 
         var offset = parseInt(size.width/2 - gameWidth/2);
-
-        var border = "-".repeat(gameWidth);
 
         var eol = require("os").EOL;
 
@@ -165,25 +218,31 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         process.stdout.write(String.fromCharCode(27,91,50,74));
         readline.cursorTo(process.stdout,0,0);
 
+        var output = new TermWriter();
+
+        var theme = TermUtil.SingleLineFrame;
+
         //process.stdout.write(border+eol);
-        TermUtil.write(" ".repeat(offset)).write();
-        TermUtil.write(border+eol).set(TermUtil.FgGreen,TermUtil.Bright).write();
+        output.addNew(" ".repeat(offset));
+        output.addNew(theme.topLeft+theme.horizontal.repeat(gameWidth-2)+theme.topRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
 
         for (var row of display) {
-            TermUtil.write(" ".repeat(offset)).write();
-            TermUtil.write("|").set(TermUtil.FgGreen,TermUtil.Bright).write()
+            output.addNew(" ".repeat(offset));
+            output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
             for (var cell of row) {
                 if (cell.state === true) {
-                    TermUtil.write("  ").set(this.getMatchingBg(cell.color)).write();
+                    output.addNew("  ").set(this.getMatchingBg(cell.color));
                 }else{
-                    process.stdout.write("  ");
+                    output.addNew("  ");
                 }
             }
-            TermUtil.write("|"+eol).set(TermUtil.FgGreen,TermUtil.Bright).write()
+            output.addNew(theme.vertical+eol).set(TermUtil.FgGreen,TermUtil.Bright);
         }
 
-        TermUtil.write(" ".repeat(offset)).write();
-        TermUtil.write(border+eol).set(TermUtil.FgGreen,TermUtil.Bright).write();
+        output.addNew(" ".repeat(offset));
+        output.addNew(theme.bottomLeft+theme.horizontal.repeat(gameWidth-2)+theme.bottomRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
+
+        output.write();
     }
 
     getMatchingFg(color) {
