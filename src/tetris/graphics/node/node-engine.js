@@ -60,6 +60,10 @@ class TermUtil {
         return new TermUtil(txt);
     }
 
+    static get Clear() {
+        return String.fromCharCode(27,91,50,74);
+    }
+
     static get Reset() {
         return "\x1b[0m";
     } 
@@ -181,19 +185,24 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         }
     }
 
-    drawBricks() {
-        var bricks = this.game.bricks;
-
+    createDisplay(w,h) {
         var display = [];
-        for (var i = 0;i<this.game.height;i++) {
+        for (var i = 0;i<h;i++) {
             display[i] = [];
-            for (var j = 0;j<this.game.width;j++) {
+            for (var j = 0;j<w;j++) {
                 display[i][j] = {
                     state: false,
                     color: null,
                 }
             }
         }
+        return display;
+    }
+
+    drawBricks() {
+        var bricks = this.game.bricks;
+
+        var display = this.createDisplay(this.game.width,this.game.height);
 
         for (const i in bricks) {
             if (this.game.ghostDrawing && bricks[i].moving) {
@@ -204,10 +213,28 @@ export class NodeGraphicEngine extends GraphicEngineBase {
             this.setDisplay(display,bricks[i]);
         }
 
-        this.drawDisplay(display);
+        var holdingDisplay = this.createDisplay(6,6);
+
+        if (this.game.holding != null) {
+            this.setDisplay(holdingDisplay, this.game.holding,this.game.holding.color,2,2);
+        }
+
+        var nextDisplay = this.createDisplay(6,6);
+
+
+
+        this.drawDisplay(display, holdingDisplay);
     }
 
-    drawDisplay(display) {
+    writeDisplayCell(output,cell) {
+        if (cell.state === true) {
+            output.addNew("  ").set(this.getMatchingBg(cell.color));
+        }else{
+            output.addNew("  ");
+        }
+    }
+
+    drawDisplay(display, holdingDisplay) {
         var gameWidth = display[0].length*2 + 2;
 
         var offset = parseInt(size.width/2 - gameWidth/2);
@@ -215,9 +242,7 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         var eol = require("os").EOL;
 
         //if (this.rendered === true)
-        process.stdout.write(String.fromCharCode(27,91,50,74));
-        readline.cursorTo(process.stdout,0,0);
-
+        
         var output = new TermWriter();
 
         var theme = TermUtil.SingleLineFrame;
@@ -227,21 +252,30 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         output.addNew(theme.topLeft+theme.horizontal.repeat(gameWidth-2)+theme.topRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
 
         for (var row of display) {
+            var y = row[y];
+
+            var tempOffset = offset;
+
+            if (y<holdingDisplay.length) {
+                for (var hCell of holdingDisplay[y])
+                    this.writeDisplayCell(output,hCell);
+            }
+
             output.addNew(" ".repeat(offset));
             output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
             for (var cell of row) {
-                if (cell.state === true) {
-                    output.addNew("  ").set(this.getMatchingBg(cell.color));
-                }else{
-                    output.addNew("  ");
-                }
+                this.writeDisplayCell(output,cell);
             }
+            
+            
             output.addNew(theme.vertical+eol).set(TermUtil.FgGreen,TermUtil.Bright);
         }
 
         output.addNew(" ".repeat(offset));
         output.addNew(theme.bottomLeft+theme.horizontal.repeat(gameWidth-2)+theme.bottomRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
 
+        process.stdout.write(TermUtil.Clear);
+        readline.cursorTo(process.stdout,0,0);
         output.write();
     }
 

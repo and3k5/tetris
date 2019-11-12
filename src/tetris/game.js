@@ -238,6 +238,10 @@ class TetrisGame {
         return this.#HOLDING;
     }
 
+    set holding(v) {
+        this.#HOLDING = v;
+    }
+
     renderBrickMatrix() {
         var result = [];
         for (var y = 0; y < this.height; y++) {
