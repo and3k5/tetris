@@ -2,6 +2,7 @@ import GraphicEngineBase from "../graphic-engine-base/graphic-engine-base.js";
 import Brick from "../../brick.js";
 import Color from "../../color.js";
 import readline from "readline";
+import size from "window-size";
 import * as console from "../../../utils/trace.js";
 
 class TermUtil {
@@ -152,7 +153,11 @@ export class NodeGraphicEngine extends GraphicEngineBase {
             this.setDisplay(display,bricks[i]);
         }
 
-        var border = "-".repeat(display[0].length+2);
+        var gameWidth = display[0].length*2 + 2;
+
+        var offset = parseInt(size.width/2 - gameWidth/2);
+
+        var border = "-".repeat(gameWidth);
 
         var eol = require("os").EOL;
 
@@ -161,28 +166,35 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         readline.cursorTo(process.stdout,0,0);
 
         //process.stdout.write(border+eol);
+        TermUtil.write(" ".repeat(offset)).write();
         TermUtil.write(border+eol).set(TermUtil.FgGreen,TermUtil.Bright).write();
 
         for (var row of display) {
+            TermUtil.write(" ".repeat(offset)).write();
             TermUtil.write("|").set(TermUtil.FgGreen,TermUtil.Bright).write()
             for (var cell of row) {
                 if (cell.state === true) {
-                    TermUtil.write("X").set(this.getMatchingFg(cell.color)).write();
+                    TermUtil.write("  ").set(this.getMatchingBg(cell.color)).write();
                 }else{
-                    process.stdout.write(" ");
+                    process.stdout.write("  ");
                 }
             }
             TermUtil.write("|"+eol).set(TermUtil.FgGreen,TermUtil.Bright).write()
         }
 
+        TermUtil.write(" ".repeat(offset)).write();
         TermUtil.write(border+eol).set(TermUtil.FgGreen,TermUtil.Bright).write();
     }
 
     getMatchingFg(color) {
-        return TermUtil[this.getMatchingFgName(color)];
+        return TermUtil["Fg"+this.getMatchingTerminalColorName(color)];
     }
 
-    getMatchingFgName(color) {
+    getMatchingBg(color) {
+        return TermUtil["Bg"+this.getMatchingTerminalColorName(color)];
+    }
+
+    getMatchingTerminalColorName(color) {
 
         var hsla = color.toHSLA();
 
@@ -195,23 +207,23 @@ export class NodeGraphicEngine extends GraphicEngineBase {
 
 
         if (hsla.l > 0.7)
-            return "FgWhite";
+            return "White";
 
         //TermUtil.FgBlack
         if (h > 210 && h <= 240)
-            return "FgBlue";
+            return "Blue";
         if (h > 140 && h <= 210)
-            return "FgCyan";
+            return "Cyan";
         if (h > 100 && h <= 140)
-            return "FgGreen";
+            return "Green";
         if (h > 240 && h <= 330)
-            return "FgMagenta";
+            return "Magenta";
         if (h > 330 || h <= 30)
-            return "FgRed";
+            return "Red";
         if (h > 30 && h <= 100)
-            return "FgYellow";
+            return "Yellow";
 
-        return "FgWhite";
+        return "White";
     }
 
     setDisplay(display, brick, color, x, y) {
