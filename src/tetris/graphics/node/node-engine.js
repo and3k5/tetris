@@ -2,6 +2,7 @@ import GraphicEngineBase from "../graphic-engine-base/graphic-engine-base.js";
 import Brick from "../../brick.js";
 import Color from "../../color.js";
 import readline from "readline";
+import * as console from "../../../utils/trace.js";
 
 class TermUtil {
     

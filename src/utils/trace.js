@@ -9,6 +9,14 @@ if (global.development === true) {
     _info = true;
 }
 
+if (global.node === true) {
+    _debug = false;
+    _info = false;
+    _log = false;
+    _warn = false;
+    _error = false;
+}
+
 function Void() { }
 
 export const debug = _debug === true ? console.debug : Void;
