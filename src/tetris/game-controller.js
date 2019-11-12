@@ -1,6 +1,7 @@
 export function executeTick(game, runEvent) {
     var brick = game.getMovingBrick();
-    brick.movedown();
+    if (brick != null)
+        brick.movedown();
     runEvent("tick");
 }
 export function gameControlDown(game, runEvent) {
