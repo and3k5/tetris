@@ -247,27 +247,45 @@ export class NodeGraphicEngine extends GraphicEngineBase {
 
         var theme = TermUtil.SingleLineFrame;
 
+        var holdingOffset = offset - holdingDisplay[0].length * 2 - 2;
+
         //process.stdout.write(border+eol);
-        output.addNew(" ".repeat(offset));
+        output.addNew(" ".repeat(holdingOffset - 2));
+        output.addNew(theme.topLeft+theme.horizontal.repeat(holdingDisplay[0].length*2)+theme.topRight).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(" ".repeat(2));
         output.addNew(theme.topLeft+theme.horizontal.repeat(gameWidth-2)+theme.topRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
 
         for (var row of display) {
-            var y = row[y];
+            var y = display.indexOf(row);
 
             var tempOffset = offset;
 
             if (y<holdingDisplay.length) {
+                var holdingWidth = holdingDisplay[y].length * 2;
+                output.addNew(" ".repeat(holdingOffset - 2));
+                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
                 for (var hCell of holdingDisplay[y])
+                {
                     this.writeDisplayCell(output,hCell);
+                }
+                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+                tempOffset -= holdingWidth;
+                output.addNew(" ".repeat(2));
+            }else if (y === holdingDisplay.length) {
+                output.addNew(" ".repeat(holdingOffset - 2));
+                output.addNew(theme.bottomLeft+theme.horizontal.repeat(holdingDisplay[0].length*2)+theme.bottomRight).set(TermUtil.FgGreen,TermUtil.Bright);
+                output.addNew(" ".repeat(2));
+            }else{
+                output.addNew(" ".repeat(tempOffset));
             }
 
-            output.addNew(" ".repeat(offset));
+            
             output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
             for (var cell of row) {
                 this.writeDisplayCell(output,cell);
             }
-            
-            
+
+            // todo next brick
             output.addNew(theme.vertical+eol).set(TermUtil.FgGreen,TermUtil.Bright);
         }
 
