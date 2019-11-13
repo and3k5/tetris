@@ -2,6 +2,7 @@ import TetrisGame from "./game.js";
 import Color from "./color.js";
 import * as console from "../utils/trace.js";
 import { StaticNextBrick } from "./logic/next-brick.js";
+import Brick from "./brick.js";
 
 export function cloneGame(game,setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -61,22 +62,23 @@ function getPositions(game, usesHolding = false,setupChanges = {}) {
     var positions = [];
 
     for (var i = 0; i < 4; i++) {
-        var cloneBase = cloneGame(game,setupChanges);
-        var movingBrickBase = cloneBase.getMovingBrick();
+        var movingBrick = game.getMovingBrick();
+        //var cloneBase = cloneGame(game,setupChanges);
+        //var movingBrickBase = cloneBase.getMovingBrick();
 
-        var oldRotation = movingBrickBase.rotation;
-        while (movingBrickBase.rotation != i) {
-            movingBrickBase.rotate();
-            if (oldRotation === movingBrickBase.rotation)
-                throw new Error("not rotating");
-        }
+        //var oldRotation = movingBrickBase.rotation;
+        //while (movingBrickBase.rotation != i) {
+        //    movingBrickBase.rotate();
+        //    if (oldRotation === movingBrickBase.rotation)
+        //        throw new Error("not rotating");
+        //}
 
-        for (var x = movingBrickBase.mostLeft; x <= movingBrickBase.mostRight; x++) {
-            var clone = cloneGame(cloneBase,setupChanges);
+        for (var x = movingBrick.mostLeft; x <= movingBrick.mostRight; x++) {
+            //var clone = cloneGame(cloneBase,setupChanges);
 
-            var movingBrick = clone.getMovingBrick();
+            //var movingBrick = clone.getMovingBrick();
             try {
-                arrangeBrick(clone, movingBrick, x, maxWidth);
+                //arrangeBrick(clone, movingBrick, x, maxWidth);
             }
             catch (e) {
                 e.message += " (skipped)";
@@ -86,16 +88,23 @@ function getPositions(game, usesHolding = false,setupChanges = {}) {
                 // TODO game locks down, even if skipped
             }
 
-            movingBrick.y = movingBrick.getLowestPosition();
+            var movingBrick = game.getMovingBrick();
 
-            var brickMatrix = clone.renderBrickMatrix();
+            // movingBrick.y = movingBrick.getLowestPosition(x - movingBrick.x);
+            var lowestY = movingBrick.getLowestPosition(x - movingBrick.x);
+
+            var brickMatrix = game.renderBrickMatrix(
+                [
+                    {guid : movingBrick.guid,x: x, y: lowestY},
+                ]
+            );
             positions.push(
                 {
-                    brick: movingBrick,
-                    x: movingBrick.x,
-                    y: movingBrick.y,
+                    //brick: movingBrick,
+                    x: x,
+                    y: lowestY,
                     brickMatrix,
-                    rotation: movingBrick.rotation,
+                    rotation: i,
                     needsHolding: usesHolding,
                 }
             );
@@ -174,7 +183,7 @@ export function sortMovements(positions) {
         var diff = b.score - a.score;
         if (diff !== 0)
             return diff;
-        return b.brick.y - a.brick.y;
+        return b.y - a.y;
     });
 }
 

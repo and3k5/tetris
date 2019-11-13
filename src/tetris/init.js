@@ -19,6 +19,27 @@ function optionParser() {
         options.logger = url.searchParams.get("logger");
         options.view = url.searchParams.get("view");
         options.debug = url.searchParams.get("debug");
+    } else if (global.node === true) {
+        var args = process.argv.concat();
+        args.splice(0,2);
+
+        var getValue = function (args,name, def = undefined) {
+            for (var arg of args) {
+                if (arg.indexOf("--"+name) === 0) {
+                    return arg.substring(name.length+3);
+                }
+            }
+            return def;
+        };
+
+        options.setup = getValue(args,"setup");
+        //options.sound = getValue(args,"sound");
+        options.next = getValue(args,"next");
+        options.simulate = getValue(args,"simulate");
+        //options.clickTick = getValue(args,"clickTick");
+        options.logger = getValue(args,"logger");
+        //options.view = getValue(args,"view");
+        //options.debug = getValue(args,"debug");
     }
     return options;
 }

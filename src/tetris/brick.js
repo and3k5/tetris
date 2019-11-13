@@ -9,8 +9,11 @@ class Brick {
     #index = undefined;
     #guid;
     constructor(options) {
-        this.#guid = createUniqueGuid();
         const o = options || { 'ingame': false, 'game': null };
+        if (typeof (o.guid) === "string")
+            this.#guid = o.guid;
+        else
+            this.#guid = createUniqueGuid();
 
         this.game = o.game;
         this.ingame = o.ingame;
@@ -28,7 +31,7 @@ class Brick {
     }
 
     get guid() {
-        return this.guid;
+        return this.#guid;
     }
 
     get index() {
@@ -40,7 +43,8 @@ class Brick {
     }
 
     clone() {
-        var brick = new Brick();
+        var brick = new Brick({guid: this.#guid});
+        
         brick.#x = this.#x;
         brick.#y = this.#y;
         brick.moving = this.moving;
@@ -91,11 +95,15 @@ class Brick {
     getAbsoluteBlocks(blocks = null, x = 0, y = 0) {
         if (blocks == null)
             blocks = this.blocks;
+        return Brick.calcAbsoluteBlocks(blocks,this.x,this.y,x,y);
+    }
 
+    // todo make static
+    static calcAbsoluteBlocks(blocks, px, py, x = 0, y = 0) {
         var result = [];
 
-        var offsetX = this.x + x;
-        var offsetY = this.y + y;
+        var offsetX = px + x;
+        var offsetY = py + y;
 
         for (const i1 in blocks) {
             for (const i2 in blocks[i1]) {
@@ -127,10 +135,14 @@ class Brick {
     }
 
     getHeight() {
+        return Brick.calcHeight(this.blocks);
+    }
+
+    static calcHeight(blocks) {
         let height = 0;
-        for (const i1 in this.blocks) {
-            for (const i2 in this.blocks[i1]) {
-                if (this.blocks[i1][i2] == 1) {
+        for (const i1 in blocks) {
+            for (const i2 in blocks[i1]) {
+                if (blocks[i1][i2] == 1) {
                     height = Math.max(height, (parseInt(i1) + 1));
                 }
             }
@@ -139,16 +151,20 @@ class Brick {
     }
 
     getWidth() {
+        return Brick.calcWidth(this.blocks);
+    }
+
+    static calcWidth(blocks) {
         let high = 0;
 
         let // 1E309 = infinity
             low = (1E309);
 
         let countrow = 0;
-        for (const i1 in this.blocks) {
+        for (const i1 in blocks) {
             countrow = 0;
-            for (const i2 in this.blocks[i1]) {
-                if (this.blocks[i1][i2] == 1) {
+            for (const i2 in blocks[i1]) {
+                if (blocks[i1][i2] == 1) {
                     high = Math.max(high, (parseInt(i2) + 2));
                     low = Math.min(low, (parseInt(i2) + 2));
                     countrow++;
@@ -177,16 +193,20 @@ class Brick {
     }
 
     getBlockX() {
+        return Brick.calcBlockX(this.blocks);
+    }
+
+    static calcBlockX(blocks) {
         let cnt = 0;
         let rtn = 0;
         for (let i = 0; i < 4; i++) {
             cnt = 0;
-            for (const i1 in this.blocks) {
-                if (this.blocks[i1][i] == 0) {
+            for (const i1 in blocks) {
+                if (blocks[i1][i] == 0) {
                     cnt++;
                 }
             }
-            if (cnt == this.blocks.length) {
+            if (cnt == blocks.length) {
                 rtn++;
             } else {
                 return rtn;
@@ -195,36 +215,7 @@ class Brick {
     }
 
     rotate_okay(brick, bl, Throw = false) {
-        var emulatedBrick = Brick.emulate(bl);
-        if ((brick.y + emulatedBrick.getHeight()) >= this.game.height)
-        {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds:" + this.posInfo());
-            return false;
-        }
-
-        if (((brick.x + emulatedBrick.getWidth() + emulatedBrick.getBlockX()) > (this.game.width)))
-        {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds:" + this.posInfo());
-            return false;
-        }
-
-        if (((brick.x + emulatedBrick.getBlockX()) < 0))
-        {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds:" + this.posInfo());
-            return false;
-        }
-
-        if (this.willCollide(0, 0, null, bl))
-        {
-            if (Throw === true)
-                throw new Error("The brick would collide with another brick");
-            return false;
-        }
-
-        return true;
+        return Brick.calcValidPosition(0,0,Throw,brick.x,brick.y,bl,this.game.bricks,this.game,this.guid);
     }
 
     getRotatedBlocks() {
@@ -255,7 +246,8 @@ class Brick {
                 //yeah
                 this.requestUpdate();
             } else {
-                if (((this.x + Brick.emulate(blocks2).getWidth() + Brick.emulate(blocks2).getBlockX()) > (this.game.width))) {
+                var emulatedBrick = Brick.emulate(blocks2);
+                if (((this.x + emulatedBrick.getWidth() + emulatedBrick.getBlockX()) > (this.game.width))) {
                     this.x--;
                     if (this.rotate_okay(this, blocks2)) {
                         // yeah
@@ -264,7 +256,7 @@ class Brick {
                         this.x++;
                         return false;
                     }
-                } else if (((this.x + Brick.emulate(blocks2).getBlockX()) < 0)) {
+                } else if (((this.x + emulatedBrick.getBlockX()) < 0)) {
                     this.x++;
                     if (this.rotate_okay(this, blocks2)) {
                         //yeah
@@ -303,6 +295,42 @@ class Brick {
         ].map(x => x.join(":")).join(",");
     }
 
+    validatePosition(x = 0,y = 0,Throw = false,px = undefined,py = undefined) {
+        if (typeof(px) !== "number")
+            px = this.x;
+        if (typeof(py) !== "number")
+            py = this.y;
+        return Brick.calcValidPosition(x,y,Throw,px,py,this.blocks,this.game.bricks,this.game,this.guid);
+    }
+
+    static calcValidPosition(x = 0,y = 0,Throw,px,py,blocks,bricks,game,pguid) {
+        if (((px + Brick.calcBlockX(blocks) + x) < 0)) {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds");
+            return false;
+        }
+
+        if (((px + Brick.calcWidth(blocks) + Brick.calcBlockX(blocks) + x) > (game.width))) {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds");
+            return false;
+        }
+
+        if ((py + Brick.calcHeight(blocks) + y) >= game.height) {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds");
+            return false;
+        }
+
+        if (Brick.calcWillCollide(x, y, bricks, blocks, px, py, pguid)) {
+            if (Throw === true)
+                throw new Error("The brick would collide with another brick");
+            return false;
+        }
+
+        return true;
+    }
+
     canMoveLeft(Throw = false) {
         if (this.game.running != true) {
             if (Throw === true)
@@ -315,19 +343,7 @@ class Brick {
             return false;
         }
 
-        if (((this.x + this.getBlockX()) <= 0)) {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds:" + this.posInfo());
-            return false;
-        }
-
-        if (this.willCollide(-1, 0)) {
-            if (Throw === true)
-                throw new Error("The brick would collide with another brick");
-            return false;
-        }
-
-        return true;
+        return this.validatePosition(-1,0,Throw);
     }
 
     moveleft(Throw = false) {
@@ -373,14 +389,16 @@ class Brick {
     willCollide(x, y, bricks = null, blocks = null) {
         if (blocks == null)
             blocks = this.blocks;
-
-        var thisBlocks = this.getAbsoluteBlocks(blocks, x, y);
-
         if (bricks == null)
             bricks = this.game.bricks;
+        return Brick.calcWillCollide(x,y,bricks,blocks,this.x,this.y,this.guid);
+    }
+
+    static calcWillCollide(x, y, bricks, blocks, px, py, pguid) {
+        var thisBlocks = Brick.calcAbsoluteBlocks(blocks,px,py,x,y);
 
         for (var brick of bricks) {
-            if (brick === this)
+            if (brick.guid === pguid)
                 continue;
 
             var opponentBlocks = brick.getAbsoluteBlocks();
@@ -407,19 +425,7 @@ class Brick {
             return false;
         }
 
-        if (((this.x + this.getWidth() + this.getBlockX()) >= (this.game.width))) {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds:" + this.posInfo());
-            return false;
-        }
-
-        if (this.willCollide(1, 0)) {
-            if (Throw === true)
-                throw new Error("The brick would collide with another brick");
-            return false;
-        }
-
-        return true;
+        return this.validatePosition(1,0,Throw);
     }
 
     moveright(Throw = false) {
@@ -488,19 +494,7 @@ class Brick {
             return false;
         }
 
-        if ((this.y + this.getHeight()) >= this.game.height) {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds:" + this.posInfo());
-            return false;
-        }
-
-        if (this.willCollide(0, 1)) {
-            if (Throw === true)
-                throw new Error("The brick would collide with another brick");
-            return false;
-        }
-
-        return true;
+        return this.validatePosition(0,1,Throw);
     }
 
     movedown(Throw = false) {
@@ -531,14 +525,14 @@ class Brick {
         }
     }
 
-    getLowestPosition() {
+    getLowestPosition(addX = 0) {
         const h = this.getHeight();
         let additionalY = 0;
         while (true) {
             if ((this.y + additionalY + h) > this.game.height)
                 break;
 
-            if (this.willCollide(0, additionalY))
+            if (this.willCollide(addX, additionalY))
                 break;
 
             additionalY++;
