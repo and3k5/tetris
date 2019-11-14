@@ -220,10 +220,10 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         }
 
         var nextDisplay = this.createDisplay(6,6);
+        this.setDisplay(nextDisplay, this.game.brickforms[this.game.nextRandom],this.game.colors[this.game.nextRandom],2,2);
 
 
-
-        this.drawDisplay(display, holdingDisplay);
+        this.drawDisplay(display, holdingDisplay, nextDisplay);
     }
 
     writeDisplayCell(output,cell) {
@@ -234,7 +234,7 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         }
     }
 
-    drawDisplay(display, holdingDisplay) {
+    drawDisplay(display, holdingDisplay, nextDisplay) {
         var gameWidth = display[0].length*2 + 2;
 
         var offset = parseInt(size.width/2 - gameWidth/2);
@@ -253,7 +253,9 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         output.addNew(" ".repeat(holdingOffset - 2));
         output.addNew(theme.topLeft+theme.horizontal.repeat(holdingDisplay[0].length*2)+theme.topRight).set(TermUtil.FgGreen,TermUtil.Bright);
         output.addNew(" ".repeat(2));
-        output.addNew(theme.topLeft+theme.horizontal.repeat(gameWidth-2)+theme.topRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(theme.topLeft+theme.horizontal.repeat(gameWidth-2)+theme.topRight).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(" ".repeat(2));
+        output.addNew(theme.topLeft+theme.horizontal.repeat(nextDisplay[0].length*2)+theme.topRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
 
         for (var row of display) {
             var y = display.indexOf(row);
@@ -284,9 +286,24 @@ export class NodeGraphicEngine extends GraphicEngineBase {
             for (var cell of row) {
                 this.writeDisplayCell(output,cell);
             }
+            output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
 
-            // todo next brick
-            output.addNew(theme.vertical+eol).set(TermUtil.FgGreen,TermUtil.Bright);
+            if (y<nextDisplay.length) {
+                output.addNew(" ".repeat(2));
+                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+                for (var nCell of nextDisplay[y])
+                {
+                    this.writeDisplayCell(output,nCell);
+                }
+                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+            }else if (y === nextDisplay.length) {
+                output.addNew(" ".repeat(2));
+                output.addNew(theme.bottomLeft+theme.horizontal.repeat(nextDisplay[0].length*2)+theme.bottomRight).set(TermUtil.FgGreen,TermUtil.Bright);
+            }else{
+                output.addNew(" ".repeat(tempOffset));
+            }
+
+            output.addNew(eol);
         }
 
         output.addNew(" ".repeat(offset));
