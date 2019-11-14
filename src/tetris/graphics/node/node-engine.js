@@ -207,7 +207,7 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         for (const i in bricks) {
             if (this.game.ghostDrawing && bricks[i].moving) {
                 var ghostColor = new Color(255, 255, 255, 0.2);
-                const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
+                const tmp_lowestPos = bricks[i].getLowestPosition();
                 this.setDisplay(display, bricks[i].blocks, ghostColor, bricks[i].x, tmp_lowestPos);
             }
             this.setDisplay(display,bricks[i]);

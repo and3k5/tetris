@@ -61,41 +61,39 @@ function getPositions(game, usesHolding = false,setupChanges = {}) {
 
     var positions = [];
 
+    var movingBrick = game.getMovingBrick();
+
     for (var i = 0; i < 4; i++) {
-        var movingBrick = game.getMovingBrick();
-        //var cloneBase = cloneGame(game,setupChanges);
-        //var movingBrickBase = cloneBase.getMovingBrick();
+        let rotatedBlocks = movingBrick.blocks;
+        for (var r = 0;r<i;r++)
+            rotatedBlocks = Brick.calcRotatedBlocks(movingBrick.blocks);
 
-        //var oldRotation = movingBrickBase.rotation;
-        //while (movingBrickBase.rotation != i) {
-        //    movingBrickBase.rotate();
-        //    if (oldRotation === movingBrickBase.rotation)
-        //        throw new Error("not rotating");
-        //}
+        var mostLeft = Brick.calcMostLeft(rotatedBlocks);
+        var mostRight = Brick.calcMostRight(game,rotatedBlocks);
 
-        for (var x = movingBrick.mostLeft; x <= movingBrick.mostRight; x++) {
+        for (var x = mostLeft; x <= mostRight; x++) {
             //var clone = cloneGame(cloneBase,setupChanges);
 
             //var movingBrick = clone.getMovingBrick();
-            try {
-                //arrangeBrick(clone, movingBrick, x, maxWidth);
-            }
-            catch (e) {
-                e.message += " (skipped)";
-                console.error(e);
-                window.location.reload();
-                continue;
-                // TODO game locks down, even if skipped
-            }
+            // try {
+            //     //arrangeBrick(clone, movingBrick, x, maxWidth);
+            // }
+            // catch (e) {
+            //     e.message += " (skipped)";
+            //     console.error(e);
+            //     window.location.reload();
+            //     continue;
+            //     // TODO game locks down, even if skipped
+            // }
 
-            var movingBrick = game.getMovingBrick();
+            //var movingBrick = game.getMovingBrick();
 
             // movingBrick.y = movingBrick.getLowestPosition(x - movingBrick.x);
-            var lowestY = movingBrick.getLowestPosition(x - movingBrick.x);
+            var lowestY = Brick.calcLowestPosition(rotatedBlocks, x - movingBrick.x,game,movingBrick.x,movingBrick.y,movingBrick.guid);
 
             var brickMatrix = game.renderBrickMatrix(
                 [
-                    {guid : movingBrick.guid,x: x, y: lowestY},
+                    {guid : movingBrick.guid,x: x, y: lowestY,blocks: rotatedBlocks},
                 ]
             );
             positions.push(

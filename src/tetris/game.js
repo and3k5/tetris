@@ -262,6 +262,8 @@ class TetrisGame {
                     x = mod.x;
                 if (typeof(mod.y) === "number")
                     y = mod.y;
+                if (typeof(mod.blocks) !== "undefined")
+                    brickForm = mod.blocks;
             }
 
             for (var i1 in brickForm) {
@@ -270,6 +272,8 @@ class TetrisGame {
                         var cx = (x) + (parseInt(i2));
                         var cy = (y) + (parseInt(i1));
                         if (cy < 0)
+                            continue;
+                        if (cy > this.width)
                             continue;
                         result[cy][cx] = true;
                     }

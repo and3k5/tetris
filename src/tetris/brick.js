@@ -219,16 +219,17 @@ class Brick {
     }
 
     getRotatedBlocks() {
+        return Brick.calcRotatedBlocks(this.blocks);
+    }
+
+    static calcRotatedBlocks(blocks) {
         const blocks2 = [];
-        const w = this.blocks[0].length;
-        const h = this.blocks.length;
-        let x;
-        let y;
-        let row;
-        for (y = 0; y < h; y++) {
-            row = [];
-            for (x = 0; x < w; x++) {
-                row[x] = this.blocks[w - x - 1][y];
+        const w = blocks[0].length;
+        const h = blocks.length;
+        for (let y = 0; y < h; y++) {
+            let row = [];
+            for (let x = 0; x < w; x++) {
+                row[x] = blocks[w - x - 1][y];
             }
             blocks2[y] = row;
         }
@@ -247,7 +248,11 @@ class Brick {
                 this.requestUpdate();
             } else {
                 var emulatedBrick = Brick.emulate(blocks2);
-                if (((this.x + emulatedBrick.getWidth() + emulatedBrick.getBlockX()) > (this.game.width))) {
+                
+                var blockX = Brick.calcBlockX(blocks2);
+                var width = Brick.calcWidth(blocks2);
+
+                if (!Brick.calcValidPosition_xOutRight(0,false,this.x,blockX,width,this.game)) {
                     this.x--;
                     if (this.rotate_okay(this, blocks2)) {
                         // yeah
@@ -256,7 +261,7 @@ class Brick {
                         this.x++;
                         return false;
                     }
-                } else if (((this.x + emulatedBrick.getBlockX()) < 0)) {
+                } else if (!Brick.calcValidPosition_xOutLeft(0,false,this.x,blockX,this.game)) {
                     this.x++;
                     if (this.rotate_okay(this, blocks2)) {
                         //yeah
@@ -303,20 +308,36 @@ class Brick {
         return Brick.calcValidPosition(x,y,Throw,px,py,this.blocks,this.game.bricks,this.game,this.guid);
     }
 
+    static calcValidPosition_xOutRight(x = 0,Throw,px,blockX,width,game) {
+        if (((px + width + blockX + x) > (game.width))) {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds");
+            return false;
+        }
+
+        return true;
+    }
+
+    static calcValidPosition_xOutLeft(x = 0,Throw,px,blockX,game) {
+        if (((px + blockX + x) < 0)) {
+            if (Throw === true)
+                throw new Error("The brick would be out of bounds");
+            return false;
+        }
+
+        return true;
+    }
+
     static calcValidPosition(x = 0,y = 0,Throw,px,py,blocks,bricks,game,pguid) {
-        if (((px + Brick.calcBlockX(blocks) + x) < 0)) {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds");
+        var blockX = Brick.calcBlockX(blocks);
+        if (!Brick.calcValidPosition_xOutLeft(x,Throw,px,blockX,game))
             return false;
-        }
 
-        if (((px + Brick.calcWidth(blocks) + Brick.calcBlockX(blocks) + x) > (game.width))) {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds");
+        var width = Brick.calcWidth(blocks);
+        if (!Brick.calcValidPosition_xOutRight(x,Throw,px,blockX,width,game))
             return false;
-        }
 
-        if ((py + Brick.calcHeight(blocks) + y) >= game.height) {
+        if ((py + Brick.calcHeight(blocks) + y) > game.height) {
             if (Throw === true)
                 throw new Error("The brick would be out of bounds");
             return false;
@@ -375,11 +396,19 @@ class Brick {
     }
 
     get mostLeft() {
-        return parseInt(-this.getBlockX());
+        return calcMostLeft(this.blocks);
+    }
+
+    static calcMostLeft(blocks) {
+        return parseInt(-Brick.calcBlockX(blocks));
     }
 
     get mostRight() {
-        return parseInt(this.game.width - this.innerWidth - this.getBlockX());
+        return calcMostRight(this.game,this.blocks);
+    }
+
+    static calcMostRight(game,blocks) {
+        return parseInt(game.width - Brick.calcWidth(blocks) - Brick.calcBlockX(blocks));
     }
 
     get innerWidth() {
@@ -526,18 +555,22 @@ class Brick {
     }
 
     getLowestPosition(addX = 0) {
-        const h = this.getHeight();
+        return Brick.calcLowestPosition(this.blocks,addX,this.game,this.x,this.y,this.guid);
+    }
+
+    static calcLowestPosition(blocks,addX = 0,game,px,py,pguid) {
+        const h = Brick.calcHeight(blocks);
         let additionalY = 0;
         while (true) {
-            if ((this.y + additionalY + h) > this.game.height)
+            if ((py + additionalY + h) > game.height)
                 break;
 
-            if (this.willCollide(addX, additionalY))
+            if (Brick.calcWillCollide(addX, additionalY, game.bricks, blocks, px, py, pguid))
                 break;
 
             additionalY++;
         }
-        return (this.y + additionalY) - 1;
+        return (py + additionalY) - 1;
     }
 
     slice_up() {
