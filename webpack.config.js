@@ -78,6 +78,30 @@ module.exports = function (env) {
         }
     });
 
+    const elecConfig = Object.assign({}, commonConfig, {
+        entry: "./src/index-browser.js",
+        target: "electron-main",
+        module: {
+            rules: [
+                cssLoader,
+                htmlLoader,
+                jsLoader,
+                imgLoader
+            ]
+        },
+        plugins: [
+            new webpack.DefinePlugin(globals(mode,{browser:true}))
+        ],
+        output: {
+            library: "tetris",
+            path: path.resolve(__dirname, "js"),
+            filename: "tetris-electron.js",
+        },
+        node: {
+            fs: "empty"
+        }
+    });
+
     const nodeConfig = Object.assign({}, commonConfig, {
         entry: "./src/index-node.js",
         target: "node",
@@ -116,6 +140,7 @@ module.exports = function (env) {
 
     return [
         webConfig,
+        elecConfig,
         nodeConfig,
         logServerConfig
     ];
