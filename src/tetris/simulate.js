@@ -168,7 +168,7 @@ export function getPossibleMoves(game,setupChanges) {
             clearingLines,
         };
 
-        setup.score = (clearingLines * 3) + (0 - holes * 0.25) + (0 - height * 2);
+        setup.score = (clearingLines * 3) + (0 - holes * 0.25) + (0 - height * 2) + (holes == 0 ? 2 : 0);
 
     }
     positions = sortMovements(positions);
