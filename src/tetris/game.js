@@ -273,7 +273,7 @@ class TetrisGame {
                         var cy = (y) + (parseInt(i1));
                         if (cy < 0)
                             continue;
-                        if (cy > this.width)
+                        if (cy > this.height)
                             continue;
                         result[cy][cx] = true;
                     }
