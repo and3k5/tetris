@@ -1,3 +1,4 @@
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
 
@@ -66,7 +67,12 @@ module.exports = function (env) {
             ]
         },
         plugins: [
-            new webpack.DefinePlugin(globals(mode,{browser:true}))
+            new webpack.DefinePlugin(globals(mode,{browser:true})),
+            new HtmlWebpackPlugin({
+                title: "ToneMatrix",
+                template: "src/web/index.html",
+                filename: "../index.html",
+            })
         ],
         output: {
             library: "tetris",
