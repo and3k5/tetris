@@ -238,7 +238,11 @@ class TetrisGame {
         return this.#HOLDING;
     }
 
-    renderBrickMatrix() {
+    set holding(v) {
+        this.#HOLDING = v;
+    }
+
+    renderBrickMatrix(modifications = []) {
         var result = [];
         for (var y = 0; y < this.height; y++) {
             result.push([]);
@@ -252,12 +256,24 @@ class TetrisGame {
             var x = brick.x;
             var y = brick.y;
 
+            var mod = modifications.filter(m => m.guid == brick.guid)[0];
+            if (mod != null) {
+                if (typeof(mod.x) === "number")
+                    x = mod.x;
+                if (typeof(mod.y) === "number")
+                    y = mod.y;
+                if (typeof(mod.blocks) !== "undefined")
+                    brickForm = mod.blocks;
+            }
+
             for (var i1 in brickForm) {
                 for (var i2 in brickForm[i1]) {
                     if (brickForm[i1][i2] == 1) {
                         var cx = (x) + (parseInt(i2));
                         var cy = (y) + (parseInt(i1));
                         if (cy < 0)
+                            continue;
+                        if (cy > this.height)
                             continue;
                         result[cy][cx] = true;
                     }

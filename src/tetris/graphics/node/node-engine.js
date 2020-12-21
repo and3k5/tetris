@@ -5,6 +5,26 @@ import readline from "readline";
 import size from "window-size";
 import * as console from "../../../utils/trace.js";
 
+class TermWriter {
+    constructor() {
+        this.items = [];
+    }
+
+    addNew(txt = "") {
+        var item = new TermUtil(txt);
+        this.items.push(item);
+        return item;
+    }
+
+    getString() {
+        return this.items.map(x => x.getString()).join("");
+    }
+
+    write() {
+        process.stdout.write(this.getString());
+    }
+}
+
 class TermUtil {
     
     constructor(text) {
@@ -18,17 +38,30 @@ class TermUtil {
         return this;
     }
 
+    text(text) {
+        this.text = text;
+        return this;
+    }
+
     log() {
         console.log(this.codes.join("")+"%s"+TermUtil.Reset,this.text);
         return this;
     }
 
+    getString() {
+        return this.codes.join("")+this.text+TermUtil.Reset;
+    }
+
     write() {
-        process.stdout.write(this.codes.join("")+this.text+TermUtil.Reset);
+        process.stdout.write(this.getString());
     }
 
     static write(txt) {
         return new TermUtil(txt);
+    }
+
+    static get Clear() {
+        return String.fromCharCode(27,91,50,74);
     }
 
     static get Reset() {
@@ -102,6 +135,28 @@ class TermUtil {
     static get BgWhite() {
         return "\x1b[47m";
     }
+
+    static get TwoLineFrame() {
+        return {
+            topLeft: "╔",
+            topRight: "╗",
+            bottomLeft: "╚",
+            bottomRight: "╝",
+            vertical: "║",
+            horizontal: "═",
+        };
+    }
+
+    static get SingleLineFrame() {
+        return {
+            topLeft: "┏",
+            topRight: "┓",
+            bottomLeft: "┗",
+            bottomRight: "┛",
+            vertical: "┃",
+            horizontal: "━",
+        };
+    }
 }
 
 export class NodeGraphicEngine extends GraphicEngineBase {
@@ -130,60 +185,133 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         }
     }
 
-    drawBricks() {
-        var bricks = this.game.bricks;
-
+    createDisplay(w,h) {
         var display = [];
-        for (var i = 0;i<this.game.height;i++) {
+        for (var i = 0;i<h;i++) {
             display[i] = [];
-            for (var j = 0;j<this.game.width;j++) {
+            for (var j = 0;j<w;j++) {
                 display[i][j] = {
                     state: false,
                     color: null,
                 }
             }
         }
+        return display;
+    }
+
+    drawBricks() {
+        var bricks = this.game.bricks;
+
+        var display = this.createDisplay(this.game.width,this.game.height);
 
         for (const i in bricks) {
             if (this.game.ghostDrawing && bricks[i].moving) {
                 var ghostColor = new Color(255, 255, 255, 0.2);
-                const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
+                const tmp_lowestPos = bricks[i].getLowestPosition();
                 this.setDisplay(display, bricks[i].blocks, ghostColor, bricks[i].x, tmp_lowestPos);
             }
             this.setDisplay(display,bricks[i]);
         }
 
+        var holdingDisplay = this.createDisplay(6,6);
+
+        if (this.game.holding != null) {
+            this.setDisplay(holdingDisplay, this.game.holding,this.game.holding.color,2,2);
+        }
+
+        var nextDisplay = this.createDisplay(6,6);
+        this.setDisplay(nextDisplay, this.game.brickforms[this.game.nextRandom],this.game.colors[this.game.nextRandom],2,2);
+
+
+        this.drawDisplay(display, holdingDisplay, nextDisplay);
+    }
+
+    writeDisplayCell(output,cell) {
+        if (cell.state === true) {
+            output.addNew("  ").set(this.getMatchingBg(cell.color));
+        }else{
+            output.addNew("  ");
+        }
+    }
+
+    drawDisplay(display, holdingDisplay, nextDisplay) {
         var gameWidth = display[0].length*2 + 2;
 
         var offset = parseInt(size.width/2 - gameWidth/2);
 
-        var border = "-".repeat(gameWidth);
-
         var eol = require("os").EOL;
 
         //if (this.rendered === true)
-        process.stdout.write(String.fromCharCode(27,91,50,74));
-        readline.cursorTo(process.stdout,0,0);
+        
+        var output = new TermWriter();
+
+        var theme = TermUtil.SingleLineFrame;
+
+        var holdingOffset = offset - holdingDisplay[0].length * 2 - 2;
 
         //process.stdout.write(border+eol);
-        TermUtil.write(" ".repeat(offset)).write();
-        TermUtil.write(border+eol).set(TermUtil.FgGreen,TermUtil.Bright).write();
+        output.addNew(" ".repeat(holdingOffset - 2));
+        output.addNew(theme.topLeft+theme.horizontal.repeat(holdingDisplay[0].length*2)+theme.topRight).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(" ".repeat(2));
+        output.addNew(theme.topLeft+theme.horizontal.repeat(gameWidth-2)+theme.topRight).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(" ".repeat(2));
+        output.addNew(theme.topLeft+theme.horizontal.repeat(nextDisplay[0].length*2)+theme.topRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
 
         for (var row of display) {
-            TermUtil.write(" ".repeat(offset)).write();
-            TermUtil.write("|").set(TermUtil.FgGreen,TermUtil.Bright).write()
-            for (var cell of row) {
-                if (cell.state === true) {
-                    TermUtil.write("  ").set(this.getMatchingBg(cell.color)).write();
-                }else{
-                    process.stdout.write("  ");
+            var y = display.indexOf(row);
+
+            var tempOffset = offset;
+
+            if (y<holdingDisplay.length) {
+                var holdingWidth = holdingDisplay[y].length * 2;
+                output.addNew(" ".repeat(holdingOffset - 2));
+                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+                for (var hCell of holdingDisplay[y])
+                {
+                    this.writeDisplayCell(output,hCell);
                 }
+                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+                tempOffset -= holdingWidth;
+                output.addNew(" ".repeat(2));
+            }else if (y === holdingDisplay.length) {
+                output.addNew(" ".repeat(holdingOffset - 2));
+                output.addNew(theme.bottomLeft+theme.horizontal.repeat(holdingDisplay[0].length*2)+theme.bottomRight).set(TermUtil.FgGreen,TermUtil.Bright);
+                output.addNew(" ".repeat(2));
+            }else{
+                output.addNew(" ".repeat(tempOffset));
             }
-            TermUtil.write("|"+eol).set(TermUtil.FgGreen,TermUtil.Bright).write()
+
+            
+            output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+            for (var cell of row) {
+                this.writeDisplayCell(output,cell);
+            }
+            output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+
+            if (y<nextDisplay.length) {
+                output.addNew(" ".repeat(2));
+                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+                for (var nCell of nextDisplay[y])
+                {
+                    this.writeDisplayCell(output,nCell);
+                }
+                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+            }else if (y === nextDisplay.length) {
+                output.addNew(" ".repeat(2));
+                output.addNew(theme.bottomLeft+theme.horizontal.repeat(nextDisplay[0].length*2)+theme.bottomRight).set(TermUtil.FgGreen,TermUtil.Bright);
+            }else{
+                output.addNew(" ".repeat(tempOffset));
+            }
+
+            output.addNew(eol);
         }
 
-        TermUtil.write(" ".repeat(offset)).write();
-        TermUtil.write(border+eol).set(TermUtil.FgGreen,TermUtil.Bright).write();
+        output.addNew(" ".repeat(offset));
+        output.addNew(theme.bottomLeft+theme.horizontal.repeat(gameWidth-2)+theme.bottomRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
+
+        process.stdout.write(TermUtil.Clear);
+        readline.cursorTo(process.stdout,0,0);
+        output.write();
     }
 
     getMatchingFg(color) {

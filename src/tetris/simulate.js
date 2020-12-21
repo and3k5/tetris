@@ -2,6 +2,7 @@ import TetrisGame from "./game.js";
 import Color from "./color.js";
 import * as console from "../utils/trace.js";
 import { StaticNextBrick } from "./logic/next-brick.js";
+import Brick from "./brick.js";
 
 export function cloneGame(game,setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -60,42 +61,48 @@ function getPositions(game, usesHolding = false,setupChanges = {}) {
 
     var positions = [];
 
+    var movingBrick = game.getMovingBrick();
+
     for (var i = 0; i < 4; i++) {
-        var cloneBase = cloneGame(game,setupChanges);
-        var movingBrickBase = cloneBase.getMovingBrick();
+        let rotatedBlocks = movingBrick.blocks;
+        for (var r = 0;r<i;r++)
+            rotatedBlocks = Brick.calcRotatedBlocks(movingBrick.blocks);
 
-        var oldRotation = movingBrickBase.rotation;
-        while (movingBrickBase.rotation != i) {
-            movingBrickBase.rotate();
-            if (oldRotation === movingBrickBase.rotation)
-                throw new Error("not rotating");
-        }
+        var mostLeft = Brick.calcMostLeft(rotatedBlocks);
+        var mostRight = Brick.calcMostRight(game,rotatedBlocks);
 
-        for (var x = movingBrickBase.mostLeft; x <= movingBrickBase.mostRight; x++) {
-            var clone = cloneGame(cloneBase,setupChanges);
+        for (var x = mostLeft; x <= mostRight; x++) {
+            //var clone = cloneGame(cloneBase,setupChanges);
 
-            var movingBrick = clone.getMovingBrick();
-            try {
-                arrangeBrick(clone, movingBrick, x, maxWidth);
-            }
-            catch (e) {
-                e.message += " (skipped)";
-                console.error(e);
-                window.location.reload();
-                continue;
-                // TODO game locks down, even if skipped
-            }
+            //var movingBrick = clone.getMovingBrick();
+            // try {
+            //     //arrangeBrick(clone, movingBrick, x, maxWidth);
+            // }
+            // catch (e) {
+            //     e.message += " (skipped)";
+            //     console.error(e);
+            //     window.location.reload();
+            //     continue;
+            //     // TODO game locks down, even if skipped
+            // }
 
-            movingBrick.y = movingBrick.getLowestPosition();
+            //var movingBrick = game.getMovingBrick();
 
-            var brickMatrix = clone.renderBrickMatrix();
+            // movingBrick.y = movingBrick.getLowestPosition(x - movingBrick.x);
+            var lowestY = Brick.calcLowestPosition(rotatedBlocks, x - movingBrick.x,game,movingBrick.x,movingBrick.y,movingBrick.guid);
+
+            var brickMatrix = game.renderBrickMatrix(
+                [
+                    {guid : movingBrick.guid,x: x, y: lowestY,blocks: rotatedBlocks},
+                ]
+            );
             positions.push(
                 {
-                    brick: movingBrick,
-                    x: movingBrick.x,
-                    y: movingBrick.y,
+                    //brick: movingBrick,
+                    x: x,
+                    y: lowestY,
                     brickMatrix,
-                    rotation: movingBrick.rotation,
+                    rotation: i,
                     needsHolding: usesHolding,
                 }
             );
@@ -161,7 +168,7 @@ export function getPossibleMoves(game,setupChanges) {
             clearingLines,
         };
 
-        setup.score = (clearingLines * 3) + (0 - holes * 0.25) + (0 - height * 2);
+        setup.score = (clearingLines * 3) + (0 - holes * 0.25) + (0 - height * 2) + (holes == 0 ? 2 : 0);
 
     }
     positions = sortMovements(positions);
@@ -174,7 +181,7 @@ export function sortMovements(positions) {
         var diff = b.score - a.score;
         if (diff !== 0)
             return diff;
-        return b.brick.y - a.brick.y;
+        return b.y - a.y;
     });
 }
 

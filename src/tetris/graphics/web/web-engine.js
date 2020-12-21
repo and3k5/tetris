@@ -244,7 +244,7 @@ export class WebGraphicEngine extends GraphicEngineBase {
         for (const i in bricks) {
             if (this.game.ghostDrawing && bricks[i].moving) {
                 var ghostColor = new Color(255, 255, 255, 0.2);
-                const tmp_lowestPos = bricks[i].getLowestPosition(bricks);
+                const tmp_lowestPos = bricks[i].getLowestPosition();
                 //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, tmp_lowestPos, ghostColor)
                 this.addToState(this.#state.bricks.game,bricks[i].blocks, bricks[i].x, tmp_lowestPos, ghostColor);
             }

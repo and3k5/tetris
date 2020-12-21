@@ -1,5 +1,16 @@
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require('path');
+
+function globals(mode,opts) {
+    return {
+        "global.development": mode === "development",
+        "global.production": mode === "production",
+        "global.mode": mode,
+        "global.browser": opts.browser === true,
+        "global.node": opts.node === true
+    };
+}
 
 module.exports = function (env) {
     var mode = env.mode;
@@ -7,6 +18,21 @@ module.exports = function (env) {
     const commonConfig = {
         mode: mode,
         watch: env.watch === "yes",
+    };
+
+    var cssLoader = {
+        test: /\.css$/,
+        use: ["style-loader","css-loader"]
+    };
+
+    var htmlLoader = {
+        test: /\.html$/,
+        use: {
+            loader:"html-loader",
+            options: {
+                attrs: [":data-src"]
+            }
+        }
     };
 
     var jsLoader = {
@@ -20,48 +46,62 @@ module.exports = function (env) {
         }
     };
 
+    var imgLoader = {
+        test: /\.svg$/,
+        use: {
+            loader: "file-loader",
+            options: {
+                outputPath: "../img"
+            }
+        }
+    };
+
     const webConfig = Object.assign({}, commonConfig, {
         entry: "./src/index-browser.js",
         module: {
             rules: [
-                {
-                    test: /\.css$/,
-                    use: ["style-loader","css-loader"]
-                },
-                {
-                    test: /\.html$/,
-                    use: {
-                        loader:"html-loader",
-                        options: {
-                            attrs: [":data-src"]
-                        }
-                    }
-                },
+                cssLoader,
+                htmlLoader,
                 jsLoader,
-                {
-                    test: /\.svg$/,
-                    use: {
-                        loader: "file-loader",
-                        options: {
-                            outputPath: "../img"
-                        }
-                    }
-                }
+                imgLoader
             ]
         },
         plugins: [
-            new webpack.DefinePlugin({
-                "global.development": mode === "development",
-                "global.production": mode === "production",
-                "global.mode": mode,
-                "global.browser": true,
-                "global.node": false
+            new webpack.DefinePlugin(globals(mode,{browser:true})),
+            new HtmlWebpackPlugin({
+                title: "ToneMatrix",
+                template: "src/web/index.html",
+                filename: "../index.html",
             })
         ],
         output: {
             library: "tetris",
             path: path.resolve(__dirname, "js"),
             filename: "tetris-web.js",
+        },
+        node: {
+            fs: "empty"
+        }
+    });
+
+    const elecConfig = Object.assign({}, commonConfig, {
+        entry: "./src/index-browser.js",
+        target: "electron-main",
+        module: {
+            rules: [
+                cssLoader,
+                htmlLoader,
+                jsLoader,
+                imgLoader
+            ]
+        },
+        plugins: [
+            new webpack.DefinePlugin(globals(mode,{browser:true}))
+        ],
+        output: {
+            library: "tetris",
+            path: path.resolve(__dirname, "js"),
+            filename: "tetris-electron.js",
         },
         node: {
             fs: "empty"
@@ -77,13 +117,7 @@ module.exports = function (env) {
             ]
         },
         plugins: [
-            new webpack.DefinePlugin({
-                "global.development": mode === "development",
-                "global.production": mode === "production",
-                "global.mode": mode,
-                "global.browser": false,
-                "global.node": true
-            })
+            new webpack.DefinePlugin(globals(mode,{node:true}))
         ],
         output: {
             library: "tetris",
@@ -101,11 +135,7 @@ module.exports = function (env) {
             ]
         },
         plugins: [
-            new webpack.DefinePlugin({
-                "global.development": mode === "development",
-                "global.production": mode === "production",
-                "global.mode": mode
-            })
+            new webpack.DefinePlugin(globals(mode,{node:true}))
         ],
         output: {
             library: "logserver",
@@ -116,6 +146,7 @@ module.exports = function (env) {
 
     return [
         webConfig,
+        elecConfig,
         nodeConfig,
         logServerConfig
     ];
