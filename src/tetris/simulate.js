@@ -3,6 +3,7 @@ import Color from "./color.js";
 import * as console from "../utils/trace.js";
 import { StaticNextBrick } from "./logic/next-brick.js";
 import Brick from "./brick.js";
+import { countClearingLines, countHoles, countHeight, getScores, summaryScore } from "./simulate-rating.js";
 
 export function cloneGame(game,setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -131,58 +132,42 @@ export function getPossibleMoves(game,setupChanges) {
         var matrix = setup.brickMatrix;
         setup.score = 0;
 
-        var holes = 0;
-        var height = 0;
-        var clearingLines = 0;
-
-        for (var y = matrix.length - 1; y >= 0; y--) {
-            if (matrix[y].filter(x => x !== true).length === 0) {
-                clearingLines++;
-            }
-        }
-
-        for (var x = 0; x < game.width; x++) {
-            var countingHoles = false;
-            var xHeight = 0;
-            for (var y = matrix.length - 1; y >= 0; y--) {
-                if (matrix[y][x] === true && countingHoles != true) {
-                    countingHoles = true;
-                }
-
-                if (countingHoles === true && matrix[y][x] !== true && matrix.map(z => z[x]).slice(0, y).filter(f => f).length > 0) {
-                    holes++;
-                }
-
-                if (matrix[y][x] === true) {
-                    var currentHeight = matrix.length - y
-                    if (xHeight < currentHeight)
-                        xHeight = currentHeight;
-                }
-            }
-            height += xHeight;
-        }
-
-        setup.scores = {
-            holes,
-            height,
-            clearingLines,
-        };
-
-        setup.score = (clearingLines * 3) + (0 - holes * 0.25) + (0 - height * 2) + (holes == 0 ? 2 : 0);
-
+        setup.scores = getScores(game, matrix);
+        setup.score = summaryScore(setup.scores);
     }
     positions = sortMovements(positions);
     console.debug("POSITIONS", positions);
     return positions;
 }
 
+function sortBy(selector, descending = false) {
+    const exec = function (selector, descending) {
+        return (a,b) => selector(descending ? b : a) - selector(descending ? a : b);
+    }
+    return {
+        sorters: [exec(selector,descending)],
+        thenBy: function (selector2,descending2) {
+            this.sorters.push(exec(selector2,descending2));
+            return this;
+        },
+        compare: function(a,b) {
+            for (var sorter of this.sorters) {
+                var diff = sorter(a,b);
+                if (diff !== 0)
+                    return diff;
+            }
+            return 0;
+        },
+        execute(array) {
+            var sorter = this;
+            return array.concat().sort((a,b) => sorter.compare(a,b));
+        }
+    }
+}
+
 export function sortMovements(positions) {
-    return positions.concat().sort((a, b) => {
-        var diff = b.score - a.score;
-        if (diff !== 0)
-            return diff;
-        return b.y - a.y;
-    });
+    return sortBy(s => s.score, true)
+        .execute(positions);
 }
 
 class SimulatorRunner {
