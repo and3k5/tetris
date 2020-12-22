@@ -5,7 +5,7 @@ import TetrisGame from "./game.js";
 import DocumentUtil from "./document-util.js";
 
 import { EasyNextBrick } from "./logic/next-brick.js";
-import * as sound from "./sound.js";
+import * as sound from "./sound";
 
 function optionParser() {
     var options = {};

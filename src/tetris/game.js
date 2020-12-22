@@ -1,6 +1,6 @@
 import Color from "./color.js";
 import Brick from "./brick.js";
-import { playSound } from "./sound.js";
+import { playSound } from "./sound";
 import { BinaryBrickForm } from "./brick-form.js";
 import * as gameController from "./game-controller.js";
 import { attachSimulator } from "./simulate.js";
