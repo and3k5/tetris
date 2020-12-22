@@ -1,4 +1,4 @@
-import { playSound } from "./sound.js";
+import { playSound } from "./sound";
 import * as console from "../utils/trace.js";
 import {createUniqueGuid} from "../utils/guid.js";
 
