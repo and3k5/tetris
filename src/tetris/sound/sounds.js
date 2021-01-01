@@ -1,1 +1,1 @@
-export const sounds = ["gamelose", "gamebump", "gamerow", "menuback", "gamemove"];
+export const sounds = ["gamebump", "gamerow", "menuback", "gamemove"];
