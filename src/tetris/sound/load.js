@@ -11,6 +11,7 @@ if (global.browser) {
 }
 
 import { sounds } from "./sounds";
+import generators from "./generators";
 
 export function init() {
     try {
@@ -62,6 +63,10 @@ export function init() {
         Promise.all(tasks).then(() => {
             console.debug("sound ready");
         });
+        for (const generator of generators) {
+            console.log(generator);
+            audioBuffers[generator.name] = generator.buffer(context);
+        }
     } catch (e) {
         console.error(e);
         context = false;
@@ -77,6 +82,7 @@ export function init() {
  * @param {string} id 
  * @param {string} url 
  * @param {AudioContext} context 
+ * @returns {AudioBuffer}
  */
 async function loadSound(id, url, context) {
     return new Promise((res, rej) => {
