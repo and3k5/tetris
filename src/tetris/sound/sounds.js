@@ -1,1 +1,1 @@
-export const sounds = ["menuback", "gamemove"];
+export const sounds = ["menuback"];

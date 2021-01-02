@@ -1,6 +1,7 @@
 import gamelose from "./gamelose.js";
 import gamebump from "./gamebump.js";
 import gamerow from "./gamerow.js";
+import gamemove from "./gamemove.js";
 
 export default [
     {
@@ -14,5 +15,9 @@ export default [
     {
         name: "gamerow",
         buffer: gamerow
+    },
+    {
+        name: "gamemove",
+        buffer: gamemove
     }
 ];
