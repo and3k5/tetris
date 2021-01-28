@@ -1,9 +1,11 @@
 import GraphicEngineBase from "../graphic-engine-base/graphic-engine-base.js";
-import Brick from "../../brick.js";
-import Color from "../../color.js";
+import { brick, utils } from "tetris-core";
+const { Brick } = brick;
+const { color } = utils;
+const { Color } = color;
 import readline from "readline";
 import size from "window-size";
-import * as console from "../../../utils/trace.js";
+const { trace: console } = utils;
 
 class TermWriter {
     constructor() {
@@ -26,7 +28,7 @@ class TermWriter {
 }
 
 class TermUtil {
-    
+
     constructor(text) {
         this.codes = [];
         this.text = text;
@@ -44,12 +46,12 @@ class TermUtil {
     }
 
     log() {
-        console.log(this.codes.join("")+"%s"+TermUtil.Reset,this.text);
+        console.log(this.codes.join("") + "%s" + TermUtil.Reset, this.text);
         return this;
     }
 
     getString() {
-        return this.codes.join("")+this.text+TermUtil.Reset;
+        return this.codes.join("") + this.text + TermUtil.Reset;
     }
 
     write() {
@@ -61,12 +63,12 @@ class TermUtil {
     }
 
     static get Clear() {
-        return String.fromCharCode(27,91,50,74);
+        return String.fromCharCode(27, 91, 50, 74);
     }
 
     static get Reset() {
         return "\x1b[0m";
-    } 
+    }
     static get Bright() {
         return "\x1b[1m";
     }
@@ -85,7 +87,7 @@ class TermUtil {
     static get Hidden() {
         return "\x1b[8m";
     }
-    
+
     static get FgBlack() {
         return "\x1b[30m";
     }
@@ -110,7 +112,7 @@ class TermUtil {
     static get FgWhite() {
         return "\x1b[37m";
     }
-    
+
     static get BgBlack() {
         return "\x1b[40m";
     }
@@ -164,32 +166,31 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         // TODO something
         console.log("init render called");
 
-        this.render(true,true);
-        this.game.addEvent("update-score",(score) => {
+        this.render(true, true);
+        this.game.addEvent("update-score", (score) => {
             //this.score.innerHTML = score;
         });
     }
 
-    render(force = false,loop = false) {
+    render(force = false, loop = false) {
         // CTX GRAPHICS
         var game = this.game;
         if (force === true || game.PENDINGUPDATE) {
             this.drawBricks();
             game.PENDINGUPDATE = false;
         }
-        
-        if (loop === true)
-        {
+
+        if (loop === true) {
             var $this = this;
-            setTimeout(() => $this.render(false, loop),10);
+            setTimeout(() => $this.render(false, loop), 10);
         }
     }
 
-    createDisplay(w,h) {
+    createDisplay(w, h) {
         var display = [];
-        for (var i = 0;i<h;i++) {
+        for (var i = 0; i < h; i++) {
             display[i] = [];
-            for (var j = 0;j<w;j++) {
+            for (var j = 0; j < w; j++) {
                 display[i][j] = {
                     state: false,
                     color: null,
@@ -202,7 +203,7 @@ export class NodeGraphicEngine extends GraphicEngineBase {
     drawBricks() {
         var bricks = this.game.bricks;
 
-        var display = this.createDisplay(this.game.width,this.game.height);
+        var display = this.createDisplay(this.game.width, this.game.height);
 
         for (const i in bricks) {
             if (this.game.ghostDrawing && bricks[i].moving) {
@@ -210,39 +211,39 @@ export class NodeGraphicEngine extends GraphicEngineBase {
                 const tmp_lowestPos = bricks[i].getLowestPosition();
                 this.setDisplay(display, bricks[i].blocks, ghostColor, bricks[i].x, tmp_lowestPos);
             }
-            this.setDisplay(display,bricks[i]);
+            this.setDisplay(display, bricks[i]);
         }
 
-        var holdingDisplay = this.createDisplay(6,6);
+        var holdingDisplay = this.createDisplay(6, 6);
 
         if (this.game.holding != null) {
-            this.setDisplay(holdingDisplay, this.game.holding,this.game.holding.color,2,2);
+            this.setDisplay(holdingDisplay, this.game.holding, this.game.holding.color, 2, 2);
         }
 
-        var nextDisplay = this.createDisplay(6,6);
-        this.setDisplay(nextDisplay, this.game.brickforms[this.game.nextRandom],this.game.colors[this.game.nextRandom],2,2);
+        var nextDisplay = this.createDisplay(6, 6);
+        this.setDisplay(nextDisplay, this.game.brickforms[this.game.nextRandom], this.game.colors[this.game.nextRandom], 2, 2);
 
 
         this.drawDisplay(display, holdingDisplay, nextDisplay);
     }
 
-    writeDisplayCell(output,cell) {
+    writeDisplayCell(output, cell) {
         if (cell.state === true) {
             output.addNew("  ").set(this.getMatchingBg(cell.color));
-        }else{
+        } else {
             output.addNew("  ");
         }
     }
 
     drawDisplay(display, holdingDisplay, nextDisplay) {
-        var gameWidth = display[0].length*2 + 2;
+        var gameWidth = display[0].length * 2 + 2;
 
-        var offset = parseInt(size.width/2 - gameWidth/2);
+        var offset = parseInt(size.width / 2 - gameWidth / 2);
 
         var eol = require("os").EOL;
 
         //if (this.rendered === true)
-        
+
         var output = new TermWriter();
 
         var theme = TermUtil.SingleLineFrame;
@@ -251,55 +252,53 @@ export class NodeGraphicEngine extends GraphicEngineBase {
 
         //process.stdout.write(border+eol);
         output.addNew(" ".repeat(holdingOffset - 2));
-        output.addNew(theme.topLeft+theme.horizontal.repeat(holdingDisplay[0].length*2)+theme.topRight).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(theme.topLeft + theme.horizontal.repeat(holdingDisplay[0].length * 2) + theme.topRight).set(TermUtil.FgGreen, TermUtil.Bright);
         output.addNew(" ".repeat(2));
-        output.addNew(theme.topLeft+theme.horizontal.repeat(gameWidth-2)+theme.topRight).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(theme.topLeft + theme.horizontal.repeat(gameWidth - 2) + theme.topRight).set(TermUtil.FgGreen, TermUtil.Bright);
         output.addNew(" ".repeat(2));
-        output.addNew(theme.topLeft+theme.horizontal.repeat(nextDisplay[0].length*2)+theme.topRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(theme.topLeft + theme.horizontal.repeat(nextDisplay[0].length * 2) + theme.topRight + eol).set(TermUtil.FgGreen, TermUtil.Bright);
 
         for (var row of display) {
             var y = display.indexOf(row);
 
             var tempOffset = offset;
 
-            if (y<holdingDisplay.length) {
+            if (y < holdingDisplay.length) {
                 var holdingWidth = holdingDisplay[y].length * 2;
                 output.addNew(" ".repeat(holdingOffset - 2));
-                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
-                for (var hCell of holdingDisplay[y])
-                {
-                    this.writeDisplayCell(output,hCell);
+                output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
+                for (var hCell of holdingDisplay[y]) {
+                    this.writeDisplayCell(output, hCell);
                 }
-                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
+                output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
                 tempOffset -= holdingWidth;
                 output.addNew(" ".repeat(2));
-            }else if (y === holdingDisplay.length) {
+            } else if (y === holdingDisplay.length) {
                 output.addNew(" ".repeat(holdingOffset - 2));
-                output.addNew(theme.bottomLeft+theme.horizontal.repeat(holdingDisplay[0].length*2)+theme.bottomRight).set(TermUtil.FgGreen,TermUtil.Bright);
+                output.addNew(theme.bottomLeft + theme.horizontal.repeat(holdingDisplay[0].length * 2) + theme.bottomRight).set(TermUtil.FgGreen, TermUtil.Bright);
                 output.addNew(" ".repeat(2));
-            }else{
+            } else {
                 output.addNew(" ".repeat(tempOffset));
             }
 
-            
-            output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
-            for (var cell of row) {
-                this.writeDisplayCell(output,cell);
-            }
-            output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
 
-            if (y<nextDisplay.length) {
+            output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
+            for (var cell of row) {
+                this.writeDisplayCell(output, cell);
+            }
+            output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
+
+            if (y < nextDisplay.length) {
                 output.addNew(" ".repeat(2));
-                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
-                for (var nCell of nextDisplay[y])
-                {
-                    this.writeDisplayCell(output,nCell);
+                output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
+                for (var nCell of nextDisplay[y]) {
+                    this.writeDisplayCell(output, nCell);
                 }
-                output.addNew(theme.vertical).set(TermUtil.FgGreen,TermUtil.Bright);
-            }else if (y === nextDisplay.length) {
+                output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
+            } else if (y === nextDisplay.length) {
                 output.addNew(" ".repeat(2));
-                output.addNew(theme.bottomLeft+theme.horizontal.repeat(nextDisplay[0].length*2)+theme.bottomRight).set(TermUtil.FgGreen,TermUtil.Bright);
-            }else{
+                output.addNew(theme.bottomLeft + theme.horizontal.repeat(nextDisplay[0].length * 2) + theme.bottomRight).set(TermUtil.FgGreen, TermUtil.Bright);
+            } else {
                 output.addNew(" ".repeat(tempOffset));
             }
 
@@ -307,19 +306,19 @@ export class NodeGraphicEngine extends GraphicEngineBase {
         }
 
         output.addNew(" ".repeat(offset));
-        output.addNew(theme.bottomLeft+theme.horizontal.repeat(gameWidth-2)+theme.bottomRight+eol).set(TermUtil.FgGreen,TermUtil.Bright);
+        output.addNew(theme.bottomLeft + theme.horizontal.repeat(gameWidth - 2) + theme.bottomRight + eol).set(TermUtil.FgGreen, TermUtil.Bright);
 
         process.stdout.write(TermUtil.Clear);
-        readline.cursorTo(process.stdout,0,0);
+        readline.cursorTo(process.stdout, 0, 0);
         output.write();
     }
 
     getMatchingFg(color) {
-        return TermUtil["Fg"+this.getMatchingTerminalColorName(color)];
+        return TermUtil["Fg" + this.getMatchingTerminalColorName(color)];
     }
 
     getMatchingBg(color) {
-        return TermUtil["Bg"+this.getMatchingTerminalColorName(color)];
+        return TermUtil["Bg" + this.getMatchingTerminalColorName(color)];
     }
 
     getMatchingTerminalColorName(color) {
@@ -355,28 +354,28 @@ export class NodeGraphicEngine extends GraphicEngineBase {
     }
 
     setDisplay(display, brick, color, x, y) {
-        if (typeof(x) !== "number")
+        if (typeof (x) !== "number")
             x = brick.x;
-        if (typeof(y) !== "number")
+        if (typeof (y) !== "number")
             y = brick.y;
         if (color == null)
             color = brick.color;
         var blocks = brick instanceof Brick ? brick.blocks : brick;
 
-        this.drawBrickForm(blocks,display, x, y, color);
+        this.drawBrickForm(blocks, display, x, y, color);
     }
 
     drawBrickForm(brickForm, display, x, y, color) {
-        if (typeof(x) !== "number")
-            throw new Error("x is not number: "+x);
-        if (typeof(y) !== "number")
-            throw new Error("y is not number: "+x);
+        if (typeof (x) !== "number")
+            throw new Error("x is not number: " + x);
+        if (typeof (y) !== "number")
+            throw new Error("y is not number: " + x);
         for (var i1 in brickForm) {
             for (var i2 in brickForm[i1]) {
                 if (brickForm[i1][i2] == 1) {
                     var _x = (x) + (parseInt(i2));
                     var _y = (y) + (parseInt(i1));
-                    
+
                     if (_y < 0)
                         continue;
 
@@ -384,19 +383,19 @@ export class NodeGraphicEngine extends GraphicEngineBase {
                         continue;
 
                     if (isNaN(_y))
-                        throw new Error("Y parsed as NaN: "+y+" + "+i1);
+                        throw new Error("Y parsed as NaN: " + y + " + " + i1);
 
                     if (isNaN(_x))
-                        throw new Error("X parsed as NaN: "+x+" + "+i2);
+                        throw new Error("X parsed as NaN: " + x + " + " + i2);
 
                     var row = display[_y];
-                    if (row == undefined) 
-                        throw new Error("Row not found: "+_y);
+                    if (row == undefined)
+                        throw new Error("Row not found: " + _y);
 
                     var cell = row[_x];
 
                     if (cell == undefined)
-                        throw new Error("Cell not found: "+_x);
+                        throw new Error("Cell not found: " + _x);
 
                     cell.state = true;
                     cell.color = color;
@@ -412,57 +411,58 @@ export class NodeGraphicEngine extends GraphicEngineBase {
 
         var game = this.game;
 
-        process.stdin.on("keypress", (str,key) => {
+        process.stdin.on("keypress", (str, key) => {
             if (key.ctrl && key.name === "c")
                 return process.exit(0);
 
-                switch (key.name) {
-                    case "left":
-                    case "a":
-                        // left
-                        if (game.running)
-                            game.action_moveleft();
-                        break;
-                    case "up":
-                    case "w":
-                        // up
-                        if (game.running)
-                            game.action_rotate();
-                        break;
-                    case "right":
-                    case "d":
-                        // right
-                        if (game.running)
-                            game.action_moveright();
-                        break;
-                    case "down":
-                    case "s":
-                        // down
-                        if (game.running)
-                            game.action_movedown();
-                        break;
-                    case "space":
-                        // space
-                        if (game.running)
-                            game.action_smashdown();
-                        break;
-                    case "escape":
-                        // escape
-                        if (game.running) {
-                            // ingame
-                            menuNav("paused");
-                            playSound("menuback");
-                        }
-                        break;
-                    case "tab":
-                        // shift
-                        if (game.running) {
-                            game.holdingShift();
-                        }
-                        break;
-                }
+            switch (key.name) {
+                case "left":
+                case "a":
+                    // left
+                    if (game.running)
+                        game.action_moveleft();
+                    break;
+                case "up":
+                case "w":
+                    // up
+                    if (game.running)
+                        game.action_rotate();
+                    break;
+                case "right":
+                case "d":
+                    // right
+                    if (game.running)
+                        game.action_moveright();
+                    break;
+                case "down":
+                case "s":
+                    // down
+                    if (game.running)
+                        game.action_movedown();
+                    break;
+                case "space":
+                    // space
+                    if (game.running)
+                        game.action_smashdown();
+                    break;
+                case "escape":
+                    // escape
+                    if (game.running) {
+                        // ingame
+                        menuNav("paused");
 
-            console.log("keypress: "+key.name);
+                        game.runEvent("fx", null, "sound", "menuback");
+                    }
+                    break;
+                case "tab":
+                    // shift
+                    if (game.running) {
+                        game.holdingShift();
+                    }
+                    break;
+            }
+
+            console.log("keypress: " + key.name);
         });
     }
 }

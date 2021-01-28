@@ -1,5 +1,3 @@
-import "./brick-form.js"
-
 export class TetrisSetup {
     // different types of bricks
     #brickforms;

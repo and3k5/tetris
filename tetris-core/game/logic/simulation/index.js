@@ -1,11 +1,11 @@
-import TetrisGame from "./game.js";
-import Color from "./color.js";
-import * as console from "../utils/trace.js";
-import { StaticNextBrick } from "./logic/next-brick.js";
-import Brick from "./brick.js";
-import { countClearingLines, countHoles, countHeight, getScores, summaryScore } from "./simulate-rating.js";
+import { TetrisGame } from "../../";
+import { Brick } from "../../../brick"
+import { trace as console, color } from "../../../utils";
+const { Color } = color;
+import { StaticNextBrick } from "../next-brick";
+import { countClearingLines, countHoles, countHeight, getScores, summaryScore } from "./simulate-rating";
 
-export function cloneGame(game,setupChanges) {
+export function cloneGame(game, setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
 
     var extra = { bricks };
@@ -13,7 +13,7 @@ export function cloneGame(game,setupChanges) {
     if (game.HOLDING != null)
         extra.holding = game.HOLDING.clone();
 
-    var setup = Object.assign({},game.setup, setupChanges,{
+    var setup = Object.assign({}, game.setup, setupChanges, {
         brickforms: game.setup.brickforms,
         width: game.setup.width,
         height: game.setup.height,
@@ -57,7 +57,7 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
     }
 }
 
-function getPositions(game, usesHolding = false,setupChanges = {}) {
+function getPositions(game, usesHolding = false, setupChanges = {}) {
     var maxWidth = game.width * 2;
 
     var positions = [];
@@ -66,11 +66,11 @@ function getPositions(game, usesHolding = false,setupChanges = {}) {
 
     for (var i = 0; i < 4; i++) {
         let rotatedBlocks = movingBrick.blocks;
-        for (var r = 0;r<i;r++)
+        for (var r = 0; r < i; r++)
             rotatedBlocks = Brick.calcRotatedBlocks(movingBrick.blocks);
 
         var mostLeft = Brick.calcMostLeft(rotatedBlocks);
-        var mostRight = Brick.calcMostRight(game,rotatedBlocks);
+        var mostRight = Brick.calcMostRight(game, rotatedBlocks);
 
         for (var x = mostLeft; x <= mostRight; x++) {
             //var clone = cloneGame(cloneBase,setupChanges);
@@ -90,11 +90,11 @@ function getPositions(game, usesHolding = false,setupChanges = {}) {
             //var movingBrick = game.getMovingBrick();
 
             // movingBrick.y = movingBrick.getLowestPosition(x - movingBrick.x);
-            var lowestY = Brick.calcLowestPosition(rotatedBlocks, x - movingBrick.x,game,movingBrick.x,movingBrick.y,movingBrick.guid);
+            var lowestY = Brick.calcLowestPosition(rotatedBlocks, x - movingBrick.x, game, movingBrick.x, movingBrick.y, movingBrick.guid);
 
             var brickMatrix = game.renderBrickMatrix(
                 [
-                    {guid : movingBrick.guid,x: x, y: lowestY,blocks: rotatedBlocks},
+                    { guid: movingBrick.guid, x: x, y: lowestY, blocks: rotatedBlocks },
                 ]
             );
             positions.push(
@@ -113,14 +113,14 @@ function getPositions(game, usesHolding = false,setupChanges = {}) {
     return positions;
 }
 
-export function getPossibleMoves(game,setupChanges) {
+export function getPossibleMoves(game, setupChanges) {
     var positions = [];
 
-    for (var pos of getPositions(game,false,setupChanges))
+    for (var pos of getPositions(game, false, setupChanges))
         positions.push(pos);
 
     if (game.canUseHolding) {
-        var clone = cloneGame(game,setupChanges);
+        var clone = cloneGame(game, setupChanges);
         clone.holdingShift();
 
         for (var pos of getPositions(clone, true, setupChanges))
@@ -142,17 +142,17 @@ export function getPossibleMoves(game,setupChanges) {
 
 function sortBy(selector, descending = false) {
     const exec = function (selector, descending) {
-        return (a,b) => selector(descending ? b : a) - selector(descending ? a : b);
+        return (a, b) => selector(descending ? b : a) - selector(descending ? a : b);
     }
     return {
-        sorters: [exec(selector,descending)],
-        thenBy: function (selector2,descending2) {
-            this.sorters.push(exec(selector2,descending2));
+        sorters: [exec(selector, descending)],
+        thenBy: function (selector2, descending2) {
+            this.sorters.push(exec(selector2, descending2));
             return this;
         },
-        compare: function(a,b) {
+        compare: function (a, b) {
             for (var sorter of this.sorters) {
-                var diff = sorter(a,b);
+                var diff = sorter(a, b);
                 if (diff !== 0)
                     return diff;
             }
@@ -160,7 +160,7 @@ function sortBy(selector, descending = false) {
         },
         execute(array) {
             var sorter = this;
-            return array.concat().sort((a,b) => sorter.compare(a,b));
+            return array.concat().sort((a, b) => sorter.compare(a, b));
         }
     }
 }
@@ -215,7 +215,7 @@ class SimulatorRunner {
                 runner.tick();
                 runner.drawMovements();
             })
-        }else {
+        } else {
             const ticker = () => {
                 if (runner.isCancelled !== false)
                     return;
@@ -224,7 +224,7 @@ class SimulatorRunner {
             };
             setTimeout(ticker, 0);
         }
-        this.#game.addEvent("lose",function () {
+        this.#game.addEvent("lose", function () {
             runner.cancel();
         });
     }
@@ -256,14 +256,14 @@ class SimulatorRunner {
         var currentMovingBrick = this.#game.getMovingBrick();
         if (this.#movements.length === 0 || this.#lastBrick != currentMovingBrick) {
             console.debug("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
-            this.#movements = getPossibleMoves(this.#game,{nextBrick: new StaticNextBrick(0)});
+            this.#movements = getPossibleMoves(this.#game, { nextBrick: new StaticNextBrick(0) });
             this.#lastBrick = currentMovingBrick;
         }
         console.debug(this.#movements[0].score);
         if (this.#movements[0].needsHolding === true) {
             this.#game.holdingShift();
             this.#movements[0].needsHolding = false;
-        }else {
+        } else {
             this.#game.moveTowards(this.#movements[0].x, this.#movements[0].rotation);
         }
 
@@ -277,7 +277,7 @@ class SimulatorRunner {
         for (var simulation of simulations) {
             if (simulation.type === "nextRandom") {
                 this.#game.nextRandom = simulation.val;
-            }else if (simulation.type === "smashdown") {
+            } else if (simulation.type === "smashdown") {
                 this.#game.action_smashdown();
             }
             this.#game.PENDINGUPDATE = true;
@@ -286,7 +286,7 @@ class SimulatorRunner {
     }
 }
 
-export function attachSimulator(game,start = true) {
+export function attachSimulator(game, start = true) {
     var ticker = new SimulatorRunner();
     ticker.attach(game);
     if (Array.isArray(game.setup.simulation)) {

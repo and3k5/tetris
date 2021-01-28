@@ -1,4 +1,5 @@
-import TetrisGame from "../../game.js";
+import { game } from "tetris-core";
+const { TetrisGame } = game;
 
 export default class GraphicEngineBase {
     #game;

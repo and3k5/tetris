@@ -1,6 +1,7 @@
 import DocumentUtil from "./document-util.js";
 import * as htmlLoad from "./debug.html";
-import { attachSimulator } from "./simulate.js";
+import { game } from "tetris-core";
+const { logic: { simulation: { attachSimulator } } } = game;
 
 export function initDebug(parent, container, game) {
     var debugContainer = new DocumentUtil(container);

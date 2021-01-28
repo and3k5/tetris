@@ -1,14 +1,17 @@
-import Color from "./color.js";
-import Brick from "./brick.js";
-import { playSound } from "./sound";
-import { BinaryBrickForm } from "./brick-form.js";
+import { Brick } from "../brick";
 import * as gameController from "./game-controller.js";
-import { attachSimulator } from "./simulate.js";
-import * as console from "../utils/trace.js";
-import { transmitter } from "./log-com.js";
-import { NextBrick } from "./logic/next-brick.js";
+import { simulation } from "./logic";
+const { attachSimulator } = simulation;
+import { trace as console, color } from "../utils";
+const { Color } = color;
+import { logging } from "../diagnostics";
+const { transmitter } = logging;
+import { nextBrick } from "./logic";
+import { EventController } from "../extensions/event";
+import { AddonContainer, INIT_TYPES } from "../extensions/addon";
+const { NextBrick } = nextBrick;
 
-class TetrisGame {
+export class TetrisGame {
     // [number] Bricks x count
     #width;
 
@@ -45,11 +48,11 @@ class TetrisGame {
     #gridColor;
 
     // events
-    #events = [];
+    #eventController = new EventController(this);
+
+    #addons = new AddonContainer();
 
     #RUNNING = true;
-
-    #runEvent;
 
     #socket = null;
 
@@ -67,18 +70,12 @@ class TetrisGame {
         return this.#gridColor;
     }
 
-    constructor(gameSetup, extra = null,graphicEngine = null) {
+    registerAddon(object, callback, initType) {
+        this.#addons.add(object, (obj) => callback(obj, this), initType);
+    }
+
+    constructor(gameSetup, extra = null, graphicEngine = null) {
         this.#setup = gameSetup;
-
-        var runEvent = (function (name,data) {
-            for (var event of this.#events) {
-                if (event.name === name) {
-                    event.handler(data);
-                }
-            }
-        }).bind(this);
-
-        this.#runEvent = runEvent;
 
         this.#nextRandomGenerator = gameSetup.nextBrick || new NextBrick();
 
@@ -87,12 +84,12 @@ class TetrisGame {
             this.#graphicEngine.setGame(this);
         }
         if (gameSetup.logger === true) {
-            this.addLogEntry({name: "gameInit"});
+            this.addLogEntry({ name: "gameInit" });
         }
-        
+
         this.#width = gameSetup.width;
         this.#height = gameSetup.height;
-        this.#gameGuid = Math.round(Math.random()*10000000000000000);
+        this.#gameGuid = Math.round(Math.random() * 10000000000000000);
         this.#gridColor = new Color(0, 255, 0, 0.5);
 
         if (extra != null) {
@@ -122,7 +119,7 @@ class TetrisGame {
         function clearLine(l) {
             if (this.#RUNNING) {
                 this.score++;
-                playSound("gamerow");
+                this.runEvent("fx", null, "sound", "gamerow");
                 var bricks = game.bricks;
                 (line => {
                     const rtn = [];
@@ -192,7 +189,7 @@ class TetrisGame {
             this.HOLDINGCOUNT = 0;
             this.addNewBrick();
 
-            gameController.gameControlDown(this, this.#runEvent);
+            gameController.gameControlDown(this);
 
             if (this.setup.simulator === true) {
                 attachSimulator(this);
@@ -204,7 +201,7 @@ class TetrisGame {
                 setInterval(function () {
                     if (game.#socket != null && game.#socket.readyState === game.#socket.OPEN) {
                         let items;
-                        while ((items = game.#logEntries.splice(0,1)).length > 0)
+                        while ((items = game.#logEntries.splice(0, 1)).length > 0)
                             for (var item of items)
                                 game.#socket.send(JSON.stringify(item));
                     }
@@ -215,9 +212,11 @@ class TetrisGame {
                 }
             }
 
-            this.#graphicEngine.initializeInput(this.#runEvent);
+            this.#graphicEngine.initializeInput();
 
             this.#graphicEngine.initRender();
+
+            this.#addons.loadByType(INIT_TYPES.AFTER_INIT);
         }
     }
 
@@ -227,7 +226,7 @@ class TetrisGame {
 
     set score(v) {
         this.#score = v;
-        this.#runEvent("update-score",v);
+        this.#eventController.trigger("update-score", null, v);
     }
 
     get colors() {
@@ -258,11 +257,11 @@ class TetrisGame {
 
             var mod = modifications.filter(m => m.guid == brick.guid)[0];
             if (mod != null) {
-                if (typeof(mod.x) === "number")
+                if (typeof (mod.x) === "number")
                     x = mod.x;
-                if (typeof(mod.y) === "number")
+                if (typeof (mod.y) === "number")
                     y = mod.y;
-                if (typeof(mod.blocks) !== "undefined")
+                if (typeof (mod.blocks) !== "undefined")
                     brickForm = mod.blocks;
             }
 
@@ -293,14 +292,14 @@ class TetrisGame {
     }
 
     getBrickId() {
-        var max = this.bricks.length > 0 ? this.bricks.map(b => b.id).sort((a,b) => b-a)[0] : 0;
-        
-        return max+1;
+        var max = this.bricks.length > 0 ? this.bricks.map(b => b.id).sort((a, b) => b - a)[0] : 0;
+
+        return max + 1;
     }
 
     addNewBrick(pos = -1) {
         var brick = new Brick({ game: this, ingame: true });
-        
+
         brick.id = this.getBrickId();
 
         const brfrm = this.brickforms;
@@ -308,11 +307,11 @@ class TetrisGame {
         brick.color = this.getColors()[rnd].copy();
         brick.blocks = brfrm[rnd].concat();
         brick.index = rnd;
-        
+
         brick.moving = true;
         brick.resetPosition();
 
-        this.logEvent({name: "newBrick",blocks: brick.blocks});
+        this.logEvent({ name: "newBrick", blocks: brick.blocks });
 
         this.setNextRandom();
 
@@ -330,7 +329,7 @@ class TetrisGame {
             var obj = {
                 action: "log",
                 time,
-                data: Object.assign({gameGuid},logObj),
+                data: Object.assign({ gameGuid }, logObj),
             };
             this.addLogEntry(obj)
         }
@@ -518,20 +517,19 @@ class TetrisGame {
     }
 
     addEvent(name, handler) {
-        this.#events.push({
-            name,
-            handler,
-        });
+        this.#eventController.on(name, handler);
+    }
+
+    runEvent(name, _this, ...args) {
+        this.#eventController.trigger.apply(this.#eventController, [name, _this].concat(args));
     }
 
     loseView() {
-        playSound("gamelose");
+        this.runEvent("fx", null, "sound", "gamelose");
         this.#RUNNING = false;
-        this.#runEvent("lose");
+        this.#eventController.trigger("lose", null);
         if (this.setup.simulator === true) {
             setTimeout(() => window.location.reload(), 2000);
         }
     }
 }
-
-export default TetrisGame

@@ -1,11 +1,13 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 import { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } from "./game-setup.js";
-import TetrisGame from "./game.js";
+import { game } from "tetris-core";
+const { TetrisGame, logic: { nextBrick: { EasyNextBrick } } } = game;
 import DocumentUtil from "./document-util.js";
-
-import { EasyNextBrick } from "./logic/next-brick.js";
 import * as sound from "./sound";
+import { SoundController } from "./sound/sound-controller.js";
+import { extensions } from "tetris-core";
+const { addon: { INIT_TYPES } } = extensions;
 
 function optionParser() {
     var options = {};
@@ -21,23 +23,23 @@ function optionParser() {
         options.debug = url.searchParams.get("debug");
     } else if (global.node === true) {
         var args = process.argv.concat();
-        args.splice(0,2);
+        args.splice(0, 2);
 
-        var getValue = function (args,name, def = undefined) {
+        var getValue = function (args, name, def = undefined) {
             for (var arg of args) {
-                if (arg.indexOf("--"+name) === 0) {
-                    return arg.substring(name.length+3);
+                if (arg.indexOf("--" + name) === 0) {
+                    return arg.substring(name.length + 3);
                 }
             }
             return def;
         };
 
-        options.setup = getValue(args,"setup");
+        options.setup = getValue(args, "setup");
         //options.sound = getValue(args,"sound");
-        options.next = getValue(args,"next");
-        options.simulate = getValue(args,"simulate");
+        options.next = getValue(args, "next");
+        options.simulate = getValue(args, "simulate");
         //options.clickTick = getValue(args,"clickTick");
-        options.logger = getValue(args,"logger");
+        options.logger = getValue(args, "logger");
         //options.view = getValue(args,"view");
         //options.debug = getValue(args,"debug");
     }
@@ -54,7 +56,7 @@ export function init(container) {
     var options = optionParser();
 
     container = new DocumentUtil(container);
-                //.append(DocumentUtil.stringToElement(htmlLoad));
+    //.append(DocumentUtil.stringToElement(htmlLoad));
 
     var setup;
 
@@ -73,14 +75,6 @@ export function init(container) {
             break;
         default:
             setup = defaultGame();
-            break;
-    }
-
-    switch (options.sound) {
-        case "off":
-            sound.deactivate();
-            break;
-        default:
             break;
     }
 
@@ -105,23 +99,23 @@ export function init(container) {
 
             var time = 0;
 
-            for (var i = 0;i<5;i++) {
-                for (var j = 0;j<4;j++) {
+            for (var i = 0; i < 5; i++) {
+                for (var j = 0; j < 4; j++) {
                     setup.simulation.push({
                         type: "nextRandom",
                         val: 0,
-                        time: time+=100,
+                        time: time += 100,
                     });
                     setup.simulation.push({
                         type: "nextRandom",
                         val: 0,
-                        time: time+=100,
+                        time: time += 100,
                     });
                 }
                 setup.simulation.push({
                     type: "nextRandom",
                     val: 0,
-                    time: time+=100,
+                    time: time += 100,
                 });
             }
             break;
@@ -150,7 +144,7 @@ export function init(container) {
         graphicEngine = new nge();
     }
 
-    
+
 
     // var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
     // var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
@@ -159,8 +153,23 @@ export function init(container) {
 
     tetrisgame = new TetrisGame(setup, null, graphicEngine);
 
+    switch (options.sound) {
+        case "off":
+            break;
+        default:
+            tetrisgame.registerAddon(new SoundController(), (ctrl, game) => {
+                ctrl.init();
+                game.addEvent("fx", (type, name) => {
+                    if (type !== "sound")
+                        return;
+                    ctrl.playSound(name);
+                });
+            }, INIT_TYPES.AFTER_INIT)
+            break;
+    }
+
     if (global.browser === true && options.debug === "1")
-        require("./debug.js").initDebug(container.parentElement,container.el,tetrisgame);
+        require("./debug.js").initDebug(container.parentElement, container.el, tetrisgame);
 
     tetrisgame.init();
 

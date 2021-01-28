@@ -1,11 +1,11 @@
 const crypto = crypto || require("crypto");
 
 function getRandomValues(arr) {
-    if (typeof(crypto.getRandomValues) === "function") {
+    if (typeof (crypto.getRandomValues) === "function") {
         return crypto.getRandomValues(arr);
-    }else if (typeof(crypto.randomFillSync) === "function") {
+    } else if (typeof (crypto.randomFillSync) === "function") {
         return crypto.randomFillSync(arr);
-    }else{
+    } else {
         throw new Error("crypto is lacking a method");
     }
 }

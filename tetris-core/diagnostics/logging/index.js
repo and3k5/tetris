@@ -24,7 +24,7 @@ export function transmitter() {
         socket.on("open", function () {
             console.log("socket open");
             socket.send(JSON.stringify({
-                action:"log",
+                action: "log",
                 time: new Date().getTime(),
                 gameGuid: 1337,
                 data: {

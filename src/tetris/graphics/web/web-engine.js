@@ -1,11 +1,12 @@
 import * as htmlLoad from "./game.html";
 import GraphicEngineBase from "../graphic-engine-base/graphic-engine-base.js";
 import DocumentUtil from "../../document-util.js";
-import Color from "../../color";
-import { RadialGradient, LinearGradient } from "../../gradient.js"; 
+import { RadialGradient, LinearGradient } from "../../gradient.js";
 import { drawGrid } from "../../graphics-grid.js";
-import { executeTick } from "../../game-controller.js";
-import Brick from "../../brick.js";
+import { brick, game, utils } from "tetris-core";
+const { color: { Color } } = utils;
+const { gameController: { executeTick } } = game;
+const { Brick } = brick;
 
 export class WebGraphicEngine extends GraphicEngineBase {
     #brickSize = 30;
@@ -51,10 +52,10 @@ export class WebGraphicEngine extends GraphicEngineBase {
     constructor(options) {
         super();
 
-        var container = 
+        var container =
             new DocumentUtil(options.container)
                 .append(DocumentUtil.stringToElement(htmlLoad));
-        
+
         this.#gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
         this.#holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
         this.#nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
@@ -64,12 +65,12 @@ export class WebGraphicEngine extends GraphicEngineBase {
         this.#nextCtx = this.#nextCanvas.getContext("2d");
     }
 
-    initializeInput(runEvent) {
+    initializeInput() {
         var game = this.game;
 
         this.gameCanvas.addEventListener("click", function () {
             if (game.setup.clickTick === true)
-                executeTick(game, runEvent);
+                executeTick(game);
         });
 
         window.addEventListener("keydown", function (e) {
@@ -110,7 +111,7 @@ export class WebGraphicEngine extends GraphicEngineBase {
                     if (game.running) {
                         // ingame
                         menuNav("paused");
-                        playSound("menuback");
+                        game.runEvent("fx", null, "sound", "menuback");
                     }
                     break;
                 case 16:
@@ -190,39 +191,39 @@ export class WebGraphicEngine extends GraphicEngineBase {
     }
 
     clearArray(array) {
-        return array.splice(0,array.length);
+        return array.splice(0, array.length);
     }
 
-    addToState(bricks, brick,x,y,color,scale) {
+    addToState(bricks, brick, x, y, color, scale) {
         var old = bricks;
         var entries = bricks;
-        if (typeof(bricks) === "object" && !Array.isArray(bricks)) {
+        if (typeof (bricks) === "object" && !Array.isArray(bricks)) {
             old = bricks.old;
             entries = bricks.state;
         }
-        if (typeof(x) === "undefined") {
+        if (typeof (x) === "undefined") {
             x = brick.x;
             y = brick.y;
         }
-        if (typeof(color) === "undefined") {
+        if (typeof (color) === "undefined") {
             color = brick.color;
         }
         var blocks;
         if (brick instanceof Brick) {
             blocks = brick.blocks;
-        }else{
+        } else {
             blocks = brick;
             brick = null;
         }
-        if (typeof(scale) !== "number")
+        if (typeof (scale) !== "number")
             scale = 1;
         var entry = brick != null ? old.filter(b => b.brick === brick)[0] : null;
         if (entry == null) {
-            entry = {brick};
+            entry = { brick };
             entries.push(entry);
             entry.fromX = x;
             entry.fromY = y;
-        }else{
+        } else {
             if (entries.indexOf(entry) === -1)
                 entries.push(entry);
             entry.fromX = entry.currentX;
@@ -246,58 +247,57 @@ export class WebGraphicEngine extends GraphicEngineBase {
                 var ghostColor = new Color(255, 255, 255, 0.2);
                 const tmp_lowestPos = bricks[i].getLowestPosition();
                 //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, tmp_lowestPos, ghostColor)
-                this.addToState(this.#state.bricks.game,bricks[i].blocks, bricks[i].x, tmp_lowestPos, ghostColor);
+                this.addToState(this.#state.bricks.game, bricks[i].blocks, bricks[i].x, tmp_lowestPos, ghostColor);
             }
             //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, bricks[i].y, bricks[i].color);
-            this.addToState({state: this.#state.bricks.game, old: removedGameEntries},bricks[i]);
+            this.addToState({ state: this.#state.bricks.game, old: removedGameEntries }, bricks[i]);
         }
 
-        
+
         //this.drawBrickForm(this.game.brickforms[this.game.nextRandom], this.#nextCtx,2,2,this.game.colors[this.game.nextRandom],BRICKSIZESCALE);
-        this.addToState(this.#state.bricks.next,this.game.brickforms[this.game.nextRandom],2,2,this.game.colors[this.game.nextRandom],BRICKSIZESCALE);
+        this.addToState(this.#state.bricks.next, this.game.brickforms[this.game.nextRandom], 2, 2, this.game.colors[this.game.nextRandom], BRICKSIZESCALE);
 
         if (this.game.holding != null) {
             //this.drawBrickForm(this.game.holding.blocks, this.#holdingCtx, 2, 2, this.game.holding.color, BRICKSIZESCALE);
-            this.addToState(this.#state.bricks.holding,this.game.holding,2,2,undefined,BRICKSIZESCALE);
+            this.addToState(this.#state.bricks.holding, this.game.holding, 2, 2, undefined, BRICKSIZESCALE);
         }
     }
 
     drawStates() {
-        this.drawState(this.#state.bricks.holding,this.#holdingCtx);
-        this.drawState(this.#state.bricks.game,this.#gameCtx);
-        this.drawState(this.#state.bricks.next,this.#nextCtx);
+        this.drawState(this.#state.bricks.holding, this.#holdingCtx);
+        this.drawState(this.#state.bricks.game, this.#gameCtx);
+        this.drawState(this.#state.bricks.next, this.#nextCtx);
     }
 
-    mix(min,max,percent) {
-        return min*(1 - percent)+max*percent;
+    mix(min, max, percent) {
+        return min * (1 - percent) + max * percent;
     }
 
     updateBrickState(entry) {
         if (
             // disable
             false &&
-            typeof(entry.fromX) === "number" && typeof(entry.fromY) === "number" &&
-            typeof(entry.toX) === "number" && typeof(entry.toY) === "number" &&
-            typeof(entry.fromStamp) === "number"
-        )
-        {
+            typeof (entry.fromX) === "number" && typeof (entry.fromY) === "number" &&
+            typeof (entry.toX) === "number" && typeof (entry.toY) === "number" &&
+            typeof (entry.fromStamp) === "number"
+        ) {
             var stamp = new Date().getTime() - entry.fromStamp;
             var percX = (stamp / 100);
             if (percX > 1) percX = 1;
             var percY = (stamp / 1000);
             if (percY > 1) percY = 1;
-            entry.currentX = this.mix(entry.fromX,entry.toX,percX);
-            entry.currentY = this.mix(entry.fromY,entry.toY,percY);
-        }else{
+            entry.currentX = this.mix(entry.fromX, entry.toX, percX);
+            entry.currentY = this.mix(entry.fromY, entry.toY, percY);
+        } else {
             entry.currentX = entry.toX;
             entry.currentY = entry.toY;
         }
     }
 
-    drawState(entries,ctx) {
+    drawState(entries, ctx) {
         for (var entry of entries) {
             this.updateBrickState(entry);
-            this.drawBrickForm(entry.blocks,ctx,entry.currentX,entry.currentY,entry.color,entry.scale);
+            this.drawBrickForm(entry.blocks, ctx, entry.currentX, entry.currentY, entry.color, entry.scale);
         }
     }
 
@@ -317,7 +317,7 @@ export class WebGraphicEngine extends GraphicEngineBase {
         var brickSize = this.brickSize / scale;
 
         var x = (bx * brickSize);
-        var y = (by *  brickSize);
+        var y = (by * brickSize);
         var w = brickSize;
         var h = brickSize;
 
@@ -367,13 +367,13 @@ export class WebGraphicEngine extends GraphicEngineBase {
     }
 
     initRender() {
-        this.render(true,true);
-        this.game.addEvent("update-score",(score) => {
+        this.render(true, true);
+        this.game.addEvent("update-score", (score) => {
             this.score.innerHTML = score;
         });
     }
 
-    render(force = false,loop = false) {
+    render(force = false, loop = false) {
         // CTX GRAPHICS
         var game = this.game;
         if (force === true || game.PENDINGUPDATE) {
@@ -383,8 +383,7 @@ export class WebGraphicEngine extends GraphicEngineBase {
         this.clearCanvases();
         this.drawGrid();
         this.drawStates();
-        if (loop === true)
-        {
+        if (loop === true) {
             var $this = this;
             requestAnimationFrame(() => $this.render(false, loop));
         }
@@ -400,30 +399,30 @@ export class BurningGraphicEngine extends WebGraphicEngine {
     }
 
     drawSquare(ctx, x, y, w, h, color) {
-        var image = ctx.createImageData(w,h);
-        
-        
+        var image = ctx.createImageData(w, h);
 
-        for (var _x = 0;_x<w;_x++) {
-            for (var _y = 0;_y<w;_y++) {
+
+
+        for (var _x = 0; _x < w; _x++) {
+            for (var _y = 0; _y < w; _y++) {
                 var pos = (_x + ~~(_y * w)) * 4;
 
-                var col = flame.mainImage(_x/w,_y/h);
+                var col = flame.mainImage(_x / w, _y / h);
 
                 if (window.loq != true) {
                     window.loq = true;
                 }
-                    
 
-                image.data[pos+0] = col[0] * 255;
-                image.data[pos+1] = col[1] * 255;
-                image.data[pos+2] = col[2] * 255;
-                image.data[pos+3] = 255;
+
+                image.data[pos + 0] = col[0] * 255;
+                image.data[pos + 1] = col[1] * 255;
+                image.data[pos + 2] = col[2] * 255;
+                image.data[pos + 3] = 255;
             }
         }
 
 
 
-        ctx.putImageData(image,x,y);
+        ctx.putImageData(image, x, y);
     }
 }
