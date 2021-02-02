@@ -1,5 +1,5 @@
-import GraphicEngineBase from "../graphic-engine-base/graphic-engine-base.js";
-import { brick, utils } from "tetris-core";
+import { brick, utils, game } from "tetris-core";
+const { engine : { EngineBase }} = game;
 const { Brick } = brick;
 const { color } = utils;
 const { Color } = color;
@@ -161,7 +161,7 @@ class TermUtil {
     }
 }
 
-export class NodeGraphicEngine extends GraphicEngineBase {
+export class NodeGraphicEngine extends EngineBase {
     initRender() {
         // TODO something
         console.log("init render called");

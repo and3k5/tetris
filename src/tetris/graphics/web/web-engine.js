@@ -1,14 +1,14 @@
 import * as htmlLoad from "./game.html";
-import GraphicEngineBase from "../graphic-engine-base/graphic-engine-base.js";
 import DocumentUtil from "../../document-util.js";
 import { RadialGradient, LinearGradient } from "../../gradient.js";
 import { drawGrid } from "../../graphics-grid.js";
 import { brick, game, utils } from "tetris-core";
+const { engine : { EngineBase }} = game;
 const { color: { Color } } = utils;
 const { gameController: { executeTick } } = game;
 const { Brick } = brick;
 
-export class WebGraphicEngine extends GraphicEngineBase {
+export class WebGraphicEngine extends EngineBase {
     #brickSize = 30;
 
     #gameCanvas;

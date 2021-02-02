@@ -4,22 +4,6 @@ import { TetrisGame, logic, setup } from "../"
 const {  nextBrick: { EasyNextBrick } } = logic;
 const {  defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } = setup;
 
-//import * as sound from "./sound";
-//
-
-
-/**
- * @typedef {Object} Options
- * @property {string} setup
- * @property {string} sound
- * @property {string} next
- * @property {string} simulate
- * @property {string} clickTick
- * @property {string} logger
- * @property {string} view
- * @property {string} debug
- */
-
 function optionParser() {
     /**
      * @type {Options}
@@ -28,7 +12,6 @@ function optionParser() {
     if (global.browser === true) {
         var url = new URL(location.href);
         options.setup = url.searchParams.get("setup");
-        options.sound = url.searchParams.get("sound");
         options.next = url.searchParams.get("next");
         options.simulate = url.searchParams.get("simulate");
         options.clickTick = url.searchParams.get("clickTick");
@@ -49,7 +32,6 @@ function optionParser() {
         };
 
         options.setup = getValue(args, "setup");
-        //options.sound = getValue(args,"sound");
         options.next = getValue(args, "next");
         options.simulate = getValue(args, "simulate");
         //options.clickTick = getValue(args,"clickTick");
@@ -60,6 +42,32 @@ function optionParser() {
     return options;
 }
 
+
+export class Options {
+    /**
+     * @type {string}
+     */
+    setup = null;
+    /**
+     * @type {string}
+     */
+    next = null;
+    /**
+     * @type {boolean,string}
+     */
+    simulate = null;
+    /**
+     * @type {boolean}
+     */
+    clickTick = null;
+    logger = null;
+    view = null;
+    debug = null;
+    constructor() {
+
+    }
+}
+
 /**
  * 
  * @param {Options} options 
@@ -68,10 +76,6 @@ function optionParser() {
 export function init(options, engine) {
     var tetrisgame;
 
-    
-    var options = optionParser();
-
-    
     //.append(DocumentUtil.stringToElement(htmlLoad));
 
     var setup;
@@ -103,7 +107,7 @@ export function init(options, engine) {
     }
 
     switch (options.simulate) {
-        case "1":
+        case true:
             setup.simulator = true;
             break;
         case "assistbug":
@@ -153,15 +157,6 @@ export function init(options, engine) {
     // var score = container.querySelector("[data-target=score]").el;
 
     tetrisgame = new TetrisGame(setup, null, engine);
-
-    switch (options.sound) {
-        case "off":
-            break;
-        default:
-            
-            break;
-    }
-
     
 
     tetrisgame.init();

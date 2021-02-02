@@ -1,7 +1,4 @@
-import { game } from "tetris-core";
-const { TetrisGame } = game;
-
-export default class GraphicEngineBase {
+export class EngineBase {
     #game;
     constructor() {
     }
@@ -27,7 +24,7 @@ export default class GraphicEngineBase {
     }
 
     /**
-     * @returns {TetrisGame}
+     * @returns {import("tetris-core").game.TetrisGame}
      */
     get game() {
         return this.#game;

@@ -3,7 +3,7 @@ const { init: { init } } = game;
 
 const options = {};
 
-import { NodeGraphicEngine } from "../src/tetris/graphics/node/node-engine.js";
+import { NodeGraphicEngine } from "./engine.js";
 const graphicEngine = new NodeGraphicEngine();
 
 init(options, graphicEngine);
