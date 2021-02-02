@@ -108,24 +108,6 @@ module.exports = function (env) {
         }
     });
 
-    const nodeConfig = Object.assign({}, commonConfig, {
-        entry: "./src/index-node.js",
-        target: "node",
-        module: {
-            rules: [
-                jsLoader,
-            ]
-        },
-        plugins: [
-            new webpack.DefinePlugin(globals(mode,{node:true}))
-        ],
-        output: {
-            library: "tetris",
-            path: path.resolve(__dirname, "js"),
-            filename: "tetris-node.js",
-        }
-    });
-
     const logServerConfig = Object.assign({}, commonConfig, {
         entry: "./src/index-logserver.js",
         target: "node",
@@ -143,6 +125,16 @@ module.exports = function (env) {
             filename: "tetris-logserver.js",
         }
     });
+
+    const createGlobals = function (modifications) {
+        return new webpack.DefinePlugin(globals(mode,modifications))
+    }
+
+    const destPath = path.resolve(__dirname, "js");
+    const createNodeConfig = require("./tetris-cli/webpack.config");
+    const nodeConfig = createNodeConfig(commonConfig, { jsLoader }, createGlobals, destPath);
+
+    //console.log(nodeConfig);
 
     return [
         webConfig,

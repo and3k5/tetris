@@ -1,14 +1,29 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import { game } from "tetris-core";
-const { TetrisGame, logic: { nextBrick: { EasyNextBrick }, setup: { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } } } = game;
-import DocumentUtil from "./document-util.js";
-import * as sound from "./sound";
-import { SoundController } from "./sound/sound-controller.js";
-import { extensions } from "tetris-core";
-const { addon: { INIT_TYPES } } = extensions;
+import { TetrisGame, logic, setup } from "../"
+const {  nextBrick: { EasyNextBrick } } = logic;
+const {  defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } = setup;
+
+//import * as sound from "./sound";
+//
+
+
+/**
+ * @typedef {Object} Options
+ * @property {string} setup
+ * @property {string} sound
+ * @property {string} next
+ * @property {string} simulate
+ * @property {string} clickTick
+ * @property {string} logger
+ * @property {string} view
+ * @property {string} debug
+ */
 
 function optionParser() {
+    /**
+     * @type {Options}
+     */
     var options = {};
     if (global.browser === true) {
         var url = new URL(location.href);
@@ -45,16 +60,18 @@ function optionParser() {
     return options;
 }
 
-export function init(container) {
+/**
+ * 
+ * @param {Options} options 
+ * @param {any} engine 
+ */
+export function init(options, engine) {
     var tetrisgame;
 
-    if (typeof (container) === "string") {
-        container = window.document.body.querySelector(container);
-    }
-
+    
     var options = optionParser();
 
-    container = new DocumentUtil(container);
+    
     //.append(DocumentUtil.stringToElement(htmlLoad));
 
     var setup;
@@ -130,45 +147,22 @@ export function init(container) {
     if (options.view === "lite")
         window.document.body.classList.add("lite-view");
 
-    let graphicEngine = null;
-
-    if (global.browser === true) {
-        var wge = require("./graphics/web/web-engine.js").WebGraphicEngine;
-        graphicEngine = new wge({
-            container: container,
-        });
-    }
-    else if (global.node === true) {
-        var nge = new require("./graphics/node/node-engine.js").NodeGraphicEngine;
-        graphicEngine = new nge();
-    }
-
-
-
     // var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
     // var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
     // var nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
     // var score = container.querySelector("[data-target=score]").el;
 
-    tetrisgame = new TetrisGame(setup, null, graphicEngine);
+    tetrisgame = new TetrisGame(setup, null, engine);
 
     switch (options.sound) {
         case "off":
             break;
         default:
-            tetrisgame.registerAddon(new SoundController(), (ctrl, game) => {
-                ctrl.init();
-                game.addEvent("fx", (type, name) => {
-                    if (type !== "sound")
-                        return;
-                    ctrl.playSound(name);
-                });
-            }, INIT_TYPES.AFTER_INIT)
+            
             break;
     }
 
-    if (global.browser === true && options.debug === "1")
-        require("./debug.js").initDebug(container.parentElement, container.el, tetrisgame);
+    
 
     tetrisgame.init();
 

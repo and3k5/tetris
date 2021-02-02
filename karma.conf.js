@@ -8,6 +8,7 @@ module.exports = (config) => {
             // all files ending in "_test"
             { pattern: 'src/test/*-test.js', watched: false },
             { pattern: 'src/test/**/*-test.js', watched: false },
+            { pattern: 'tetris-core/**/*-spec.js', watched: false },
             // each file acts as entry point for the webpack configuration
         ],
 
@@ -15,6 +16,7 @@ module.exports = (config) => {
             // add webpack as preprocessor
             'src/test/*-test.js': ['webpack'],
             'src/test/**/*-test.js': ['webpack'],
+            "tetris-core/**/*-spec.js": ["webpack"]
         },
 
         webpack: webpackConfig({mode: "development"}),

@@ -1,16 +1,16 @@
-import Brick from "../tetris/brick.js";
-import TetrisGame from "../tetris/game.js";
-import { defaultGame, TetrisSetup } from "../tetris/game-setup.js";
-import * as console from "../utils/trace.js";
+import { Brick } from "./brick";
+import { game, utils } from "../";
+const { TetrisGame, setup: { defaultGame, TetrisSetup } } = game;
+const { trace: console } = utils;
 
 var setup = defaultGame();
 
 describe("brick", () => {
 
-    it("returns false when collision is detected",function () {
-        var brickA = new Brick({brickform: [[1,1],[1,1]],x:1,y:10});
-        var brickB = new Brick({brickform: [[1,1],[1,1]],x:2,y:10});
-        var result = brickA.willCollide(0,0,[brickB]);
+    it("returns false when collision is detected", function () {
+        var brickA = new Brick({ brickform: [[1, 1], [1, 1]], x: 1, y: 10 });
+        var brickB = new Brick({ brickform: [[1, 1], [1, 1]], x: 2, y: 10 });
+        var result = brickA.willCollide(0, 0, [brickB]);
         expect(result).toEqual(true);
     });
 
