@@ -1,8 +1,7 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
-import { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } from "./game-setup.js";
 import { game } from "tetris-core";
-const { TetrisGame, logic: { nextBrick: { EasyNextBrick } } } = game;
+const { TetrisGame, logic: { nextBrick: { EasyNextBrick }, setup: { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } } } = game;
 import DocumentUtil from "./document-util.js";
 import * as sound from "./sound";
 import { SoundController } from "./sound/sound-controller.js";
