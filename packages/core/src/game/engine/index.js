@@ -24,7 +24,7 @@ export class EngineBase {
     }
 
     /**
-     * @returns {import("tetris-core").game.TetrisGame}
+     * @returns {import("@tetris/core").game.TetrisGame}
      */
     get game() {
         return this.#game;

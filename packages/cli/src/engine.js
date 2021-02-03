@@ -1,4 +1,4 @@
-import { brick, utils, game } from "tetris-core";
+import { brick, utils, game } from "@tetris/core";
 const { engine : { EngineBase }} = game;
 const { Brick } = brick;
 const { color } = utils;

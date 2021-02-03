@@ -1,4 +1,3 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const path = require("path");
 
@@ -11,7 +10,6 @@ function globals(mode,opts) {
         "global.node": opts.node === true
     };
 }
-
 
 module.exports = function (env) {
 
@@ -58,8 +56,9 @@ module.exports = function (env) {
         }
     };
 
-    const webConfig = Object.assign({}, commonConfig, {
-        entry: path.resolve(__dirname, "src", "index.js"),
+    const elecConfig = Object.assign({}, commonConfig, {
+        entry: path.resolve(__dirname, "../web/src", "index.js"),
+        target: "electron-main",
         module: {
             rules: [
                 cssLoader,
@@ -70,20 +69,15 @@ module.exports = function (env) {
         },
         plugins: [
             new webpack.DefinePlugin(globals(mode, {browser:true})),
-            new HtmlWebpackPlugin({
-                title: "ToneMatrix",
-                template: path.resolve(__dirname, "src", "index.html"),
-                filename: path.resolve(__dirname, "dist", "index.html"),
-            })
         ],
         output: {
             library: "tetris",
             path: path.resolve(__dirname, "dist"),
-            filename: "tetris-web.js",
+            filename: "tetris-electron.js",
         },
         node: {
             fs: "empty"
         }
     });
-    return webConfig;
+    return elecConfig;
 }

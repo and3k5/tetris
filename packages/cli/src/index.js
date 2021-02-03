@@ -1,4 +1,4 @@
-import { game } from "tetris-core";
+import { game } from "@tetris/core";
 const { init: { init } } = game;
 
 const options = {};
