@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node node_modules/webpack/bin/webpack.js --env.mode=production",
-    "watch": "node node_modules/webpack/bin/webpack.js --env.mode=development --env.watch=yes",
-    "build-dev": "node node_modules/webpack/bin/webpack.js --env.mode=development",
-    "host": "npx http-server -a 127.0.0.1",
-    "test": "node node_modules/karma/bin/karma start karma.conf.js"
+    "build": "npx lerna run build",
+    "build-dev": "npx lerna run build-dev",
+    "test": "node node_modules/karma/bin/karma start karma.conf.js",
+    "postinstall": "npx lerna bootstrap"
   },
   "repository": {
     "type": "git",
@@ -18,34 +17,21 @@
     "url": "https://github.com/and3k5/tetris/issues"
   },
   "homepage": "https://github.com/and3k5/tetris#readme",
-  "dependencies": {
-    "axios": "^0.19.0",
-    "simplex-noise": "^2.4.0",
-    "window-size": "^1.1.1",
-    "ws": "^7.2.0"
-  },
   "devDependencies": {
-    "@babel/core": "^7.6.3",
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/preset-env": "^7.6.3",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^8.0.6",
-    "babel-polyfill": "^6.26.0",
-    "bufferutil": "^4.0.2",
-    "core-js": "^3.2.1",
-    "css-loader": "^3.2.0",
-    "file-loader": "^4.2.0",
-    "html-loader": "^0.5.5",
-    "html-webpack-plugin": "^4.5.0",
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-export-default-from": "^7.12.1",
+    "@babel/plugin-proposal-export-namespace-from": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.13",
+    "@babel/plugin-proposal-private-property-in-object": "^7.12.1",
     "http-server": "^0.12.3",
     "jasmine-core": "^3.5.0",
     "karma": "^4.4.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^2.0.1",
     "karma-webpack": "^4.0.2",
-    "regenerator-runtime": "^0.13.3",
-    "style-loader": "^1.0.0",
-    "utf-8-validate": "^5.0.3",
+    "lerna": "^3.22.1",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
   }
