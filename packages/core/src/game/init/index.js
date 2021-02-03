@@ -1,5 +1,3 @@
-import "core-js/stable";
-import "regenerator-runtime/runtime";
 import { TetrisGame, logic, setup } from "../"
 const {  nextBrick: { EasyNextBrick } } = logic;
 const {  defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } = setup;

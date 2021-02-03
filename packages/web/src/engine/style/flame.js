@@ -1,5 +1,5 @@
-import SimplexNoise from "simplex-noise";
-var nois = new SimplexNoise(Math.random);
+//import SimplexNoise from "simplex-noise";
+//var nois = new SimplexNoise(Math.random);
 
 function noise2(x,y) {
     var time = performance.now() / 1000
@@ -13,10 +13,13 @@ function noise2(x,y) {
 }
 
 export function mainImage(x,y) {
+    throw new Error("Not implemented");
+    /*
     //return mainImageImpl(new vec2(x,1-y));
     const iTime = performance.now() / 1000;
     var rnd = noise2(x,y);
     return [rnd,rnd,rnd];
+    */
 }
 
 window.exportMainImage = mainImage;

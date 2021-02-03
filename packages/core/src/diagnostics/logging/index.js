@@ -2,6 +2,8 @@
 //import { LogFile } from "./log-file.js";
 
 export function transmitter() {
+    throw new Error("Not implemented");
+    /*
     if (global.browser === true) {
         let socket = new WebSocket("ws://" + location.hostname + ":" + 8085);
         socket.addEventListener("open", function () {
@@ -42,9 +44,12 @@ export function transmitter() {
             console.log("error");
         });
     }
+    */
 }
 
 export function receiver() {
+    throw new Error("Not implemented");
+    /*
     //const db = new sqlite3.Database('./database.sqlite');
     const LogFile = require("./log-file.js").LogFile;
     const logFile = new LogFile({ path: "./log.json", init: () => [] });
@@ -99,5 +104,5 @@ export function receiver() {
     })
 
 
-
+    */
 }

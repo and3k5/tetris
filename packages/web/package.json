@@ -25,7 +25,7 @@
     "build": "npx webpack --env.mode=production",
     "watch": "node node_modules/webpack/bin/webpack.js --env.mode=development --env.watch=yes",
     "build-dev": "node node_modules/webpack/bin/webpack.js --env.mode=development",
-    "host": "cd dist && npx http-server -a 127.0.0.1",
+    "host": "mkdir -p dist && cd dist && npx http-server -a 127.0.0.1",
     "test": "node node_modules/karma/bin/karma start karma.conf.js"
   },
   "bugs": {
@@ -35,12 +35,6 @@
     "@tetris/core": "^0.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-export-default-from": "^7.12.1",
-    "@babel/plugin-proposal-export-namespace-from": "^7.12.1",
-    "@babel/plugin-proposal-private-property-in-object": "^7.12.1",
-    "@babel/preset-env": "^7.12.11",
     "babel-loader": "^8.2.2",
     "babel-polyfill": "^6.26.0",
     "bufferutil": "^4.0.2",
