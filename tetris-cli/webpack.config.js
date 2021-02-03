@@ -1,6 +1,6 @@
 const path = require("path");
 
-module.exports = function (commonConfig, loaders, globalsPlugin, basePath) {
+module.exports = function (commonConfig, loaders, globalsPlugin, basePath, root) {
     const jsLoader = loaders.jsLoader;
 
     const nodeConfig = Object.assign({}, commonConfig, {

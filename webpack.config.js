@@ -56,58 +56,9 @@ module.exports = function (env) {
         }
     };
 
-    const webConfig = Object.assign({}, commonConfig, {
-        entry: "./src/index-browser.js",
-        module: {
-            rules: [
-                cssLoader,
-                htmlLoader,
-                jsLoader,
-                imgLoader
-            ]
-        },
-        plugins: [
-            new webpack.DefinePlugin(globals(mode,{browser:true})),
-            new HtmlWebpackPlugin({
-                title: "ToneMatrix",
-                template: "src/web/index.html",
-                filename: "../index.html",
-            })
-        ],
-        output: {
-            library: "tetris",
-            path: path.resolve(__dirname, "js"),
-            filename: "tetris-web.js",
-        },
-        node: {
-            fs: "empty"
-        }
-    });
+    
 
-    const elecConfig = Object.assign({}, commonConfig, {
-        entry: "./src/index-browser.js",
-        target: "electron-main",
-        module: {
-            rules: [
-                cssLoader,
-                htmlLoader,
-                jsLoader,
-                imgLoader
-            ]
-        },
-        plugins: [
-            new webpack.DefinePlugin(globals(mode,{browser:true}))
-        ],
-        output: {
-            library: "tetris",
-            path: path.resolve(__dirname, "js"),
-            filename: "tetris-electron.js",
-        },
-        node: {
-            fs: "empty"
-        }
-    });
-
+    
     const logServerConfig = Object.assign({}, commonConfig, {
         entry: "./src/index-logserver.js",
         target: "node",
@@ -129,10 +80,18 @@ module.exports = function (env) {
     const createGlobals = function (modifications) {
         return new webpack.DefinePlugin(globals(mode,modifications))
     }
-
     const destPath = path.resolve(__dirname, "js");
+
+    const createWebConfig = require("./tetris-web/webpack.config");
+    const webConfig = createWebConfig(commonConfig, { cssLoader,htmlLoader,jsLoader,imgLoader }, createGlobals, destPath, __dirname);
+
+    const createElecConfig = require("./tetris-electron/webpack.config");
+    const elecConfig = createElecConfig(commonConfig, { cssLoader,htmlLoader,jsLoader,imgLoader }, createGlobals, destPath, __dirname);
+
+
+    
     const createNodeConfig = require("./tetris-cli/webpack.config");
-    const nodeConfig = createNodeConfig(commonConfig, { jsLoader }, createGlobals, destPath);
+    const nodeConfig = createNodeConfig(commonConfig, { jsLoader }, createGlobals, destPath, __dirname);
 
     //console.log(nodeConfig);
 

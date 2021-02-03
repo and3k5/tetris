@@ -1,4 +1,4 @@
-import DocumentUtil from "./document-util.js";
+import DocumentUtil from "../../utils/document-util";
 
 var cache = [];
 class CacheKey {

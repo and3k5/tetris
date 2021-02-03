@@ -3,7 +3,7 @@ const { init: { init } } = game;
 
 const options = {};
 
-import { NodeGraphicEngine } from "./engine.js";
+import { NodeGraphicEngine } from "./engine";
 const graphicEngine = new NodeGraphicEngine();
 
 var args = process.argv.concat();

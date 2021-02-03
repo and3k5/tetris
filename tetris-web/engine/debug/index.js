@@ -1,4 +1,4 @@
-import DocumentUtil from "./document-util.js";
+import DocumentUtil from "../../utils/document-util";
 import * as htmlLoad from "./debug.html";
 import { game } from "tetris-core";
 const { logic: { simulation: { attachSimulator } } } = game;
