@@ -1,5 +1,5 @@
 import "./engine/style/tetris.css";
-import { game, extensions } from "tetris-core";
+import { game, extensions } from "@tetris/core";
 const { init: { init, Options } } = game;
 
 import "./engine/style/flame.js";

@@ -2,7 +2,7 @@ import * as htmlLoad from "./game.html";
 import DocumentUtil from "../utils/document-util";
 import { RadialGradient, LinearGradient } from "./style/gradient.js";
 import { drawGrid } from "./style/graphics-grid.js";
-import { brick, game, utils } from "tetris-core";
+import { brick, game, utils } from "@tetris/core";
 const { engine : { EngineBase }} = game;
 const { color: { Color } } = utils;
 const { gameController: { executeTick } } = game;

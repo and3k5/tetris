@@ -1,6 +1,6 @@
 import DocumentUtil from "../../utils/document-util";
 import * as htmlLoad from "./debug.html";
-import { game } from "tetris-core";
+import { game } from "@tetris/core";
 const { logic: { simulation: { attachSimulator } } } = game;
 
 export function initDebug(parent, container, game) {
