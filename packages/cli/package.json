@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "npx webpack --env.mode=production",
+    "start": "npm run build && node dist/tetris-node.js",
     "watch": "npx webpack --env.mode=development --env.watch=yes",
     "build-dev": "npx webpack --env.mode=development --env.mode=development",
     "test": "echo \"Error: run tests from root\" && exit 1"
