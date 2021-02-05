@@ -187,13 +187,14 @@ export class TetrisGame {
             this.#RUNNING = true;
             this.score = 0;
             this.HOLDINGCOUNT = 0;
-            this.addNewBrick();
-
-            gameController.gameControlDown(this);
 
             if (this.setup.simulator === true) {
                 attachSimulator(this);
             }
+
+            this.addNewBrick();
+
+            gameController.gameControlDown(this);
 
             if (this.setup.logger === true) {
                 var socket = transmitter();
@@ -320,6 +321,8 @@ export class TetrisGame {
         } else {
             this.bricks[pos] = brick;
         }
+
+        this.#eventController.trigger("current-brick-change", null);
     }
 
     logEvent(logObj) {

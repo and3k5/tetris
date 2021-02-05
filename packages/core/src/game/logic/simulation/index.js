@@ -3,7 +3,7 @@ import { Brick } from "../../../brick"
 import { trace as console, color } from "../../../utils";
 const { Color } = color;
 import { StaticNextBrick } from "../next-brick";
-import { countClearingLines, countHoles, countHeight, getScores, summaryScore } from "./simulate-rating";
+import { getScores, summaryScore } from "./simulate-rating";
 
 export function cloneGame(game, setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -171,7 +171,6 @@ export function sortMovements(positions) {
 }
 
 class SimulatorRunner {
-    #lastBrick;
     #movements = [];
     #game;
     #cancelled = false;
@@ -184,6 +183,11 @@ class SimulatorRunner {
 
     attach(game) {
         this.#game = game;
+        var simulator = this;
+        this.#game.addEvent("current-brick-change",function () {
+            console.log("current brick change");
+            simulator.getNewMove();
+        });
     }
 
     drawMovements() {
@@ -191,7 +195,6 @@ class SimulatorRunner {
             var brick = this.#movements[0].brick;
             console.debug("drawing", brick);
             var color = new Color(255, 255, 255, 0.2);
-            // var color = this.#lastBrick.color.invert().brightness(0.5);;
             setTimeout(() => this.#game.drawBrick(brick, color), 50);
         }
     }
@@ -252,13 +255,13 @@ class SimulatorRunner {
             throw new Error("Mode is not supported: " + this.#mode);
     }
 
+    getNewMove() {
+        this.#movements = getPossibleMoves(this.#game, { nextBrick: new StaticNextBrick(0) });
+    }
+
     assistTick() {
-        var currentMovingBrick = this.#game.getMovingBrick();
-        if (this.#movements.length === 0 || this.#lastBrick != currentMovingBrick) {
-            console.debug("new brick", this.#movements.length === 0, this.#lastBrick != currentMovingBrick);
-            this.#movements = getPossibleMoves(this.#game, { nextBrick: new StaticNextBrick(0) });
-            this.#lastBrick = currentMovingBrick;
-        }
+        if (this.#movements.length < 1)
+            return;
         console.debug(this.#movements[0].score);
         if (this.#movements[0].needsHolding === true) {
             this.#game.holdingShift();
@@ -271,6 +274,7 @@ class SimulatorRunner {
     }
 
     playbackTick() {
+        throw new Error("Not implemented");
         var time = new Date().getTime() - this.#starttime;
         var simulations = this.#simulation.filter(s => s.done !== true && s.time < time);
         console.log(simulations);

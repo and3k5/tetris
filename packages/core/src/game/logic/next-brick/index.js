@@ -1,6 +1,7 @@
 import { getPossibleMoves, sortMovements, cloneGame } from "../simulation";
 
 export class NextBrick {
+    
     constructor() {
 
     }

@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npx lerna run build",
     "build-dev": "npx lerna run build-dev",
-    "test": "node node_modules/karma/bin/karma start karma.conf.js",
+    "test": "npx lerna run test",
     "postinstall": "npx lerna bootstrap"
   },
   "repository": {
