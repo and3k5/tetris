@@ -3,7 +3,7 @@ import { Brick } from "../../../brick"
 import { trace as console, color } from "../../../utils";
 const { Color } = color;
 import { StaticNextBrick } from "../next-brick";
-import { getScores, summaryScore } from "./simulate-rating";
+import { getScores, sortMovements } from "./simulate-rating";
 
 export function cloneGame(game, setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -130,44 +130,15 @@ export function getPossibleMoves(game, setupChanges) {
     for (var setup of positions) {
         //console.debug(setup);
         var matrix = setup.brickMatrix;
-        setup.score = 0;
+        //setup.score = 0;
 
         setup.scores = getScores(game, matrix);
-        setup.score = summaryScore(setup.scores);
+        //setup.score = summaryScore(setup.scores);
     }
+
     positions = sortMovements(positions);
     console.debug("POSITIONS", positions);
     return positions;
-}
-
-function sortBy(selector, descending = false) {
-    const exec = function (selector, descending) {
-        return (a, b) => selector(descending ? b : a) - selector(descending ? a : b);
-    }
-    return {
-        sorters: [exec(selector, descending)],
-        thenBy: function (selector2, descending2) {
-            this.sorters.push(exec(selector2, descending2));
-            return this;
-        },
-        compare: function (a, b) {
-            for (var sorter of this.sorters) {
-                var diff = sorter(a, b);
-                if (diff !== 0)
-                    return diff;
-            }
-            return 0;
-        },
-        execute(array) {
-            var sorter = this;
-            return array.concat().sort((a, b) => sorter.compare(a, b));
-        }
-    }
-}
-
-export function sortMovements(positions) {
-    return sortBy(s => s.score, true)
-        .execute(positions);
 }
 
 class SimulatorRunner {
@@ -184,7 +155,7 @@ class SimulatorRunner {
     attach(game) {
         this.#game = game;
         var simulator = this;
-        this.#game.addEvent("current-brick-change",function () {
+        this.#game.addEvent("current-brick-change", function () {
             console.log("current brick change");
             simulator.getNewMove();
         });
@@ -257,6 +228,7 @@ class SimulatorRunner {
 
     getNewMove() {
         this.#movements = getPossibleMoves(this.#game, { nextBrick: new StaticNextBrick(0) });
+        console.log(this.#movements[0]);
     }
 
     assistTick() {

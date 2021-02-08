@@ -1,5 +1,5 @@
 import { TetrisGame } from "../../game";
-import { getPossibleMoves } from "./index";
+import { getPossibleMoves } from "./";
 
 describe("getPossibleMoves", function () {
     it("can get a best possible move", function () {

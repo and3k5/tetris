@@ -1,4 +1,6 @@
-import { getPossibleMoves, sortMovements, cloneGame } from "../simulation";
+import { getPossibleMoves, cloneGame } from "../simulation";
+import { sortMovements } from "../simulation/simulate-rating";
+
 
 export class NextBrick {
     
