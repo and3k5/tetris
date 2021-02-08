@@ -55,9 +55,16 @@ div.holding, div.next {
 canvas#game {
 	background: linear-gradient(rgb(100,100,100), rgb(80,80,80));
     border-radius: 5px;
+    width:100%;
+}
+
+.game-canvas-container {
+    position:relative;
     max-width: 50%;
     max-height: 100%;
 }
+
+
 canvas#holding, canvas#next {
 	width: 100%;
 }
@@ -90,3 +97,4 @@ p.scorelbl {
     margin-bottom: 10px;
     max-width: 100%;
 }
+

@@ -1,6 +1,7 @@
 import DocumentUtil from "../../utils/document-util";
 import * as htmlLoad from "./debug.html";
 import { game } from "@tetris/core";
+import { Color } from "@tetris/core/src/utils/color";
 const { logic: { simulation: { attachSimulator } } } = game;
 
 /**
@@ -35,17 +36,37 @@ export function initDebug(parent, container, game) {
          */
         const graphicsEngine = game.graphicsEngine;
 
+        var cloneCtx = document.createElement("canvas").getContext("2d");
+        cloneCtx.canvas.style.position = "absolute";
+        cloneCtx.canvas.style.top = "0px";
+        cloneCtx.canvas.style.left = "0px";
+        cloneCtx.canvas.style.width = "100%";
+        cloneCtx.canvas.style.pointerEvents = "none";
+        graphicsEngine.gameCtx.canvas.parentElement.appendChild(cloneCtx.canvas);
+
+
         const calldraw = function () {
             console.log("draw: " + selectedValue);
 
-            graphicsEngine.render(true, false);
-            graphicsEngine.drawState([], graphicsEngine.gameCtx);
+            
+            
 
             if (selectedValue < 0) {
                 console.log("TODO CLEAR");
             } else {
                 var movement = movements[selectedValue]
-                console.log("DRAW SIMULATION STEP");
+                console.log(movement);
+                cloneCtx.canvas.width = graphicsEngine.gameCtx.canvas.width;
+                cloneCtx.canvas.height = graphicsEngine.gameCtx.canvas.height;
+                
+                for (var y = 0;y<game.height;y++) {
+                    for (var x = 0;x < game.width;x++) {
+                        if (movement.brickMatrix[y][x] === true) {
+                            var color = new Color(255,0,0,1);
+                            graphicsEngine.drawSquare(cloneCtx, x, y, color);
+                        }
+                    }
+                }
             }
         }
 
@@ -66,7 +87,7 @@ export function initDebug(parent, container, game) {
 
         movements = game.simulator.movements;
 
-        selector.el.addEventListener("change", function (ev) {
+        selector.el.addEventListener("input", function (ev) {
             selectedValue = ev.target.value;
             calldraw();
         });
