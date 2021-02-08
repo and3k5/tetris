@@ -1,6 +1,6 @@
 import { TetrisGame, logic, setup } from "../"
-const {  nextBrick: { EasyNextBrick } } = logic;
-const {  defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } = setup;
+const { nextBrick: { EasyNextBrick } } = logic;
+const { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } = setup;
 
 function optionParser() {
     /**
@@ -149,13 +149,8 @@ export function init(options, engine) {
     if (options.view === "lite")
         window.document.body.classList.add("lite-view");
 
-    // var gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
-    // var holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
-    // var nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
-    // var score = container.querySelector("[data-target=score]").el;
-
     tetrisgame = new TetrisGame(setup, null, engine);
-    
+
 
     tetrisgame.init();
 

@@ -3,6 +3,12 @@ import * as htmlLoad from "./debug.html";
 import { game } from "@tetris/core";
 const { logic: { simulation: { attachSimulator } } } = game;
 
+/**
+ * 
+ * @param {any} parent 
+ * @param {any} container 
+ * @param {import("../../../../core/src/game").TetrisGame} game 
+ */
 export function initDebug(parent, container, game) {
     var debugContainer = new DocumentUtil(container);
 
@@ -17,20 +23,76 @@ export function initDebug(parent, container, game) {
         clickTick.el.checked = v
     });
 
-    var simulateCount = debugContainer.querySelector("[data-target='simulateCount']");
-    var simulateButton = debugContainer.querySelector("[data-target='simulateButton']");
+    var simulationViewer = debugContainer.querySelector("[data-target='simulation-viewer']");
 
-    var simulator = null;
 
-    simulateButton.el.addEventListener("click", function () {
-        if (simulator === null) {
-            simulator = attachSimulator(game, false);
+    if (game.simulator != null) {
+        var selectedValue = -1;
+        var movements = [];
+
+        /**
+         * @type {import("..").WebGraphicEngine}
+         */
+        const graphicsEngine = game.graphicsEngine;
+
+        const calldraw = function () {
+            console.log("draw: " + selectedValue);
+
+            graphicsEngine.render(true, false);
+            graphicsEngine.drawState([], graphicsEngine.gameCtx);
+
+            if (selectedValue < 0) {
+                console.log("TODO CLEAR");
+            } else {
+                var movement = movements[selectedValue]
+                console.log("DRAW SIMULATION STEP");
+            }
         }
-        var count = simulateCount.el.value;
-        for (var i = 0; i < count; i++) {
-            simulator.tick();
-        }
-    });
+
+        var selector = simulationViewer.querySelector("[data-target='simulationSelector']");
+        selector.react(() => movements).addHandler(v => {
+            console.log("UPDATED MOVEMENTS");
+            selector.el.max = movements.length - 1;
+            selector.el.value = 0;
+            calldraw(null);
+        });
+
+        game.simulator.addEvent("update-movements", function (m) {
+            movements = m;
+        });
+
+        console.log("simulator is enabled");
+
+
+        movements = game.simulator.movements;
+
+        selector.el.addEventListener("change", function (ev) {
+            selectedValue = ev.target.value;
+            calldraw();
+        });
+
+        var upBtn = simulationViewer.querySelector("[data-target='sim-up']");
+        upBtn.el.addEventListener("click", function () {
+            selectedValue = selectedValue + 1;
+            if (selectedValue > movements.length)
+                selectedValue = movements.length;
+            selector.el.value = selectedValue;
+            calldraw();
+        });
+        var downBtn = simulationViewer.querySelector("[data-target='sim-down']");
+        downBtn.el.addEventListener("click", function () {
+            selectedValue = selectedValue - 1;
+            if (selectedValue < 0)
+                selectedValue = 0;
+            selector.el.value = selectedValue;
+            calldraw();
+        });
+    } else {
+        console.log("simulator is not enabled");
+        simulationViewer.style.display = "none";
+    }
+
+
 
     container.parentNode.insertBefore(debugContainer.el, container.nextSibling);
 }

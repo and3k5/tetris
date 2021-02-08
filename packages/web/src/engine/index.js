@@ -3,7 +3,7 @@ import DocumentUtil from "../utils/document-util";
 import { RadialGradient, LinearGradient } from "./style/gradient.js";
 import { drawGrid } from "./style/graphics-grid.js";
 import { brick, game, utils } from "@tetris/core";
-const { engine : { EngineBase }} = game;
+const { engine: { EngineBase } } = game;
 const { color: { Color } } = utils;
 const { gameController: { executeTick } } = game;
 const { Brick } = brick;
@@ -194,45 +194,62 @@ export class WebGraphicEngine extends EngineBase {
         return array.splice(0, array.length);
     }
 
-    addToState(bricks, brick, x, y, color, scale) {
-        var old = bricks;
-        var entries = bricks;
-        if (typeof (bricks) === "object" && !Array.isArray(bricks)) {
-            old = bricks.old;
-            entries = bricks.state;
+    addToState({ brick, old, state, x, y, blocks, color, scale = 1 }) {
+        if (typeof (old) === "undefined") {
+            old = state;
         }
-        if (typeof (x) === "undefined") {
-            x = brick.x;
-            y = brick.y;
-        }
-        if (typeof (color) === "undefined") {
-            color = brick.color;
-        }
-        var blocks;
-        if (brick instanceof Brick) {
-            blocks = brick.blocks;
-        } else {
-            blocks = brick;
-            brick = null;
-        }
-        if (typeof (scale) !== "number")
-            scale = 1;
+
         var entry = brick != null ? old.filter(b => b.brick === brick)[0] : null;
+
+        if (typeof (x) !== "number") {
+            if (brick instanceof Brick) {
+                x = brick.x;
+            } else {
+                throw new Error("Missing x coordinate");
+            }
+        }
+
+        if (typeof (y) !== "number") {
+            if (brick instanceof Brick) {
+                y = brick.y;
+            } else {
+                throw new Error("Missing x coordinate");
+            }
+        }
+
         if (entry == null) {
             entry = { brick };
-            entries.push(entry);
             entry.fromX = x;
             entry.fromY = y;
         } else {
-            if (entries.indexOf(entry) === -1)
-                entries.push(entry);
             entry.fromX = entry.currentX;
             entry.fromY = entry.currentY;
         }
+
+        if (state.indexOf(entry) === -1)
+            state.push(entry);
+
         entry.toX = x;
         entry.toY = y;
+
+        if (typeof (blocks) === "undefined") {
+            if (brick instanceof Brick) {
+                blocks = brick.blocks;
+            } else {
+                throw new Error("Missing blocks");
+            }
+        }
         entry.blocks = blocks;
+
+        if (typeof (color) === "undefined") {
+            if (brick instanceof Brick) {
+                color = brick.color;
+            } else {
+                throw new Error("Missing color");
+            }
+        }
         entry.color = color;
+
         entry.scale = scale;
         entry.fromStamp = new Date().getTime();
     }
@@ -247,19 +264,38 @@ export class WebGraphicEngine extends EngineBase {
                 var ghostColor = new Color(255, 255, 255, 0.2);
                 const tmp_lowestPos = bricks[i].getLowestPosition();
                 //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, tmp_lowestPos, ghostColor)
-                this.addToState(this.#state.bricks.game, bricks[i].blocks, bricks[i].x, tmp_lowestPos, ghostColor);
+                this.addToState({
+                    state: this.#state.bricks.game,
+                    blocks: bricks[i].blocks,
+                    x: bricks[i].x,
+                    y: tmp_lowestPos,
+                    color: ghostColor
+                });
             }
             //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, bricks[i].y, bricks[i].color);
-            this.addToState({ state: this.#state.bricks.game, old: removedGameEntries }, bricks[i]);
+            this.addToState({ state: this.#state.bricks.game, old: removedGameEntries, brick: bricks[i] });
         }
 
 
         //this.drawBrickForm(this.game.brickforms[this.game.nextRandom], this.#nextCtx,2,2,this.game.colors[this.game.nextRandom],BRICKSIZESCALE);
-        this.addToState(this.#state.bricks.next, this.game.brickforms[this.game.nextRandom], 2, 2, this.game.colors[this.game.nextRandom], BRICKSIZESCALE);
+        this.addToState({
+            state: this.#state.bricks.next,
+            blocks: this.game.brickforms[this.game.nextRandom],
+            x: 2,
+            y: 2,
+            color: this.game.colors[this.game.nextRandom],
+            scale: BRICKSIZESCALE
+        });
 
         if (this.game.holding != null) {
             //this.drawBrickForm(this.game.holding.blocks, this.#holdingCtx, 2, 2, this.game.holding.color, BRICKSIZESCALE);
-            this.addToState(this.#state.bricks.holding, this.game.holding, 2, 2, undefined, BRICKSIZESCALE);
+            this.addToState({
+                state: this.#state.bricks.holding,
+                brick: this.game.holding,
+                x: 2,
+                y: 2,
+                scale: BRICKSIZESCALE
+            });
         }
     }
 

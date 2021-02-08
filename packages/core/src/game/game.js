@@ -52,6 +52,8 @@ export class TetrisGame {
 
     #addons = new AddonContainer();
 
+    #simulator = null;
+
     #RUNNING = true;
 
     #socket = null;
@@ -72,6 +74,14 @@ export class TetrisGame {
 
     registerAddon(object, callback, initType) {
         this.#addons.add(object, (obj) => callback(obj, this), initType);
+    }
+
+    get simulator() {
+        return this.#simulator;
+    }
+
+    get graphicsEngine() {
+        return this.#graphicEngine;
     }
 
     constructor(gameSetup, extra = null, graphicEngine = null) {
@@ -189,7 +199,7 @@ export class TetrisGame {
             this.HOLDINGCOUNT = 0;
 
             if (this.setup.simulator === true) {
-                attachSimulator(this);
+                this.#simulator = attachSimulator(this);
             }
 
             this.addNewBrick();

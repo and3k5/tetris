@@ -1,5 +1,6 @@
 import { TetrisGame } from "../../";
 import { Brick } from "../../../brick"
+import { EventController } from "../../../extensions/event";
 import { trace as console, color } from "../../../utils";
 const { Color } = color;
 import { StaticNextBrick } from "../next-brick";
@@ -148,6 +149,7 @@ class SimulatorRunner {
     #mode = "assist";
     #simulation = [];
     #starttime = 0;
+    #eventController = new EventController(this);
     constructor() {
 
     }
@@ -229,6 +231,11 @@ class SimulatorRunner {
     getNewMove() {
         this.#movements = getPossibleMoves(this.#game, { nextBrick: new StaticNextBrick(0) });
         console.log(this.#movements[0]);
+        this.#eventController.trigger("update-movements", null, this.#movements.concat());
+    }
+
+    addEvent(name, handler) {
+        this.#eventController.on(name, handler);
     }
 
     assistTick() {
@@ -259,6 +266,10 @@ class SimulatorRunner {
             this.#game.PENDINGUPDATE = true;
             simulation.done = true;
         }
+    }
+
+    get movements() {
+        return this.#movements;
     }
 }
 
