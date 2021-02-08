@@ -140,7 +140,7 @@ export function init(options, engine) {
     }
 
 
-    if (options.clickTick === "1")
+    if (options.clickTick === true)
         setup.clickTick = true;
 
     if (options.logger === "1")
