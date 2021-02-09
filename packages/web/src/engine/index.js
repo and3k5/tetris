@@ -106,7 +106,6 @@ export class WebGraphicEngine extends EngineBase {
                     e.preventDefault();
                     if (game.running) {
                         // ingame
-                        menuNav("paused");
                         game.runEvent("fx", null, "sound", "menuback");
                     }
                     break;
@@ -357,25 +356,25 @@ export class WebGraphicEngine extends EngineBase {
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
 
-        var fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
+        fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
         fstyle.addColor(0.2, color.alpha(0.5));
         fstyle.addColor(0, Color.Black().alpha(0.9));
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
 
-        var fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
+        fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
         fstyle.addColor(0.3, color.scale(0.7).alpha(0));
         fstyle.addColor(0, Color.Black().alpha(0.4));
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
 
-        var fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
+        fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
         fstyle.addColor(0.8, color.scale(0.1).alpha(0));
         fstyle.addColor(1, Color.Black());
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
 
-        var fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
+        fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
         fstyle.addColor(0.8, color.scale(0.2).alpha(0));
         fstyle.addColor(1, Color.Black());
         ctx.fillStyle = fstyle.compile();

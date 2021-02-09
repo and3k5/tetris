@@ -59,8 +59,6 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
 }
 
 function getPositions(game, usesHolding = false, setupChanges = {}) {
-    var maxWidth = game.width * 2;
-
     var positions = [];
 
     var movingBrick = game.getMovingBrick();
@@ -117,24 +115,23 @@ function getPositions(game, usesHolding = false, setupChanges = {}) {
 export function getPossibleMoves(game, setupChanges) {
     var positions = [];
 
-    for (var pos of getPositions(game, false, setupChanges))
+    for (let pos of getPositions(game, false, setupChanges))
         positions.push(pos);
 
     if (game.canUseHolding) {
         var clone = cloneGame(game, setupChanges);
         clone.holdingShift();
 
-        for (var pos of getPositions(clone, true, setupChanges))
+        for (let pos of getPositions(clone, true, setupChanges))
             positions.push(pos);
     }
 
-    for (var setup of positions) {
+    for (let setup of positions) {
         //console.debug(setup);
         var matrix = setup.brickMatrix;
         //setup.score = 0;
 
         setup.scores = getScores(game, matrix);
-        //setup.score = summaryScore(setup.scores);
     }
 
     positions = sortMovements(positions);
@@ -254,6 +251,7 @@ class SimulatorRunner {
 
     playbackTick() {
         throw new Error("Not implemented");
+        // eslint-disable-next-line no-unreachable
         var time = new Date().getTime() - this.#starttime;
         var simulations = this.#simulation.filter(s => s.done !== true && s.time < time);
         console.log(simulations);

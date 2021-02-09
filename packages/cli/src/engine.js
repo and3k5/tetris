@@ -167,9 +167,6 @@ export class NodeGraphicEngine extends EngineBase {
         console.log("init render called");
 
         this.render(true, true);
-        this.game.addEvent("update-score", (score) => {
-            //this.score.innerHTML = score;
-        });
     }
 
     render(force = false, loop = false) {
@@ -444,8 +441,6 @@ export class NodeGraphicEngine extends EngineBase {
                     // escape
                     if (game.running) {
                         // ingame
-                        menuNav("paused");
-
                         game.runEvent("fx", null, "sound", "menuback");
                     }
                     break;

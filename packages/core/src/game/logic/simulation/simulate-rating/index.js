@@ -88,8 +88,3 @@ export function sortMovements(positions) {
         .thenBy(s => s.scores.height, false)
         .execute(positions);
 }
-
-export function summaryScore(scores) {
-    throw new Error("Deprecated");
-    return (scores.clearingLines * 3) + (scores.holes * -7) + (scores.height * -2) + (scores.holes == 0 ? 2 : 0);
-}

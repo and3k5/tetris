@@ -1,6 +1,7 @@
+/*global describe, expect, it*/
 import { Brick } from "./brick";
 import { game, utils } from "../";
-const { TetrisGame, setup: { defaultGame, TetrisSetup } } = game;
+const { TetrisGame, setup: { defaultGame } } = game;
 const { trace: console } = utils;
 
 var setup = defaultGame();

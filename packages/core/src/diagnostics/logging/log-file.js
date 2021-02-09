@@ -20,13 +20,13 @@ export class LogFile {
         var proxySetup = {
             get: function (target, prop) {
                 //console.log({ type: 'get', target, prop });
-                return Reflect.get(target, prop);;
+                return Reflect.get(target, prop);
                 var value = Reflect.get(target, prop);
                 if (typeof (value) === "function" || prop === "toJSON")
                     return Reflect.get(target, prop);
 
                 console.log("get", prop);
-                var value = Reflect.get(target, prop);
+                value = Reflect.get(target, prop);
                 if (value != null && typeof (value) === "object" && !value.isPrototypeOf(Proxy)) {
                     console.log("newLink from get");
                     Reflect.set(target, prop, new Proxy(value, proxySetup));
@@ -40,7 +40,7 @@ export class LogFile {
             set: function (target, prop, value) {
                 //console.log({ type: 'set', target, prop, value });
                 console.log("set", prop);
-                var value = Reflect.get(target, prop);
+                value = Reflect.get(target, prop);
                 if (value != null && typeof (value) === "object" && !value.isPrototypeOf(Proxy)) {
                     console.log("newLink from set");
                     Reflect.set(target, prop, new Proxy(value, proxySetup));

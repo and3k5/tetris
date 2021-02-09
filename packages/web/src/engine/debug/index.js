@@ -1,8 +1,6 @@
 import DocumentUtil from "../../utils/document-util";
 import * as htmlLoad from "./debug.html";
-import { game } from "@tetris/core";
 import { Color } from "@tetris/core/src/utils/color";
-const { logic: { simulation: { attachSimulator } } } = game;
 
 /**
  * 
@@ -71,7 +69,7 @@ export function initDebug(parent, container, game) {
         }
 
         var selector = simulationViewer.querySelector("[data-target='simulationSelector']");
-        selector.react(() => movements).addHandler(v => {
+        selector.react(() => movements).addHandler(() => {
             console.log("UPDATED MOVEMENTS");
             selector.el.max = movements.length - 1;
             selector.el.value = 0;

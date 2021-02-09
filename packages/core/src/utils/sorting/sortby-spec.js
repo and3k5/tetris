@@ -1,3 +1,5 @@
+/*global describe, expect, it*/
+
 import { sortBy } from ".";
 
 describe("sortBy", function () {
@@ -44,7 +46,7 @@ describe("sortBy", function () {
             { a: 2, b: 1, c: 5 },
         ];
 
-        var scrambledData = data.concat().sort((a, b) => Math.random() * 100 - 50);
+        var scrambledData = data.concat().sort(() => Math.random() * 100 - 50);
 
         expect(JSON.stringify(scrambledData)).not.toBe(JSON.stringify(data));
 

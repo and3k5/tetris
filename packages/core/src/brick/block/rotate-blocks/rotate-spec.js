@@ -1,3 +1,4 @@
+/*global describe, expect, it*/
 import { calcRotatedBlocks } from "."
 
 describe("rotate-blocks", function () {

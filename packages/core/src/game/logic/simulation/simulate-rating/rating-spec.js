@@ -1,3 +1,4 @@
+/*global describe, expect, it*/
 import { countHeight, countHoles } from "./";
 
 describe("countHoles", function () {

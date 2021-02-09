@@ -134,7 +134,6 @@ export class TetrisGame {
                 var bricks = game.bricks;
                 (line => {
                     const rtn = [];
-                    const tx = 0;
                     let times = 0;
                     for (times = 0; times <= this.width; times++) {
                         for (const i in bricks) {
@@ -155,8 +154,6 @@ export class TetrisGame {
                 })(l);
                 (line => {
                     const rtn = [];
-                    const tx = 0;
-                    const times = 0;
                     for (const i in bricks) {
                         for (const i1 in bricks[i].blocks) {
                             for (const i2 in bricks[i].blocks[i1]) {
@@ -257,9 +254,9 @@ export class TetrisGame {
 
     renderBrickMatrix(modifications = []) {
         var result = [];
-        for (var y = 0; y < this.height; y++) {
+        for (let y = 0; y < this.height; y++) {
             result.push([]);
-            for (var x = 0; x < this.width; x++) {
+            for (let x = 0; x < this.width; x++) {
                 result[result.length - 1].push(false);
             }
         }
@@ -436,7 +433,7 @@ export class TetrisGame {
     }
 
     set PENDINGUPDATE(v) {
-        return this.#PENDINGUPDATE = v;
+        this.#PENDINGUPDATE = v;
     }
 
     get nextRandom() {
@@ -478,8 +475,6 @@ export class TetrisGame {
             this.HOLDINGCOUNT = 0;
             this.#HOLDING = null;
             this.#bricks = [];
-        } else {
-            return false;
         }
     }
 

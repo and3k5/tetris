@@ -1,8 +1,6 @@
-import { TetrisGame } from "../game";
-
 export class InputController {
     /**
-     * @type {TetrisGame}
+     * @type {import("../game").TetrisGame}
      */
     #game;
     constructor(game) {

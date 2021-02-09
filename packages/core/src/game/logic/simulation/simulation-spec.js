@@ -1,3 +1,4 @@
+/*global describe, it*/
 import { TetrisGame } from "../../game";
 import { getPossibleMoves } from "./";
 

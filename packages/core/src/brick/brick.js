@@ -126,7 +126,7 @@ export class Brick {
                         const cond3 = (this != brcks[i]);
                         if (cond1 && cond2 && cond3) {
                             return false;
-                        } else { }
+                        }
                     }
                 }
             }
@@ -160,14 +160,11 @@ export class Brick {
         let // 1E309 = infinity
             low = (1E309);
 
-        let countrow = 0;
         for (const i1 in blocks) {
-            countrow = 0;
             for (const i2 in blocks[i1]) {
                 if (blocks[i1][i2] == 1) {
                     high = Math.max(high, (parseInt(i2) + 2));
                     low = Math.min(low, (parseInt(i2) + 2));
-                    countrow++;
                 }
             }
         }
@@ -237,8 +234,6 @@ export class Brick {
                 //yeah
                 this.requestUpdate();
             } else {
-                var emulatedBrick = Brick.emulate(blocks2);
-
                 var blockX = Brick.calcBlockX(blocks2);
                 var width = Brick.calcWidth(blocks2);
 
@@ -308,7 +303,7 @@ export class Brick {
         return true;
     }
 
-    static calcValidPosition_xOutLeft(x = 0, Throw, px, blockX, game) {
+    static calcValidPosition_xOutLeft(x = 0, Throw, px, blockX) {
         if (((px + blockX + x) < 0)) {
             if (Throw === true)
                 throw new Error("The brick would be out of bounds");
@@ -551,6 +546,7 @@ export class Brick {
     static calcLowestPosition(blocks, addX = 0, game, px, py, pguid) {
         const h = Brick.calcHeight(blocks);
         let additionalY = 0;
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             if ((py + additionalY + h) > game.height)
                 break;
@@ -565,9 +561,6 @@ export class Brick {
 
     slice_up() {
         const rtn = [];
-        let i;
-        var i1;
-        var i2;
         const this_color = this.color;
         for (var i1 in this.blocks) {
             for (var i2 in this.blocks[i1]) {

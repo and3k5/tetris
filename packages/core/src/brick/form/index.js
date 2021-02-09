@@ -11,6 +11,7 @@ export class BrickFormBase {
 export class SimpleBrickForm extends BrickFormBase {
     #form;
     constructor(form) {
+        super();
         this.#form = form;
     }
     getBrickForm() {
@@ -31,7 +32,7 @@ export class BinaryBrickForm extends BrickFormBase {
     getBrickForm() {
         var size = this.#size;
         var mask = 0;
-        for (var i = 0; i < size; i++) {
+        for (let i = 0; i < size; i++) {
             mask = mask << 1;
             mask |= 0b1;
         }
@@ -40,7 +41,7 @@ export class BinaryBrickForm extends BrickFormBase {
 
         var temp = this.#value;
 
-        for (var i = 0; i < size * size; i++) {
+        for (let i = 0; i < size * size; i++) {
             var block = 0;
             if ((temp & 1) === 1) {
                 block = 1;

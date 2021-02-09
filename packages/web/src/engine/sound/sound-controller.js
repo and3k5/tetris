@@ -62,6 +62,6 @@ export class SoundController {
             }, ((source.buffer.length / this.#context.sampleRate) * 1000) + 100);
         } catch (e) {
             console.warn(e);
-        };
+        }
     }
 }
