@@ -27,6 +27,12 @@
   "bugs": {
     "url": "https://github.com/and3k5/tetris/issues"
   },
+  "eslintConfig": {
+    "ignorePatterns": [
+      "/dist/**/*",
+      "/__tests__/**/*"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "^7.12.13",
     "@babel/node": "^7.12.13",
