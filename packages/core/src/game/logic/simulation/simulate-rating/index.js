@@ -84,8 +84,8 @@ export function getScores(game, matrix) {
 
 export function sortMovements(positions) {
     return sortBy(s => s.scores.clearingLines, true)
-        .thenBy(s => s.scores.height, false)
         .thenBy(s => s.scores.holes, false)
+        .thenBy(s => s.scores.height, false)
         .execute(positions);
 }
 

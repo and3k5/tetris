@@ -68,7 +68,7 @@ function getPositions(game, usesHolding = false, setupChanges = {}) {
     for (var i = 0; i < 4; i++) {
         let rotatedBlocks = movingBrick.blocks;
         for (var r = 0; r < i; r++)
-            rotatedBlocks = Brick.calcRotatedBlocks(movingBrick.blocks);
+            rotatedBlocks = Brick.calcRotatedBlocks(rotatedBlocks);
 
         var mostLeft = Brick.calcMostLeft(rotatedBlocks);
         var mostRight = Brick.calcMostRight(game, rotatedBlocks);
