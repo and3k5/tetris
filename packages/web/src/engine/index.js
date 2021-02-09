@@ -78,32 +78,28 @@ export class WebGraphicEngine extends EngineBase {
                 case 37:
                     // left
                     e.preventDefault();
-                    if (game.running)
-                        game.action_moveleft();
+                    game.input.left();
                     break;
                 case 38:
                     // up
                     e.preventDefault();
-                    if (game.running)
-                        game.action_rotate();
+                    game.input.rotate();
                     break;
                 case 39:
                     // right
                     e.preventDefault();
-                    if (game.running)
-                        game.action_moveright();
+                    game.input.right();
                     break;
                 case 40:
                     // down
                     e.preventDefault();
-                    if (game.running)
-                        game.action_movedown();
+                    game.input.down();
                     break;
                 case 32:
                     // space
                     e.preventDefault();
-                    if (game.running && e.repeat !== true)
-                        game.action_smashdown();
+                    if (e.repeat !== true)
+                        game.input.smashDown();
                     break;
                 case 27:
                     // escape
@@ -117,9 +113,7 @@ export class WebGraphicEngine extends EngineBase {
                 case 16:
                     // shift
                     e.preventDefault();
-                    if (game.running) {
-                        game.holdingShift();
-                    }
+                    game.input.hold();
                     break;
             }
         }, false);
@@ -143,11 +137,11 @@ export class WebGraphicEngine extends EngineBase {
                 deg += 360;
 
             if (deg > 120 && deg < 220) {
-                game.action_moveleft();
+                game.input.left();
             } else if (deg > 340 || deg < 40) {
-                game.action_moveright();
+                game.input.right();
             } else if (deg < 115 && deg > 65) {
-                game.action_smashdown();
+                game.input.smashDown();
             } else {
                 console.debug(deg);
             }

@@ -419,31 +419,26 @@ export class NodeGraphicEngine extends EngineBase {
                 case "left":
                 case "a":
                     // left
-                    if (game.running)
-                        game.action_moveleft();
+                    game.input.left();
                     break;
                 case "up":
                 case "w":
                     // up
-                    if (game.running)
-                        game.action_rotate();
+                    game.input.rotate();
                     break;
                 case "right":
                 case "d":
                     // right
-                    if (game.running)
-                        game.action_moveright();
+                    game.input.right();
                     break;
                 case "down":
                 case "s":
                     // down
-                    if (game.running)
-                        game.action_movedown();
+                    game.input.down();
                     break;
                 case "space":
                     // space
-                    if (game.running)
-                        game.action_smashdown();
+                    game.input.smashDown();
                     break;
                 case "escape":
                     // escape
@@ -456,9 +451,7 @@ export class NodeGraphicEngine extends EngineBase {
                     break;
                 case "tab":
                     // shift
-                    if (game.running) {
-                        game.holdingShift();
-                    }
+                    game.input.hold();
                     break;
             }
 

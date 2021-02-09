@@ -261,7 +261,7 @@ class SimulatorRunner {
             if (simulation.type === "nextRandom") {
                 this.#game.nextRandom = simulation.val;
             } else if (simulation.type === "smashdown") {
-                this.#game.action_smashdown();
+                this.#game.input.smashDown();
             }
             this.#game.PENDINGUPDATE = true;
             simulation.done = true;

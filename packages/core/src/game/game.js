@@ -9,6 +9,7 @@ const { transmitter } = logging;
 import { nextBrick } from "./logic";
 import { EventController } from "../extensions/event";
 import { AddonContainer, INIT_TYPES } from "../extensions/addon";
+import { InputController } from "./input";
 const { NextBrick } = nextBrick;
 
 export class TetrisGame {
@@ -229,6 +230,8 @@ export class TetrisGame {
 
             this.#addons.loadByType(INIT_TYPES.AFTER_INIT);
         }
+
+        this.input = new InputController(this);
     }
 
     get score() {
@@ -381,23 +384,23 @@ export class TetrisGame {
     }
 
     action_smashdown() {
-        this.getMovingBrick().smashdown(true);
+        this.input.smashDown();
     }
 
     action_moveleft() {
-        this.getMovingBrick().moveleft();
+        this.input.left();
     }
 
     action_rotate() {
-        this.getMovingBrick().rotate();
+        this.input.rotate();
     }
 
     action_moveright() {
-        this.getMovingBrick().moveright();
+        this.input.right();
     }
 
     action_movedown() {
-        this.getMovingBrick().movedown();
+        this.input.down();
     }
 
     get ghostDrawing() {

@@ -1,4 +1,7 @@
 export class EngineBase {
+    /**
+     * @type {import("../game").TetrisGame}
+     */
     #game;
     constructor() {
     }
@@ -24,7 +27,7 @@ export class EngineBase {
     }
 
     /**
-     * @returns {import("@tetris/core").game.TetrisGame}
+     * @returns {import("../game").TetrisGame}
      */
     get game() {
         return this.#game;
