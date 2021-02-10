@@ -23,10 +23,10 @@
   },
   "scripts": {
     "build": "npx webpack --env.mode=production",
-    "watch": "npx webpack --env.mode=development --env.watch=yes",
+    "watch": "npx webpack --env.mode=development --watch",
     "build-dev": "npx webpack --env.mode=development --env.mode=development",
     "host": "mkdir -p dist && cd dist && npx http-server -a 127.0.0.1",
-    "test": "node node_modules/karma/bin/karma start karma.conf.js"
+    "test": "npx karma start --single-run"
   },
   "bugs": {
     "url": "https://github.com/and3k5/tetris/issues"
@@ -49,10 +49,12 @@
     "http-server": "^0.12.3",
     "jasmine-core": "^3.5.0",
     "karma": "^6.1.0",
+    "karma-babel-preprocessor": "^8.0.1",
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^2.0.1",
-    "karma-webpack": "^4.0.2",
+    "karma-webpack": "^5.0.0",
     "lerna": "^3.22.1",
+    "puppeteer": "^7.0.4",
     "style-loader": "^1.0.0",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"

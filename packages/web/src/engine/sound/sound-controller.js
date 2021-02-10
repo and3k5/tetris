@@ -32,7 +32,11 @@ export class SoundController {
         this.ready = true;
     }
 
-    playSound(id) {
+    get allSoundKeys() {
+        return Object.keys(this.#audioBuffers);
+    }
+
+    playSound(id, {throwErrors = false} = {}) {
         if (this.failed == true) {
             return false;
         }
@@ -57,11 +61,14 @@ export class SoundController {
             // tell the source which sound to play
             source.connect(this.#context.destination); // connect the source to the context's destination (the speakers)
             source.start(0); // play the source now
-            setTimeout(() => {
-                source.disconnect();
-            }, ((source.buffer.length / this.#context.sampleRate) * 1000) + 100);
+            var timeout = ((buffer.length / this.#context.sampleRate) * 1000) + 100;
+            setTimeout(() => source.disconnect(),timeout);
+            return true;
         } catch (e) {
             console.warn(e);
+            if (throwErrors)
+                throw e;
+            return false;
         }
     }
 }

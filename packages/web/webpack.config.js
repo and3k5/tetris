@@ -13,14 +13,15 @@ function globals(mode,opts) {
 }
 
 
-module.exports = function (env) {
-
-    var mode = env.mode;
+module.exports = function ({mode = "production"}) {
 
     const commonConfig = {
         mode: mode,
-        watch: env.watch === "yes",
     };
+
+    if (mode === "development") {
+        commonConfig.devtool = "inline-source-map";
+    }
 
     var cssLoader = {
         test: /\.css$/,

@@ -221,9 +221,11 @@ export class TetrisGame {
                 }
             }
 
-            this.#graphicEngine.initializeInput();
+            if (this.#graphicEngine != null) {
+                this.#graphicEngine.initializeInput();
 
-            this.#graphicEngine.initRender();
+                this.#graphicEngine.initRender();
+            }
 
             this.#addons.loadByType(INIT_TYPES.AFTER_INIT);
         }
