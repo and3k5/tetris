@@ -23,8 +23,7 @@
   "scripts": {
     "build": "npx webpack --env.mode=production",
     "watch": "npx webpack --env.mode=development --env.watch=yes",
-    "build-dev": "npx webpack --env.mode=development --env.mode=development",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "build-dev": "npx webpack --env.mode=development --env.mode=development"
   },
   "bugs": {
     "url": "https://github.com/and3k5/tetris/issues"
