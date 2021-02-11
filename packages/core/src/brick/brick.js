@@ -1,5 +1,5 @@
 import { guid, trace as console } from "../utils";
-import { calcRotatedBlocks } from "./block/rotate-blocks";
+import { createRotatedBlocks, rotateLeft, rotateRight, rotateTwice } from "./block/rotate-blocks";
 const { createUniqueGuid } = guid;
 
 export class Brick {
@@ -215,21 +215,45 @@ export class Brick {
         return Brick.calcValidPosition(0, 0, Throw, brick.x, brick.y, bl, this.game.bricks, this.game, this.guid);
     }
 
-    getRotatedBlocks() {
-        return Brick.calcRotatedBlocks(this.blocks);
+    createRotatedRightBlocks() {
+        return Brick.rotateRight(this.blocks);
     }
 
-    static calcRotatedBlocks(blocks) {
-        return calcRotatedBlocks(blocks);
+    static rotateRight(blocks) {
+        return rotateRight(blocks);
+    }
+
+    createRotatedLeftBlocks() {
+        return Brick.rotateLeft(this.blocks);
+    }
+
+    static rotateLeft(blocks) {
+        return rotateLeft(blocks);
+    }
+
+    createRotatedTwiceBlocks() {
+        return Brick.rotateTwice(this.blocks);
+    }
+
+    static rotateTwice(blocks) {
+        return rotateTwice(blocks);
+    }
+
+    createRotatedBlocks(rotations) {
+        return Brick.rotateBlocks(this.blocks, rotations);
+    }
+
+    static rotateBlocks(blocks, rotations) {
+        return createRotatedBlocks(blocks, rotations);
     }
 
     canRotate(Throw = false, blocks2 = null) {
-        return this.rotate_okay(this, blocks2 || this.getRotatedBlocks(), Throw);
+        return this.rotate_okay(this, blocks2 || this.createRotatedRightBlocks(), Throw);
     }
 
     rotate(Throw = false) {
         if (this.game.running) {
-            const blocks2 = this.getRotatedBlocks();
+            const blocks2 = this.createRotatedRightBlocks();
             if (this.canRotate(Throw, blocks2)) {
                 //yeah
                 this.requestUpdate();

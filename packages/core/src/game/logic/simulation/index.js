@@ -1,9 +1,9 @@
 import { TetrisGame } from "../../";
-import { Brick } from "../../../brick"
 import { EventController } from "../../../extensions/event";
 import { trace as console, color } from "../../../utils";
 const { Color } = color;
 import { StaticNextBrick } from "../next-brick";
+import { getPositions } from "./positions";
 import { getScores, sortMovements } from "./simulate-rating";
 
 export function cloneGame(game, setupChanges) {
@@ -58,59 +58,6 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
     }
 }
 
-function getPositions(game, usesHolding = false, setupChanges = {}) {
-    var positions = [];
-
-    var movingBrick = game.getMovingBrick();
-
-    for (var i = 0; i < 4; i++) {
-        let rotatedBlocks = movingBrick.blocks;
-        for (var r = 0; r < i; r++)
-            rotatedBlocks = Brick.calcRotatedBlocks(rotatedBlocks);
-
-        var mostLeft = Brick.calcMostLeft(rotatedBlocks);
-        var mostRight = Brick.calcMostRight(game, rotatedBlocks);
-
-        for (var x = mostLeft; x <= mostRight; x++) {
-            //var clone = cloneGame(cloneBase,setupChanges);
-
-            //var movingBrick = clone.getMovingBrick();
-            // try {
-            //     //arrangeBrick(clone, movingBrick, x, maxWidth);
-            // }
-            // catch (e) {
-            //     e.message += " (skipped)";
-            //     console.error(e);
-            //     window.location.reload();
-            //     continue;
-            //     // TODO game locks down, even if skipped
-            // }
-
-            //var movingBrick = game.getMovingBrick();
-
-            // movingBrick.y = movingBrick.getLowestPosition(x - movingBrick.x);
-            var lowestY = Brick.calcLowestPosition(rotatedBlocks, x - movingBrick.x, game, movingBrick.x, movingBrick.y, movingBrick.guid);
-
-            var brickMatrix = game.renderBrickMatrix(
-                [
-                    { guid: movingBrick.guid, x: x, y: lowestY, blocks: rotatedBlocks },
-                ]
-            );
-            positions.push(
-                {
-                    //brick: movingBrick,
-                    x: x,
-                    y: lowestY,
-                    brickMatrix,
-                    rotation: i,
-                    needsHolding: usesHolding,
-                }
-            );
-        }
-    }
-
-    return positions;
-}
 
 export function getPossibleMoves(game, setupChanges) {
     var positions = [];
