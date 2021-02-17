@@ -50,7 +50,7 @@ export class EasyNextBrick extends NextBrick {
         }
         var best = sortMovements(movements)[0];
 
-        console.log(best.move.brick.game.nextBrick);
+        //console.log(best.move.brick.game.nextBrick);
         return best.move.brick.index;
     }
 

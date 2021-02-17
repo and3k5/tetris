@@ -11,6 +11,6 @@ describe("getPossibleMoves", function () {
         var moves = getPossibleMoves(game, {
 
         });
-        console.log(moves);
+        //console.log(moves);
     });
 });

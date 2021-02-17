@@ -322,8 +322,6 @@ export class NodeGraphicEngine extends EngineBase {
 
         var hsla = color.toHSLA();
 
-        //console.log(hsla);
-
         var h = hsla.h % 360;
         while (h < 0)
             h += 360;
@@ -449,8 +447,6 @@ export class NodeGraphicEngine extends EngineBase {
                     game.input.hold();
                     break;
             }
-
-            console.log("keypress: " + key.name);
         });
     }
 }

@@ -1,3 +1,5 @@
+import { StaticNextBrick } from "../logic/next-brick";
+
 export class TetrisSetup {
     // different types of bricks
     #brickforms;
@@ -13,6 +15,8 @@ export class TetrisSetup {
     // brick sequence
     #sequence = null;
 
+    #nextBrick = null;
+
     /**
      * 
      * @param {BrickFormBase[]} brickforms 
@@ -22,6 +26,11 @@ export class TetrisSetup {
         this.#width = width;
         this.#height = height;
         this.#graphics = extra.graphics;
+        this.#nextBrick = extra.nextBrick;
+    }
+
+    get nextBrick() {
+        return this.#nextBrick;
     }
 
     get brickforms() {
@@ -128,4 +137,13 @@ export function shitGame() {
         [0, 0, 0]],
     ];
     return new TetrisSetup(brickforms, 10, 20);
+}
+
+/**
+ * 
+ * @param {Number[][]} blocks 
+ */
+export function predictableGameWithOneBlock(blocks) {
+    const brickforms = [blocks];
+    return new TetrisSetup(brickforms, 10, 20, { nextBrick: new StaticNextBrick(0) });
 }

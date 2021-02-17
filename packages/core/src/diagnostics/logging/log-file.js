@@ -39,10 +39,10 @@ export class LogFile {
             },
             set: function (target, prop, value) {
                 //console.log({ type: 'set', target, prop, value });
-                console.log("set", prop);
+                //console.log("set", prop);
                 value = Reflect.get(target, prop);
                 if (value != null && typeof (value) === "object" && !value.isPrototypeOf(Proxy)) {
-                    console.log("newLink from set");
+                    //console.log("newLink from set");
                     Reflect.set(target, prop, new Proxy(value, proxySetup));
                 }
                 //target[prop] = value;
@@ -72,7 +72,7 @@ export class LogFile {
             this.json = JSON.parse(content);
         };
         this.writeHandler = function () {
-            console.log("file write");
+            //console.log("file write");
             var content = JSON.stringify(this.json);
             fs.writeFileSync(path, content);
         }

@@ -413,11 +413,11 @@ export class Brick {
     }
 
     get mostRight() {
-        return Brick.calcMostRight(this.game, this.blocks);
+        return Brick.calcMostRight(this.game.width, this.blocks);
     }
 
-    static calcMostRight(game, blocks) {
-        return parseInt(game.width - Brick.calcWidth(blocks) - Brick.calcBlockX(blocks));
+    static calcMostRight(width, blocks) {
+        return parseInt(width - Brick.calcWidth(blocks) - Brick.calcBlockX(blocks));
     }
 
     get innerWidth() {
@@ -564,18 +564,28 @@ export class Brick {
     }
 
     getLowestPosition(addX = 0) {
-        return Brick.calcLowestPosition(this.blocks, addX, this.game, this.x, this.y, this.guid);
+        return Brick.calcLowestPosition(this.blocks, addX, this.game.height, this.game.bricks, this.x, this.y, this.guid);
     }
 
-    static calcLowestPosition(blocks, addX = 0, game, px, py, pguid) {
+    /**
+     * 
+     * @param {any} blocks 
+     * @param {any} addX 
+     * @param {Number} height
+     * @param {Brick[]} bricks
+     * @param {*} px 
+     * @param {*} py 
+     * @param {*} pguid 
+     */
+    static calcLowestPosition(blocks, addX = 0, height, bricks, px, py, pguid) {
         const h = Brick.calcHeight(blocks);
         let additionalY = 0;
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            if ((py + additionalY + h) > game.height)
+            if ((py + additionalY + h) > height)
                 break;
 
-            if (Brick.calcWillCollide(addX, additionalY, game.bricks, blocks, px, py, pguid))
+            if (Brick.calcWillCollide(addX, additionalY, bricks, blocks, px, py, pguid))
                 break;
 
             additionalY++;

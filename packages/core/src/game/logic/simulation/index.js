@@ -58,19 +58,25 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
     }
 }
 
-
+/**
+ * 
+ * @param {TetrisGame} game 
+ * @param {*} setupChanges 
+ */
 export function getPossibleMoves(game, setupChanges) {
     var positions = [];
 
-    for (let pos of getPositions(game, false, setupChanges))
+    for (let pos of getPositions(game.width, game.height, game.bricks, game.getMovingBrick()))
         positions.push(pos);
 
     if (game.canUseHolding) {
         var clone = cloneGame(game, setupChanges);
         clone.holdingShift();
 
-        for (let pos of getPositions(clone, true, setupChanges))
+        for (let pos of getPositions(clone.width, clone.height, clone.bricks, clone.getMovingBrick())) {
+            pos.needsHolding = true;
             positions.push(pos);
+        }
     }
 
     for (let setup of positions) {
@@ -102,7 +108,7 @@ class SimulatorRunner {
         this.#game = game;
         var simulator = this;
         this.#game.addEvent("current-brick-change", function () {
-            console.log("current brick change");
+            console.debug("current brick change");
             simulator.getNewMove();
         });
     }
@@ -174,7 +180,7 @@ class SimulatorRunner {
 
     getNewMove() {
         this.#movements = getPossibleMoves(this.#game, { nextBrick: new StaticNextBrick(0) });
-        console.log(this.#movements[0]);
+        //console.log(this.#movements[0]);
         this.#eventController.trigger("update-movements", null, this.#movements.concat());
     }
 

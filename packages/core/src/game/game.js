@@ -255,27 +255,44 @@ export class TetrisGame {
     }
 
     renderBrickMatrix(modifications = []) {
+        return TetrisGame.renderBrickMatrix(this.width, this.height, this.bricks, modifications);
+    }
+
+    /**
+     * 
+     * @param {number} width 
+     * @param {number} height 
+     * @param {Brick[]} bricks 
+     * @param {any[]} modifications 
+     */
+    static renderBrickMatrix(width, height, bricks, modifications = []) {
+        modifications = modifications.concat();
         var result = [];
-        for (let y = 0; y < this.height; y++) {
+        for (let y = 0; y < height; y++) {
             result.push([]);
-            for (let x = 0; x < this.width; x++) {
+            for (let x = 0; x < width; x++) {
                 result[result.length - 1].push(false);
             }
         }
-        var bricks = this.bricks;
         for (const brick of bricks) {
             var brickForm = brick.blocks;
             var x = brick.x;
             var y = brick.y;
 
-            var mod = modifications.filter(m => m.guid == brick.guid)[0];
-            if (mod != null) {
+            var matchingModifications = modifications.filter(m => m.guid == brick.guid);
+            if (matchingModifications.length > 1)
+                throw new Error("There were multiple modifications found for a single brick!");
+            if (matchingModifications.length == 1) {
+                var mod = matchingModifications[0];
+
                 if (typeof (mod.x) === "number")
                     x = mod.x;
                 if (typeof (mod.y) === "number")
                     y = mod.y;
                 if (typeof (mod.blocks) !== "undefined")
                     brickForm = mod.blocks;
+
+                modifications.splice(modifications.indexOf(mod), 1);
             }
 
             for (var i1 in brickForm) {
@@ -285,12 +302,16 @@ export class TetrisGame {
                         var cy = (y) + (parseInt(i1));
                         if (cy < 0)
                             continue;
-                        if (cy > this.height)
+                        if (cy > height)
                             continue;
                         result[cy][cx] = true;
                     }
                 }
             }
+        }
+
+        if (modifications.length > 0) {
+            throw new Error(`There were ${modifications.length} modifications which is not used`);
         }
 
         return result;
@@ -467,6 +488,9 @@ export class TetrisGame {
         return this.#height;
     }
 
+    /**
+     * @returns {Brick[]}
+     */
     get bricks() {
         return this.#bricks;
     }
