@@ -34,12 +34,12 @@ function swapXY(matrix) {
     return result;
 }
 
-export function countHoles(game, matrix) {
+export function countHoles(matrix) {
     let holes = 0;
 
     matrix = swapXY(matrix);
 
-    for (var x = 0; x < game.width; x++) {
+    for (var x = 0; x < matrix.length; x++) {
         var topBlockIndex = matrix[x].indexOf(true);
 
         if (topBlockIndex === -1)
@@ -53,16 +53,17 @@ export function countHoles(game, matrix) {
     return holes;
 }
 
-export function countHeight(game, matrix) {
+export function countHeight(matrix) {
     let height = 0;
 
     matrix = swapXY(matrix);
 
-    for (var x = 0; x < game.width; x++) {
-        var index = matrix[x].indexOf(true);
+    for (var x = 0; x < matrix.length; x++) {
+        const col = matrix[x];
+        var index = col.indexOf(true);
         if (index < 0)
             continue;
-        var xHeight = game.height - index;
+        var xHeight = col.length - index;
 
         if (xHeight > height)
             height = xHeight;
@@ -76,26 +77,32 @@ export class Score {
         this.holes = holes;
         this.height = height;
     }
+
+    /**
+     * 
+     * @param {Score} score 
+     * @param {Score} worstScore 
+     * @param {Score} bestScore 
+     */
+    getRatio(worstScore, bestScore) {
+        const clearingLinesRatio = ratioValue(worstScore.clearingLines, bestScore.clearingLines, this.clearingLines);
+        const holesRatio = ratioValue(worstScore.holes, bestScore.holes, this.holes);
+        const heightRatio = ratioValue(worstScore.height, bestScore.height, this.height);
+
+        return ((clearingLinesRatio * 3) + (holesRatio * 2)) / 5;
+    }
 }
 
-export function getScores(game, matrix) {
+export function getScores(matrix) {
     const clearingLines = countClearingLines(matrix);
-    const holes = countHoles(game, matrix);
-    const height = countHeight(game, matrix);
+    const holes = countHoles(matrix);
+    const height = countHeight(matrix);
 
     return new Score({
         holes,
         height,
         clearingLines,
     });
-}
-
-export function rate(worstScore, bestScore, currentScore, fieldName) {
-    const worst = worstScore[fieldName];
-    const best = bestScore[fieldName];
-    const current = currentScore[fieldName];
-
-    return ratioValue(worst, best, current);
 }
 
 export function ratioValue(worst, best, current) {
@@ -105,27 +112,6 @@ export function ratioValue(worst, best, current) {
     let result = (current - worst) / (best - worst)
 
     return result;
-}
-
-/**
- * 
- * @param {Score} score 
- * @param {Score} worstScore 
- * @param {Score} bestScore 
- */
-function summaryScore(score, worstScore, bestScore) {
-    var scoreItems = [];
-    // 1 = 100% = good
-    // 0 = 0% = bad
-
-    scoreItems.push(rate(worstScore, bestScore, score, "clearingLines", true));
-    scoreItems.push(rate(worstScore, bestScore, score, "holes", false));
-    scoreItems.push(rate(worstScore, bestScore, score, "height", false));
-
-    const count = scoreItems.length;
-    const summary = scoreItems.reduce((a, b) => a + b, 0);
-
-    return summary / count;
 }
 
 function getWorstScoreValues(positions) {
@@ -148,7 +134,7 @@ export function sortMovements(positions) {
     const worstScore = getWorstScoreValues(positions);
     const bestScore = getBestScoreValues(positions);
 
-    return sortBy(s => summaryScore(s.scores, worstScore, bestScore), true)
+    return sortBy(s => s.scores.getRatio(worstScore, bestScore), true)
         .thenBy(s => s.scores.clearingLines, true)
         .thenBy(s => s.scores.holes, false)
         .thenBy(s => s.scores.height, false)

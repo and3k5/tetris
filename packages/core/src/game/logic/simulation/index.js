@@ -84,7 +84,7 @@ export function getPossibleMoves(game, setupChanges) {
         var matrix = setup.brickMatrix;
         //setup.score = 0;
 
-        setup.scores = getScores(game, matrix);
+        setup.scores = getScores(matrix);
     }
 
     positions = sortMovements(positions);

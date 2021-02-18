@@ -16,7 +16,7 @@ describe("countHoles", function () {
             "          ",
         ].map(x => x.split("").map(y => y === "x"));
 
-        var result = countHoles({ width: 10, height: 10 }, matrix);
+        var result = countHoles(matrix);
 
         expect(result).toBe(6);
     });
@@ -37,7 +37,7 @@ describe("countHeight", function () {
             "xxxxx     ",
         ].map(x => x.split("").map(y => y === "x"));
 
-        var result = countHeight({ width: 10, height: 10 }, matrix);
+        var result = countHeight(matrix);
 
         expect(result).toBe(5);
     });
