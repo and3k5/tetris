@@ -94,7 +94,7 @@ export class Score {
         //const heightRatio = ratioValue(worstScore.height, bestScore.height, this.height);
         const heightRatio = 1 - (this.height.blocksHeight / this.height.gameHeight);
 
-        return ((clearingLinesRatio * 3) + (holesRatio * 2) + heightRatio) / 6;
+        return ((clearingLinesRatio * 2) + (holesRatio * 3) + heightRatio) / 6;
     }
 }
 
