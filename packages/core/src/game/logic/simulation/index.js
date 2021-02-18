@@ -4,7 +4,7 @@ import { trace as console, color } from "../../../utils";
 const { Color } = color;
 import { StaticNextBrick } from "../next-brick";
 import { getPositions } from "./positions";
-import { getScores, sortMovements } from "./simulate-rating";
+import { getScore, sortMovements } from "./simulate-rating";
 
 export function cloneGame(game, setupChanges) {
     var bricks = game.bricks.concat().map(b => b.clone());
@@ -80,11 +80,7 @@ export function getPossibleMoves(game, setupChanges) {
     }
 
     for (let setup of positions) {
-        //console.debug(setup);
-        var matrix = setup.brickMatrix;
-        //setup.score = 0;
-
-        setup.scores = getScores(matrix);
+        setup.scores = getScore(setup.brickMatrix);
     }
 
     positions = sortMovements(positions);
@@ -188,18 +184,29 @@ class SimulatorRunner {
         this.#eventController.on(name, handler);
     }
 
-    assistTick() {
+    get targetMovement() {
         if (this.#movements.length < 1)
-            return;
-        console.debug(this.#movements[0].score);
-        if (this.#movements[0].needsHolding === true) {
-            this.#game.holdingShift();
-            this.#movements[0].needsHolding = false;
-        } else {
-            this.#game.moveTowards(this.#movements[0].x, this.#movements[0].rotation);
-        }
+            return undefined;
+        return this.#movements[0];
+    }
 
-        console.debug("move", this.#movements[0].x);
+    assistTick() {
+        const movement = this.targetMovement;
+        if (movement == null)
+            return;
+
+        const instruction = movement.getNextInstruction();
+        if (typeof (instruction) === "undefined") {
+            return; // skip
+        }
+        else if (typeof (instruction) === "function") {
+            const response = instruction(this.#game);
+            if (response instanceof Promise) {
+                console.warn("TODO: async handle / promise await missing");
+            }
+        } else {
+            throw new Error("Unknown instruction type");
+        }
     }
 
     playbackTick() {

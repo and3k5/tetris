@@ -58,8 +58,12 @@ export function countHeight(matrix) {
 
     matrix = swapXY(matrix);
 
+    let gameHeight = null;
+
     for (var x = 0; x < matrix.length; x++) {
         const col = matrix[x];
+        if (gameHeight == null)
+            gameHeight = col.length;
         var index = col.indexOf(true);
         if (index < 0)
             continue;
@@ -68,7 +72,7 @@ export function countHeight(matrix) {
         if (xHeight > height)
             height = xHeight;
     }
-    return height;
+    return { blocksHeight: height, gameHeight };
 }
 
 export class Score {
@@ -87,13 +91,14 @@ export class Score {
     getRatio(worstScore, bestScore) {
         const clearingLinesRatio = ratioValue(worstScore.clearingLines, bestScore.clearingLines, this.clearingLines);
         const holesRatio = ratioValue(worstScore.holes, bestScore.holes, this.holes);
-        const heightRatio = ratioValue(worstScore.height, bestScore.height, this.height);
+        //const heightRatio = ratioValue(worstScore.height, bestScore.height, this.height);
+        const heightRatio = 1 - (this.height.blocksHeight / this.height.gameHeight);
 
-        return ((clearingLinesRatio * 3) + (holesRatio * 2)) / 5;
+        return ((clearingLinesRatio * 3) + (holesRatio * 2) + heightRatio) / 6;
     }
 }
 
-export function getScores(matrix) {
+export function getScore(matrix) {
     const clearingLines = countClearingLines(matrix);
     const holes = countHoles(matrix);
     const height = countHeight(matrix);
