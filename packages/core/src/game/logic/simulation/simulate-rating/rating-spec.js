@@ -39,7 +39,7 @@ describe("countHeight", function () {
 
         var result = countHeight(matrix);
 
-        expect(result).toBe(5);
+        expect(result.blocksHeight).toBe(5);
     });
 })
 
