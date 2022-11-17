@@ -30,7 +30,7 @@
     "url": "https://github.com/and3k5/tetris/issues"
   },
   "dependencies": {
-    "@tetris/core": "^0.0.0",
+    "@tetris/core": "file:../core",
     "window-size": "^1.1.1"
   },
   "eslintConfig": {
