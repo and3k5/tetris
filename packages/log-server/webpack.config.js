@@ -45,6 +45,11 @@ module.exports = function (env) {
             library: "logserver",
             path: path.resolve(__dirname, "dist"),
             filename: "tetris-logserver.js",
+        },
+        resolve: {
+            alias: {
+                "@tetris/core": path.resolve(__dirname, "../core")
+            }
         }
     });
 

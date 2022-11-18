@@ -77,6 +77,11 @@ module.exports = function (env) {
         },
         node: {
             fs: "empty"
+        },
+        resolve: {
+            alias: {
+                "@tetris/core": path.resolve(__dirname, "../core")
+            }
         }
     });
     return elecConfig;

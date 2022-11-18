@@ -46,6 +46,11 @@ module.exports = function (env) {
             library: "tetris",
             path: path.resolve(__dirname, "dist"),
             filename: "tetris-node.js",
+        },
+        resolve: {
+            alias: {
+                "@tetris/core": path.resolve(__dirname, "../core")
+            }
         }
     });
 

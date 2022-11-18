@@ -84,6 +84,11 @@ module.exports = function ({mode = "production"}) {
         },
         node: {
             fs: "empty"
+        },
+        resolve: {
+            alias: {
+                "@tetris/core": path.resolve(__dirname, "../core")
+            }
         }
     });
     return webConfig;
