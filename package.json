@@ -33,7 +33,7 @@
     "karma-chrome-launcher": "^3.1.0",
     "karma-jasmine": "^2.0.1",
     "karma-webpack": "^4.0.2",
-    "lerna": "^5.0.0",
+    "lerna": "^6.0.3",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
   },
