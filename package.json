@@ -34,7 +34,7 @@
     "karma-jasmine": "^2.0.1",
     "karma-webpack": "^4.0.2",
     "lerna": "^6.0.3",
-    "webpack": "^4.41.0",
+    "webpack": "^5.97.1",
     "webpack-cli": "^3.3.9"
   },
   "volta": {
