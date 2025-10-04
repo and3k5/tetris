@@ -38,6 +38,12 @@ module.exports = function ({mode = "production"}) {
         }
     };
 
+    const tsLoader =  {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+    };
+
     var jsLoader = {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -66,6 +72,7 @@ module.exports = function ({mode = "production"}) {
                 cssLoader,
                 htmlLoader,
                 jsLoader,
+                tsLoader,
                 imgLoader
             ]
         },
@@ -88,7 +95,8 @@ module.exports = function ({mode = "production"}) {
         resolve: {
             alias: {
                 "@tetris/core": path.resolve(__dirname, "../core")
-            }
+            },
+            extensions: [".tsx", ".ts", ".js"]
         }
     });
     return webConfig;
