@@ -1,14 +1,13 @@
+import { WebGraphicEngine } from "..";
 import DocumentUtil from "../../utils/document-util";
 import * as htmlLoad from "./debug.html";
 import { Color } from "@tetris/core/src/utils/color";
 
-/**
- *
- * @param {any} parent
- * @param {any} container
- * @param {import("../../../../core/src/game").TetrisGame} game
- */
-export function initDebug(parent, container, game) {
+export function initDebug(
+    parent: any,
+    container: any,
+    game: import("../../../../core/src/game").TetrisGame,
+) {
     const debugContainer = new DocumentUtil(container);
 
     const element = DocumentUtil.stringToElement(htmlLoad);
@@ -30,10 +29,7 @@ export function initDebug(parent, container, game) {
         let selectedValue = -1;
         let movements = [];
 
-        /**
-         * @type {import("..").WebGraphicEngine}
-         */
-        const graphicsEngine = game.graphicsEngine;
+        const graphicsEngine: WebGraphicEngine = game.graphicsEngine;
 
         const cloneCtx = document.createElement("canvas").getContext("2d");
         cloneCtx.canvas.style.position = "absolute";
@@ -72,7 +68,7 @@ export function initDebug(parent, container, game) {
                 console.log("UPDATED MOVEMENTS");
                 selector.el.max = movements.length - 1;
                 selector.el.value = 0;
-                calldraw(null);
+                calldraw();
             });
 
         game.simulator.addEvent("update-movements", function (m) {
@@ -104,7 +100,14 @@ export function initDebug(parent, container, game) {
         });
     } else {
         console.log("simulator is not enabled");
-        simulationViewer.style.display = "none";
+        if (
+            "style" in simulationViewer &&
+            typeof simulationViewer.style === "object" &&
+            simulationViewer.style !== null &&
+            "display" in simulationViewer.style
+        ) {
+            simulationViewer.style.display = "none";
+        }
     }
 
     container.parentNode.insertBefore(debugContainer.el, container.nextSibling);

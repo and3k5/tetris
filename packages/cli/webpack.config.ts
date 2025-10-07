@@ -1,7 +1,7 @@
-const path = require("path");
-const webpack = require("webpack");
+import path from "path";
+import { default as webpack, Configuration } from "webpack";
 
-function globals(mode, opts) {
+function globals(mode: string, opts: { browser?: boolean; node?: boolean }) {
     return {
         "global.development": mode === "development",
         "global.production": mode === "production",
@@ -11,19 +11,25 @@ function globals(mode, opts) {
     };
 }
 
-module.exports = function (env) {
+module.exports = function (env: { mode: any; watch: string }) {
     const mode = env.mode;
 
-    const commonConfig = {
+    const commonConfig: Partial<Configuration> = {
         mode: mode,
         watch: env.watch === "yes",
+    };
+
+    const tsLoader = {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
     };
 
     const nodeConfig = Object.assign({}, commonConfig, {
         entry: path.resolve(__dirname, "src", "index.ts"),
         target: "node",
         module: {
-            rules: [],
+            rules: [tsLoader],
         },
         plugins: [new webpack.DefinePlugin(globals(mode, { node: true }))],
         output: {
@@ -33,7 +39,7 @@ module.exports = function (env) {
         },
         resolve: {
             alias: {
-                "@tetris/core": path.resolve(__dirname, "../core"),
+                "@tetris/core": path.resolve(__dirname, "../core/src/index.ts"),
             },
         },
     });

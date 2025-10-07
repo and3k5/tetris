@@ -3,9 +3,8 @@ const {
     init: { init },
 } = game;
 
-const options = {};
-
 import { NodeGraphicEngine } from "./engine";
+import { Options } from "@tetris/core/src/game/init";
 const graphicEngine = new NodeGraphicEngine();
 
 const args = process.argv.concat();
@@ -20,9 +19,11 @@ const getValue = function (args, name, def = undefined) {
     return def;
 };
 
-options.setup = getValue(args, "setup");
-options.next = getValue(args, "next");
-options.simulate = getValue(args, "simulate") === "true";
-options.logger = getValue(args, "logger");
+const options: Options = {
+    setup: getValue(args, "setup"),
+    next: getValue(args, "next"),
+    simulate: getValue(args, "simulate") === "true",
+    logger: getValue(args, "logger"),
+};
 
 init(options, graphicEngine);

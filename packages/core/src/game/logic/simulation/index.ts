@@ -1,4 +1,5 @@
 import { TetrisGame } from "../../";
+import { Brick } from "../../../brick";
 import { EventController } from "../../../extensions/event";
 import { trace as console, color } from "../../../utils";
 const { Color } = color;
@@ -9,7 +10,7 @@ import { getScore, sortMovements } from "./simulate-rating";
 export function cloneGame(game, setupChanges) {
     const bricks = game.bricks.concat().map((b) => b.clone());
 
-    const extra = { bricks };
+    const extra: { bricks: Brick[]; holding?: Brick | undefined } = { bricks };
 
     if (game.HOLDING != null) extra.holding = game.HOLDING.clone();
 
@@ -51,12 +52,7 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
     }
 }
 
-/**
- *
- * @param {TetrisGame} game
- * @param {*} setupChanges
- */
-export function getPossibleMoves(game, setupChanges) {
+export function getPossibleMoves(game: TetrisGame, setupChanges?: any) {
     let positions = [];
 
     for (const pos of getPositions(game.width, game.height, game.bricks, game.getMovingBrick()))
@@ -198,19 +194,6 @@ class SimulatorRunner {
 
     playbackTick() {
         throw new Error("Not implemented");
-
-        const time = new Date().getTime() - this._starttime;
-        const simulations = this._simulation.filter((s) => s.done !== true && s.time < time);
-        console.log(simulations);
-        for (const simulation of simulations) {
-            if (simulation.type === "nextRandom") {
-                this._game.nextRandom = simulation.val;
-            } else if (simulation.type === "smashdown") {
-                this._game.input.smashDown();
-            }
-            this._game.PENDINGUPDATE = true;
-            simulation.done = true;
-        }
     }
 
     get movements() {

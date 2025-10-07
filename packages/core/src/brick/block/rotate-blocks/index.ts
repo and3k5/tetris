@@ -1,52 +1,26 @@
-/**
- * Returns a blocks array with the blocks data rotated to the right
- * @param {boolean[][]} blocks
- * @returns {boolean[][]}
- */
-export function rotateRight(blocks) {
+export function rotateRight(blocks: boolean[][]): boolean[][] {
     return createRotatedBlocks(blocks, 1);
 }
 
-/**
- * Returns a blocks array with the blocks data rotated to the left
- * @param {boolean[][]} blocks
- * @returns {boolean[][]}
- */
-export function rotateLeft(blocks) {
+export function rotateLeft(blocks: boolean[][]): boolean[][] {
     return createRotatedBlocks(blocks, -1);
 }
 
-/**
- *
- * @param {boolean[][]} blocks
- * @returns {boolean[][]}
- */
-export function rotateTwice(blocks) {
+export function rotateTwice(blocks: boolean[][]): boolean[][] {
     return createRotatedBlocks(blocks, 2);
 }
 
-/**
- *
- * @param {boolean[][]} blocks Blocks array
- * @param {number} rotations Number of rotations
- */
-export function createRotatedBlocks(blocks, rotations) {
+export function createRotatedBlocks(blocks: boolean[][], rotations: number) {
     if (typeof rotations !== "number") throw new Error("rotations parameter must be a number");
     if (!isFinite(rotations)) throw new Error("rotations parameter must be a finite number");
     rotations = (4 + (rotations % 4)) % 4;
     if (rotations == 0) return blocks.concat();
 
-    /**
-     * @type {boolean[][]}
-     */
-    const blocks2 = [];
+    const blocks2: boolean[][] = [];
     const w = blocks[0].length;
     const h = blocks.length;
     for (let y = 0; y < h; y++) {
-        /**
-         * @type {boolean[]}
-         */
-        const row = [];
+        const row: boolean[] = [];
         let blocksRow = null;
         switch (rotations) {
             case 2:

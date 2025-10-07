@@ -70,19 +70,16 @@ export function countHeight(matrix) {
 }
 
 export class Score {
+    clearingLines: any;
+    holes: any;
+    height: any;
     constructor({ clearingLines, holes, height }) {
         this.clearingLines = clearingLines;
         this.holes = holes;
         this.height = height;
     }
 
-    /**
-     *
-     * @param {Score} score
-     * @param {Score} worstScore
-     * @param {Score} bestScore
-     */
-    getRatio(worstScore, bestScore) {
+    getRatio(worstScore: Score, bestScore: Score) {
         const clearingLinesRatio = ratioValue(
             worstScore.clearingLines,
             bestScore.clearingLines,

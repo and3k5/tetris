@@ -1,4 +1,8 @@
 export class Color {
+    r: any;
+    g: any;
+    b: any;
+    a: any;
     constructor(r, g, b, a) {
         this.r = r; // Red
         this.g = g; // Green

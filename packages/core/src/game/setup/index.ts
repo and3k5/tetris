@@ -1,8 +1,9 @@
+import { BrickFormBase } from "../../brick/form";
 import { StaticNextBrick } from "../logic/next-brick";
 
 export class TetrisSetup {
     // different types of bricks
-    private _brickforms;
+    private _brickforms: BrickFormBase[] | number[][][];
 
     // game width
     private _width;
@@ -17,11 +18,12 @@ export class TetrisSetup {
 
     private _nextBrick = null;
 
-    /**
-     *
-     * @param {BrickFormBase[]} brickforms
-     */
-    constructor(brickforms, width, height, extra = {}) {
+    constructor(
+        brickforms: BrickFormBase[] | number[][][],
+        width,
+        height,
+        extra: { graphics?: any; nextBrick?: any } = {},
+    ) {
         this._brickforms = brickforms;
         this._width = width;
         this._height = height;
@@ -165,11 +167,7 @@ export function shitGame() {
     return new TetrisSetup(brickforms, 10, 20);
 }
 
-/**
- *
- * @param {Number[][]} blocks
- */
-export function predictableGameWithOneBlock(blocks) {
+export function predictableGameWithOneBlock(blocks: number[][]) {
     const brickforms = [blocks];
     return new TetrisSetup(brickforms, 10, 20, { nextBrick: new StaticNextBrick(0) });
 }

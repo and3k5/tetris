@@ -1,8 +1,8 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const webpack = require("webpack");
-const path = require("path");
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import webpack, { Configuration } from "webpack";
+import path from "path";
 
-function globals(mode, opts) {
+function globals(mode: string, opts: { browser?: boolean; node?: boolean }) {
     return {
         "global.development": mode === "development",
         "global.production": mode === "production",
@@ -12,8 +12,8 @@ function globals(mode, opts) {
     };
 }
 
-module.exports = function ({ mode = "production" }) {
-    const commonConfig = {
+module.exports = function ({ mode = "production" }: { mode: "production" | "development" }) {
+    const commonConfig: Partial<Configuration> = {
         mode: mode,
     };
 
@@ -70,12 +70,9 @@ module.exports = function ({ mode = "production" }) {
             path: path.resolve(__dirname, "dist"),
             filename: "tetris-web.js",
         },
-        node: {
-            fs: "empty",
-        },
         resolve: {
             alias: {
-                "@tetris/core": path.resolve(__dirname, "../core"),
+                "@tetris/core": path.resolve(__dirname, "../core/src/index.ts"),
             },
             extensions: [".tsx", ".ts", ".js"],
         },

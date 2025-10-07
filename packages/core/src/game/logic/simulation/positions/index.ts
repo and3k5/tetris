@@ -1,16 +1,13 @@
 import { Brick } from "../../../../brick";
 import { TetrisGame } from "../../../game";
-import { SimpleMovement } from "../movement";
+import { Movement, SimpleMovement } from "../movement";
 
-/**
- *
- * @param {number} width
- * @param {number} height
- * @param {Brick[]} bricks
- * @param {Brick} currentBrick
- * @returns {import("../movement").Movement[]}
- */
-export function getPositions(width, height, bricks, currentBrick) {
+export function getPositions(
+    width: number,
+    height: number,
+    bricks: Brick[],
+    currentBrick: Brick,
+): SimpleMovement[] {
     const positions = [];
 
     const movingBrick = currentBrick;

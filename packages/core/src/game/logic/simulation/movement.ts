@@ -1,16 +1,23 @@
+import { TetrisGame } from "../../game";
+import { Score } from "./simulate-rating";
+
 export class Movement {
+    x: any;
+    y: any;
+    brickMatrix: any;
+    score: Score | null;
     constructor({ x, y, brickMatrix }) {
         this.x = x;
         this.y = y;
         this.brickMatrix = brickMatrix;
-        /**
-         * @type {import("./simulate-rating").Score}
-         */
         this.score = null;
     }
 }
 
 export class SimpleMovement extends Movement {
+    rotation: any;
+    needsHolding: any;
+    holdingFired: boolean;
     constructor(options) {
         super(options);
 
@@ -24,21 +31,13 @@ export class SimpleMovement extends Movement {
     getNextInstruction() {
         const movement = this;
 
-        /**
-         * Result function
-         *
-         * @param {import("../../game").TetrisGame} game
-         */
-        const result = function (game) {
+        const result = function (game: TetrisGame) {
             if (movement.needsHolding === true && movement.holdingFired !== true) {
                 movement.holdingFired = true;
                 game.holdingShift();
                 return;
             }
 
-            /**
-             * @type {import("../../../brick").Brick}
-             */
             const movingBrick = game.getMovingBrick();
             if (movingBrick.rotation === movement.rotation && movingBrick.x === movement.x) {
                 game.input.smashDown();

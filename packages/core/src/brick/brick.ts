@@ -8,7 +8,14 @@ export class Brick {
     private _rotation = 0;
     private _index = undefined;
     private _guid;
-    constructor(options) {
+    game: any;
+    ingame: any;
+    color: any;
+    blocks: any;
+    moving: any;
+    id: any;
+    static emulate: (vblocks: any) => Brick;
+    constructor(options?: any) {
         const o = options || { ingame: false, game: null };
         if (typeof o.guid === "string") this._guid = o.guid;
         else this._guid = createUniqueGuid();
@@ -277,7 +284,7 @@ export class Brick {
                         this.x++;
                         return false;
                     }
-                } else if (!Brick.calcValidPosition_xOutLeft(0, false, this.x, blockX, this.game)) {
+                } else if (!Brick.calcValidPosition_xOutLeft(0, false, this.x, blockX)) {
                     this.x++;
                     if (this.rotate_okay(this, blocks2)) {
                         //yeah
@@ -351,7 +358,7 @@ export class Brick {
 
     static calcValidPosition(x = 0, y = 0, Throw, px, py, blocks, bricks, game, pguid) {
         const blockX = Brick.calcBlockX(blocks);
-        if (!Brick.calcValidPosition_xOutLeft(x, Throw, px, blockX, game)) return false;
+        if (!Brick.calcValidPosition_xOutLeft(x, Throw, px, blockX)) return false;
 
         const width = Brick.calcWidth(blocks);
         if (!Brick.calcValidPosition_xOutRight(x, Throw, px, blockX, width, game)) return false;
@@ -412,7 +419,7 @@ export class Brick {
     }
 
     static calcMostLeft(blocks) {
-        return parseInt(-Brick.calcBlockX(blocks));
+        return ~~-Brick.calcBlockX(blocks);
     }
 
     get mostRight() {
@@ -420,7 +427,7 @@ export class Brick {
     }
 
     static calcMostRight(width, blocks) {
-        return parseInt(width - Brick.calcWidth(blocks) - Brick.calcBlockX(blocks));
+        return ~~(width - Brick.calcWidth(blocks) - Brick.calcBlockX(blocks));
     }
 
     get innerWidth() {
@@ -563,17 +570,15 @@ export class Brick {
         );
     }
 
-    /**
-     *
-     * @param {any} blocks
-     * @param {any} addX
-     * @param {Number} height
-     * @param {Brick[]} bricks
-     * @param {*} px
-     * @param {*} py
-     * @param {*} pguid
-     */
-    static calcLowestPosition(blocks, addX = 0, height, bricks, px, py, pguid) {
+    static calcLowestPosition(
+        blocks: any,
+        addX: any = 0,
+        height: number,
+        bricks: Brick[],
+        px: any,
+        py: any,
+        pguid: any,
+    ) {
         const h = Brick.calcHeight(blocks);
         let additionalY = 0;
 
@@ -615,7 +620,7 @@ export class Brick {
     findMe() {
         for (const i in this.game.bricks) {
             if (this.game.bricks[i] == this) {
-                return i;
+                return parseInt(i);
             }
         }
         console.warn("findMe could not find brick in game");

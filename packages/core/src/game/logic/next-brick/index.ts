@@ -49,8 +49,9 @@ export class EasyNextBrick extends NextBrick {
     }
 
     getPossibleMovesForType(game, index) {
-        const setupChanges = {};
-        setupChanges.nextBrick = new StaticNextBrick(index);
+        const setupChanges = {
+            nextBrick: new StaticNextBrick(index),
+        };
         const clone = cloneGame(game, setupChanges);
         clone.addNewBrick();
         const moves = getPossibleMoves(clone);

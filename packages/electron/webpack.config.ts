@@ -1,7 +1,7 @@
-const webpack = require("webpack");
-const path = require("path");
+import { default as webpack, Configuration } from "webpack";
+import path from "path";
 
-function globals(mode, opts) {
+function globals(mode: string, opts: { browser?: boolean; node?: boolean }) {
     return {
         "global.development": mode === "development",
         "global.production": mode === "production",
@@ -11,10 +11,10 @@ function globals(mode, opts) {
     };
 }
 
-module.exports = function (env) {
+module.exports = function (env: { mode: any; watch: string }) {
     const mode = env.mode;
 
-    const commonConfig = {
+    const commonConfig: Partial<Configuration> = {
         mode: mode,
         watch: env.watch === "yes",
     };
@@ -56,12 +56,9 @@ module.exports = function (env) {
             path: path.resolve(__dirname, "dist"),
             filename: "tetris-electron.js",
         },
-        node: {
-            fs: "empty",
-        },
         resolve: {
             alias: {
-                "@tetris/core": path.resolve(__dirname, "../core"),
+                "@tetris/core": path.resolve(__dirname, "../core/src/index.ts"),
             },
         },
     });

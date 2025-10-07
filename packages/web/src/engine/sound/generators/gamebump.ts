@@ -1,12 +1,6 @@
 import { noteToFreq } from "./notes";
 
-/**
- *
- * @param {AudioContext} audioContext
- * @param {Number} freq
- * @param {Number} sampleDuration
- */
-export default function Sound(audioContext) {
+export default function Sound(audioContext: AudioContext) {
     const sampleDuration = 0.5;
     const sampleRate = audioContext.sampleRate;
     const sampleLength = sampleRate * sampleDuration;
@@ -19,12 +13,7 @@ export default function Sound(audioContext) {
     return buffer;
 }
 
-/**
- *
- * @param {Float32Array} data
- * @param {Number} sampleLength
- */
-export function note(data, startIndex, freq, sampleDuration, sampleRate) {
+export function note(data: Float32Array, startIndex, freq, sampleDuration, sampleRate) {
     const sampleLength = sampleRate * sampleDuration;
     for (let i = 0; i < sampleLength; i++) {
         // Math.random() is in [0; 1.0]

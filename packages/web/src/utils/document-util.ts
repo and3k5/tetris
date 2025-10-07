@@ -58,7 +58,7 @@ export default class DocumentUtil {
         return this._element;
     }
 
-    static stringToElement(str, parent) {
+    static stringToElement(str, parent?) {
         const container = document.createElement(parent || "div");
         container.innerHTML = str;
         const result = [];
@@ -122,6 +122,6 @@ class Reactor {
 
     observe() {
         if (this._interval !== -1) throw new Error("Is already observing");
-        this._interval = setInterval(this._tick, 100);
+        this._interval = window.setInterval(this._tick, 100);
     }
 }

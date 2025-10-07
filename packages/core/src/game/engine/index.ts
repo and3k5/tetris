@@ -1,8 +1,7 @@
+import { TetrisGame } from "../game";
+
 export class EngineBase {
-    /**
-     * @type {import("../game").TetrisGame}
-     */
-    private _game;
+    private _game: TetrisGame;
     constructor() {}
 
     initialize() {
@@ -25,9 +24,6 @@ export class EngineBase {
         this._game = game;
     }
 
-    /**
-     * @returns {import("../game").TetrisGame}
-     */
     get game() {
         return this._game;
     }
