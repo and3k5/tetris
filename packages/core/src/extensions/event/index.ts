@@ -1,12 +1,12 @@
 export class EventController {
-    #handlers = [];
-    #defaultThis = null;
+    private _handlers = [];
+    private _defaultThis = null;
     constructor(defaultThis) {
-        this.#defaultThis = defaultThis;
+        this._defaultThis = defaultThis;
     }
 
     on(name, handler) {
-        this.#handlers.push({
+        this._handlers.push({
             name,
             handler,
         });
@@ -14,9 +14,9 @@ export class EventController {
 
     trigger(name, _this, ...args) {
         if (_this === null) {
-            _this = this.#defaultThis;
+            _this = this._defaultThis;
         }
-        for (var event of this.#handlers) {
+        for (var event of this._handlers) {
             if (event.name === name) {
                 event.handler.apply(_this, args);
             }

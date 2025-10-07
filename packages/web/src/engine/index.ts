@@ -3,119 +3,127 @@ import DocumentUtil from "../utils/document-util";
 import { RadialGradient, LinearGradient } from "./style/gradient.js";
 import { drawGrid } from "./style/graphics-grid.js";
 import { brick, game, utils } from "@tetris/core";
-const { engine: { EngineBase } } = game;
-const { color: { Color } } = utils;
-const { gameController: { executeTick } } = game;
+const {
+    engine: { EngineBase },
+} = game;
+const {
+    color: { Color },
+} = utils;
+const {
+    gameController: { executeTick },
+} = game;
 const { Brick } = brick;
 
 export class WebGraphicEngine extends EngineBase {
-    #brickSize = 30;
+    private _brickSize = 30;
 
-    #gameCanvas;
-    #holdingCanvas;
-    #nextCanvas;
-    #gameCtx;
-    #holdingCtx;
-    #nextCtx;
-    #score;
+    private _gameCanvas;
+    private _holdingCanvas;
+    private _nextCanvas;
+    private _gameCtx;
+    private _holdingCtx;
+    private _nextCtx;
+    private _score;
 
-    #state = null;
+    private _state = null;
 
     get score() {
-        return this.#score;
+        return this._score;
     }
 
     get brickSize() {
-        return this.#brickSize;
+        return this._brickSize;
     }
 
     set brickSize(v) {
-        this.#brickSize = v;
+        this._brickSize = v;
     }
 
     get gameCanvas() {
-        return this.#gameCanvas;
+        return this._gameCanvas;
     }
 
     get gameCtx() {
-        return this.#gameCtx;
+        return this._gameCtx;
     }
 
     get holdingCanvas() {
-        return this.#holdingCanvas;
+        return this._holdingCanvas;
     }
 
     get nextCanvas() {
-        return this.#nextCanvas;
+        return this._nextCanvas;
     }
 
     constructor(options) {
         super();
 
-        var container =
-            new DocumentUtil(options.container)
-                .append(DocumentUtil.stringToElement(htmlLoad));
+        var container = new DocumentUtil(options.container).append(
+            DocumentUtil.stringToElement(htmlLoad),
+        );
 
-        this.#gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
-        this.#holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
-        this.#nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
-        this.#score = container.querySelector("[data-target=score]").el;
-        this.#gameCtx = this.#gameCanvas.getContext("2d");
-        this.#holdingCtx = this.#holdingCanvas.getContext("2d");
-        this.#nextCtx = this.#nextCanvas.getContext("2d");
+        this._gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
+        this._holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
+        this._nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
+        this._score = container.querySelector("[data-target=score]").el;
+        this._gameCtx = this._gameCanvas.getContext("2d");
+        this._holdingCtx = this._holdingCanvas.getContext("2d");
+        this._nextCtx = this._nextCanvas.getContext("2d");
     }
 
     initializeInput() {
         var game = this.game;
 
         this.gameCanvas.addEventListener("click", function () {
-            if (game.setup.clickTick === true)
-                executeTick(game);
+            if (game.setup.clickTick === true) executeTick(game);
         });
 
-        window.addEventListener("keydown", function (e) {
-            switch (e.keyCode) {
-                case 37:
-                    // left
-                    e.preventDefault();
-                    game.input.left();
-                    break;
-                case 38:
-                    // up
-                    e.preventDefault();
-                    game.input.rotate();
-                    break;
-                case 39:
-                    // right
-                    e.preventDefault();
-                    game.input.right();
-                    break;
-                case 40:
-                    // down
-                    e.preventDefault();
-                    game.input.down();
-                    break;
-                case 32:
-                    // space
-                    e.preventDefault();
-                    if (e.repeat !== true)
-                        game.input.smashDown();
-                    break;
-                case 27:
-                    // escape
-                    e.preventDefault();
-                    if (game.running) {
-                        // ingame
-                        game.runEvent("fx", null, "sound", "menuback");
-                    }
-                    break;
-                case 16:
-                    // shift
-                    e.preventDefault();
-                    game.input.hold();
-                    break;
-            }
-        }, false);
+        window.addEventListener(
+            "keydown",
+            function (e) {
+                switch (e.keyCode) {
+                    case 37:
+                        // left
+                        e.preventDefault();
+                        game.input.left();
+                        break;
+                    case 38:
+                        // up
+                        e.preventDefault();
+                        game.input.rotate();
+                        break;
+                    case 39:
+                        // right
+                        e.preventDefault();
+                        game.input.right();
+                        break;
+                    case 40:
+                        // down
+                        e.preventDefault();
+                        game.input.down();
+                        break;
+                    case 32:
+                        // space
+                        e.preventDefault();
+                        if (e.repeat !== true) game.input.smashDown();
+                        break;
+                    case 27:
+                        // escape
+                        e.preventDefault();
+                        if (game.running) {
+                            // ingame
+                            game.runEvent("fx", null, "sound", "menuback");
+                        }
+                        break;
+                    case 16:
+                        // shift
+                        e.preventDefault();
+                        game.input.hold();
+                        break;
+                }
+            },
+            false,
+        );
 
         var touchStart = null;
 
@@ -132,8 +140,7 @@ export class WebGraphicEngine extends EngineBase {
             var rad = Math.atan2(deltaY, deltaX);
             var deg = rad * (180 / Math.PI);
 
-            while (deg < 0)
-                deg += 360;
+            while (deg < 0) deg += 360;
 
             if (deg > 120 && deg < 220) {
                 game.input.left();
@@ -151,9 +158,9 @@ export class WebGraphicEngine extends EngineBase {
     }
 
     clearCanvases() {
-        this.clearCanvas(this.#gameCtx, this.canvasWidth, this.canvasHeight);
-        this.clearCanvas(this.#holdingCtx, this.brickSize * 4, this.brickSize * 4);
-        this.clearCanvas(this.#nextCtx, this.brickSize * 4, this.brickSize * 4);
+        this.clearCanvas(this._gameCtx, this.canvasWidth, this.canvasHeight);
+        this.clearCanvas(this._holdingCtx, this.brickSize * 4, this.brickSize * 4);
+        this.clearCanvas(this._nextCtx, this.brickSize * 4, this.brickSize * 4);
     }
 
     clear() {
@@ -162,24 +169,31 @@ export class WebGraphicEngine extends EngineBase {
 
     drawGrid() {
         const BRICKSIZESCALE = 1.5;
-        drawGrid(this.#gameCtx, this.game.gridColor, this.brickSize, this.brickSize, this.game.width, this.game.height);
+        drawGrid(
+            this._gameCtx,
+            this.game.gridColor,
+            this.brickSize,
+            this.brickSize,
+            this.game.width,
+            this.game.height,
+        );
         var smallBrickSize = this.brickSize / BRICKSIZESCALE;
-        drawGrid(this.#nextCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
-        drawGrid(this.#holdingCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
+        drawGrid(this._nextCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
+        drawGrid(this._holdingCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
     }
 
     clearState() {
-        if (this.#state == null) {
-            this.#state = {};
-            this.#state.bricks = {
+        if (this._state == null) {
+            this._state = {};
+            this._state.bricks = {
                 holding: [],
                 game: [],
                 next: [],
             };
         }
-        this.clearArray(this.#state.bricks.holding);
-        var removedGameItems = this.clearArray(this.#state.bricks.game);
-        this.clearArray(this.#state.bricks.next);
+        this.clearArray(this._state.bricks.holding);
+        var removedGameItems = this.clearArray(this._state.bricks.game);
+        this.clearArray(this._state.bricks.next);
         return removedGameItems;
     }
 
@@ -188,13 +202,13 @@ export class WebGraphicEngine extends EngineBase {
     }
 
     addToState({ brick, old, state, x, y, blocks, color, scale = 1 }) {
-        if (typeof (old) === "undefined") {
+        if (typeof old === "undefined") {
             old = state;
         }
 
-        var entry = brick != null ? old.filter(b => b.brick === brick)[0] : null;
+        var entry = brick != null ? old.filter((b) => b.brick === brick)[0] : null;
 
-        if (typeof (x) !== "number") {
+        if (typeof x !== "number") {
             if (brick instanceof Brick) {
                 x = brick.x;
             } else {
@@ -202,7 +216,7 @@ export class WebGraphicEngine extends EngineBase {
             }
         }
 
-        if (typeof (y) !== "number") {
+        if (typeof y !== "number") {
             if (brick instanceof Brick) {
                 y = brick.y;
             } else {
@@ -219,13 +233,12 @@ export class WebGraphicEngine extends EngineBase {
             entry.fromY = entry.currentY;
         }
 
-        if (state.indexOf(entry) === -1)
-            state.push(entry);
+        if (state.indexOf(entry) === -1) state.push(entry);
 
         entry.toX = x;
         entry.toY = y;
 
-        if (typeof (blocks) === "undefined") {
+        if (typeof blocks === "undefined") {
             if (brick instanceof Brick) {
                 blocks = brick.blocks;
             } else {
@@ -234,7 +247,7 @@ export class WebGraphicEngine extends EngineBase {
         }
         entry.blocks = blocks;
 
-        if (typeof (color) === "undefined") {
+        if (typeof color === "undefined") {
             if (brick instanceof Brick) {
                 color = brick.color;
             } else {
@@ -256,46 +269,49 @@ export class WebGraphicEngine extends EngineBase {
             if (this.game.ghostDrawing && bricks[i].moving) {
                 var ghostColor = new Color(255, 255, 255, 0.2);
                 const tmp_lowestPos = bricks[i].getLowestPosition();
-                //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, tmp_lowestPos, ghostColor)
+                //this.drawBrickForm(bricks[i].blocks, this._gameCtx, bricks[i].x, tmp_lowestPos, ghostColor)
                 this.addToState({
-                    state: this.#state.bricks.game,
+                    state: this._state.bricks.game,
                     blocks: bricks[i].blocks,
                     x: bricks[i].x,
                     y: tmp_lowestPos,
-                    color: ghostColor
+                    color: ghostColor,
                 });
             }
-            //this.drawBrickForm(bricks[i].blocks, this.#gameCtx, bricks[i].x, bricks[i].y, bricks[i].color);
-            this.addToState({ state: this.#state.bricks.game, old: removedGameEntries, brick: bricks[i] });
+            //this.drawBrickForm(bricks[i].blocks, this._gameCtx, bricks[i].x, bricks[i].y, bricks[i].color);
+            this.addToState({
+                state: this._state.bricks.game,
+                old: removedGameEntries,
+                brick: bricks[i],
+            });
         }
 
-
-        //this.drawBrickForm(this.game.brickforms[this.game.nextRandom], this.#nextCtx,2,2,this.game.colors[this.game.nextRandom],BRICKSIZESCALE);
+        //this.drawBrickForm(this.game.brickforms[this.game.nextRandom], this._nextCtx,2,2,this.game.colors[this.game.nextRandom],BRICKSIZESCALE);
         this.addToState({
-            state: this.#state.bricks.next,
+            state: this._state.bricks.next,
             blocks: this.game.brickforms[this.game.nextRandom],
             x: 2,
             y: 2,
             color: this.game.colors[this.game.nextRandom],
-            scale: BRICKSIZESCALE
+            scale: BRICKSIZESCALE,
         });
 
         if (this.game.holding != null) {
-            //this.drawBrickForm(this.game.holding.blocks, this.#holdingCtx, 2, 2, this.game.holding.color, BRICKSIZESCALE);
+            //this.drawBrickForm(this.game.holding.blocks, this._holdingCtx, 2, 2, this.game.holding.color, BRICKSIZESCALE);
             this.addToState({
-                state: this.#state.bricks.holding,
+                state: this._state.bricks.holding,
                 brick: this.game.holding,
                 x: 2,
                 y: 2,
-                scale: BRICKSIZESCALE
+                scale: BRICKSIZESCALE,
             });
         }
     }
 
     drawStates() {
-        this.drawState(this.#state.bricks.holding, this.#holdingCtx);
-        this.drawState(this.#state.bricks.game, this.#gameCtx);
-        this.drawState(this.#state.bricks.next, this.#nextCtx);
+        this.drawState(this._state.bricks.holding, this._holdingCtx);
+        this.drawState(this._state.bricks.game, this._gameCtx);
+        this.drawState(this._state.bricks.next, this._nextCtx);
     }
 
     mix(min, max, percent) {
@@ -306,14 +322,16 @@ export class WebGraphicEngine extends EngineBase {
         if (
             // disable
             false &&
-            typeof (entry.fromX) === "number" && typeof (entry.fromY) === "number" &&
-            typeof (entry.toX) === "number" && typeof (entry.toY) === "number" &&
-            typeof (entry.fromStamp) === "number"
+            typeof entry.fromX === "number" &&
+            typeof entry.fromY === "number" &&
+            typeof entry.toX === "number" &&
+            typeof entry.toY === "number" &&
+            typeof entry.fromStamp === "number"
         ) {
             var stamp = new Date().getTime() - entry.fromStamp;
-            var percX = (stamp / 100);
+            var percX = stamp / 100;
             if (percX > 1) percX = 1;
-            var percY = (stamp / 1000);
+            var percY = stamp / 1000;
             if (percY > 1) percY = 1;
             entry.currentX = this.mix(entry.fromX, entry.toX, percX);
             entry.currentY = this.mix(entry.fromY, entry.toY, percY);
@@ -326,17 +344,22 @@ export class WebGraphicEngine extends EngineBase {
     drawState(entries, ctx) {
         for (var entry of entries) {
             this.updateBrickState(entry);
-            this.drawBrickForm(entry.blocks, ctx, entry.currentX, entry.currentY, entry.color, entry.scale);
+            this.drawBrickForm(
+                entry.blocks,
+                ctx,
+                entry.currentX,
+                entry.currentY,
+                entry.color,
+                entry.scale,
+            );
         }
     }
-
-
 
     drawBrickForm(brickForm, ctx, x, y, color, scale = 1) {
         for (var i1 in brickForm) {
             for (var i2 in brickForm[i1]) {
                 if (brickForm[i1][i2] == 1) {
-                    this.drawSquare(ctx, (x) + (parseInt(i2)), (y) + (parseInt(i1)), color, scale);
+                    this.drawSquare(ctx, x + parseInt(i2), y + parseInt(i1), color, scale);
                 }
             }
         }
@@ -345,36 +368,36 @@ export class WebGraphicEngine extends EngineBase {
     drawSquare(ctx, bx, by, color, scale = 1) {
         var brickSize = this.brickSize / scale;
 
-        var x = (bx * brickSize);
-        var y = (by * brickSize);
+        var x = bx * brickSize;
+        var y = by * brickSize;
         var w = brickSize;
         var h = brickSize;
 
-        var fstyle = new RadialGradient(ctx, x + (w / 2), y + (h / 2), 0, x + (w / 2), y + (h / 2), 40);
+        var fstyle = new RadialGradient(ctx, x + w / 2, y + h / 2, 0, x + w / 2, y + h / 2, 40);
         fstyle.addColor(0, color);
         fstyle.addColor(1, color.alphaScale(0.5));
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
 
-        fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
+        fstyle = new LinearGradient(ctx, x + w / 2, y, x + w / 2, y + h);
         fstyle.addColor(0.2, color.alpha(0.5));
         fstyle.addColor(0, Color.Black().alpha(0.9));
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
 
-        fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
+        fstyle = new LinearGradient(ctx, x, y + h / 2, x + w, y + h / 2);
         fstyle.addColor(0.3, color.scale(0.7).alpha(0));
         fstyle.addColor(0, Color.Black().alpha(0.4));
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
 
-        fstyle = new LinearGradient(ctx, x + (w / 2), y, x + (w / 2), y + h);
+        fstyle = new LinearGradient(ctx, x + w / 2, y, x + w / 2, y + h);
         fstyle.addColor(0.8, color.scale(0.1).alpha(0));
         fstyle.addColor(1, Color.Black());
         ctx.fillStyle = fstyle.compile();
         ctx.fillRect(x, y, w, h);
 
-        fstyle = new LinearGradient(ctx, x, y + (h / 2), x + w, y + (h / 2));
+        fstyle = new LinearGradient(ctx, x, y + h / 2, x + w, y + h / 2);
         fstyle.addColor(0.8, color.scale(0.2).alpha(0));
         fstyle.addColor(1, Color.Black());
         ctx.fillStyle = fstyle.compile();
@@ -430,8 +453,6 @@ export class BurningGraphicEngine extends WebGraphicEngine {
     drawSquare(ctx, x, y, w, h, color) {
         var image = ctx.createImageData(w, h);
 
-
-
         for (var _x = 0; _x < w; _x++) {
             for (var _y = 0; _y < w; _y++) {
                 var pos = (_x + ~~(_y * w)) * 4;
@@ -442,15 +463,12 @@ export class BurningGraphicEngine extends WebGraphicEngine {
                     window.loq = true;
                 }
 
-
                 image.data[pos + 0] = col[0] * 255;
                 image.data[pos + 1] = col[1] * 255;
                 image.data[pos + 2] = col[2] * 255;
                 image.data[pos + 3] = 255;
             }
         }
-
-
 
         ctx.putImageData(image, x, y);
     }

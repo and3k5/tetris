@@ -1,12 +1,8 @@
 import { getPossibleMoves, cloneGame } from "../simulation";
 import { sortMovements } from "../simulation/simulate-rating";
 
-
 export class NextBrick {
-    
-    constructor() {
-
-    }
+    constructor() {}
 
     nextBrick(game) {
         var previousRandom = game.nextRandom;
@@ -20,31 +16,29 @@ export class NextBrick {
 }
 
 export class StaticNextBrick extends NextBrick {
-    #v;
+    private _v;
     constructor(v) {
         super();
-        this.#v = v;
+        this._v = v;
     }
 
     nextBrick() {
-        return this.#v;
+        return this._v;
     }
 }
 
 export class EasyNextBrick extends NextBrick {
-    #fallback;
+    private _fallback;
     constructor(fallback = null) {
         super();
-        this.#fallback = fallback || new NextBrick();
+        this._fallback = fallback || new NextBrick();
     }
 
     nextBrick(game) {
-
         var latestBrick = game.bricks.concat().sort((a, b) => b.id - a.id)[0];
         var movements = [];
         for (var i = 0; i < game.brickforms.length; i++) {
-            if (latestBrick != null && i == latestBrick.index)
-                continue;
+            if (latestBrick != null && i == latestBrick.index) continue;
             var move = this.getPossibleMovesForType(game, i)[0];
             movements.push({ i, move });
         }

@@ -1,36 +1,33 @@
 export class BrickFormBase {
-    constructor() {
-
-    }
+    constructor() {}
 
     getBrickForm() {
-        throw new Error("missing implementation")
+        throw new Error("missing implementation");
     }
 }
 
 export class SimpleBrickForm extends BrickFormBase {
-    #form;
+    private _form;
     constructor(form) {
         super();
-        this.#form = form;
+        this._form = form;
     }
     getBrickForm() {
-        return JSON.parse(JSON.stringify(this.#form));
+        return JSON.parse(JSON.stringify(this._form));
     }
 }
 
 export class BinaryBrickForm extends BrickFormBase {
-    #value;
-    #size;
+    private _value;
+    private _size;
     constructor(value, size) {
-        if (!(size > 0))
-            throw new Error("Size must be more than 0");
+        if (!(size > 0)) throw new Error("Size must be more than 0");
         super();
-        this.#value = value;
-        this.#size = size;
+        this._value = value;
+        this._size = size;
     }
     getBrickForm() {
-        var size = this.#size;
+        var size = this._size;
         var mask = 0;
         for (let i = 0; i < size; i++) {
             mask = mask << 1;
@@ -39,7 +36,7 @@ export class BinaryBrickForm extends BrickFormBase {
 
         var form = [[]];
 
-        var temp = this.#value;
+        var temp = this._value;
 
         for (let i = 0; i < size * size; i++) {
             var block = 0;

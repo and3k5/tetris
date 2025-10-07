@@ -2,44 +2,38 @@ export class InputController {
     /**
      * @type {import("../game").TetrisGame}
      */
-    #game;
+    private _game;
     constructor(game) {
-        this.#game = game;
+        this._game = game;
     }
 
     smashDown() {
-        if (this.#game.running !== true)
-            return;
-        this.#game.getMovingBrick().smashdown(true);
+        if (this._game.running !== true) return;
+        this._game.getMovingBrick().smashdown(true);
     }
 
     left() {
-        if (this.#game.running !== true)
-            return;
-        this.#game.getMovingBrick().moveleft();
+        if (this._game.running !== true) return;
+        this._game.getMovingBrick().moveleft();
     }
 
     rotate() {
-        if (this.#game.running !== true)
-            return;
-        this.#game.getMovingBrick().rotate();
+        if (this._game.running !== true) return;
+        this._game.getMovingBrick().rotate();
     }
 
     right() {
-        if (this.#game.running !== true)
-            return;
-        this.#game.getMovingBrick().moveright();
+        if (this._game.running !== true) return;
+        this._game.getMovingBrick().moveright();
     }
 
     down() {
-        if (this.#game.running !== true)
-            return;
-        this.#game.getMovingBrick().movedown();
+        if (this._game.running !== true) return;
+        this._game.getMovingBrick().movedown();
     }
 
     hold() {
-        if (this.#game.running !== true)
-            return;
-        this.#game.holdingShift();
+        if (this._game.running !== true) return;
+        this._game.holdingShift();
     }
 }

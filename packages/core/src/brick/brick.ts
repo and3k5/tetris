@@ -3,73 +3,70 @@ import { createRotatedBlocks, rotateLeft, rotateRight, rotateTwice } from "./blo
 const { createUniqueGuid } = guid;
 
 export class Brick {
-    #x = undefined;
-    #y = undefined;
-    #rotation = 0;
-    #index = undefined;
-    #guid;
+    private _x = undefined;
+    private _y = undefined;
+    private _rotation = 0;
+    private _index = undefined;
+    private _guid;
     constructor(options) {
-        const o = options || { 'ingame': false, 'game': null };
-        if (typeof (o.guid) === "string")
-            this.#guid = o.guid;
-        else
-            this.#guid = createUniqueGuid();
+        const o = options || { ingame: false, game: null };
+        if (typeof o.guid === "string") this._guid = o.guid;
+        else this._guid = createUniqueGuid();
 
         this.game = o.game;
         this.ingame = o.ingame;
 
         if (o.brickform != null) {
-            if (this.game != null)
-                this.color = this.game.getColors()[0].copy();
+            if (this.game != null) this.color = this.game.getColors()[0].copy();
             this.blocks = o.brickform.concat();
         }
 
-        if (typeof (o.x) === "number" && typeof (o.y) === "number") {
+        if (typeof o.x === "number" && typeof o.y === "number") {
             this.x = o.x;
             this.y = o.y;
         }
     }
 
     get guid() {
-        return this.#guid;
+        return this._guid;
     }
 
     get index() {
-        return this.#index;
+        return this._index;
     }
 
     set index(v) {
-        this.#index = v;
+        this._index = v;
     }
 
     clone() {
-        var brick = new Brick({ guid: this.#guid });
+        var brick = new Brick({ guid: this._guid });
 
-        brick.#x = this.#x;
-        brick.#y = this.#y;
+        brick._x = this._x;
+        brick._y = this._y;
         brick.moving = this.moving;
         brick.blocks = this.blocks.concat();
         brick.color = this.color.copy();
-        brick.#rotation = this.#rotation;
+        brick._rotation = this._rotation;
         brick.index = this.index;
         return brick;
     }
 
     get x() {
-        return this.#x;
+        return this._x;
     }
 
     set x(v) {
-        this.#x = v;
+        this._x = v;
         this.requestUpdate();
     }
 
     get y() {
-        return this.#y;
+        return this._y;
     }
 
     set y(v) {
-        this.#y = v;
+        this._y = v;
         this.requestUpdate();
     }
 
@@ -82,19 +79,18 @@ export class Brick {
     }
 
     requestUpdate() {
-        if (this.ingame && (this.game != null)) {
+        if (this.ingame && this.game != null) {
             this.game.PENDINGUPDATE = true;
         }
     }
 
     resetPosition() {
-        this.x = Math.round(((this.game.width) / 2) - (this.blocks[0].length / 2));
-        this.y = Math.round(0 - (this.blocks.length));
+        this.x = Math.round(this.game.width / 2 - this.blocks[0].length / 2);
+        this.y = Math.round(0 - this.blocks.length);
     }
 
     getAbsoluteBlocks(blocks = null, x = 0, y = 0) {
-        if (blocks == null)
-            blocks = this.blocks;
+        if (blocks == null) blocks = this.blocks;
         return Brick.calcAbsoluteBlocks(blocks, this.x, this.y, x, y);
     }
 
@@ -121,9 +117,9 @@ export class Brick {
             for (const i1 in brcks[i].blocks) {
                 for (const i2 in brcks[i].blocks[i1]) {
                     if (brcks[i].blocks[i1][i2] == 1) {
-                        const cond1 = (x == brcks[i].x + parseInt(i2));
-                        const cond2 = (y == brcks[i].y + parseInt(i1));
-                        const cond3 = (this != brcks[i]);
+                        const cond1 = x == brcks[i].x + parseInt(i2);
+                        const cond2 = y == brcks[i].y + parseInt(i1);
+                        const cond3 = this != brcks[i];
                         if (cond1 && cond2 && cond3) {
                             return false;
                         }
@@ -143,7 +139,7 @@ export class Brick {
         for (const i1 in blocks) {
             for (const i2 in blocks[i1]) {
                 if (blocks[i1][i2] == 1) {
-                    height = Math.max(height, (parseInt(i1) + 1));
+                    height = Math.max(height, parseInt(i1) + 1);
                 }
             }
         }
@@ -158,17 +154,17 @@ export class Brick {
         let high = 0;
 
         let // 1E309 = infinity
-            low = (1E309);
+            low = 1e309;
 
         for (const i1 in blocks) {
             for (const i2 in blocks[i1]) {
                 if (blocks[i1][i2] == 1) {
-                    high = Math.max(high, (parseInt(i2) + 2));
-                    low = Math.min(low, (parseInt(i2) + 2));
+                    high = Math.max(high, parseInt(i2) + 2);
+                    low = Math.min(low, parseInt(i2) + 2);
                 }
             }
         }
-        return (high - low) + 1;
+        return high - low + 1;
     }
 
     getBlockY() {
@@ -186,7 +182,6 @@ export class Brick {
                 return rtn;
             }
         }
-
     }
 
     getBlockX() {
@@ -212,7 +207,17 @@ export class Brick {
     }
 
     rotate_okay(brick, bl, Throw = false) {
-        return Brick.calcValidPosition(0, 0, Throw, brick.x, brick.y, bl, this.game.bricks, this.game, this.guid);
+        return Brick.calcValidPosition(
+            0,
+            0,
+            Throw,
+            brick.x,
+            brick.y,
+            bl,
+            this.game.bricks,
+            this.game,
+            this.guid,
+        );
     }
 
     createRotatedRightBlocks() {
@@ -261,7 +266,9 @@ export class Brick {
                 var blockX = Brick.calcBlockX(blocks2);
                 var width = Brick.calcWidth(blocks2);
 
-                if (!Brick.calcValidPosition_xOutRight(0, false, this.x, blockX, width, this.game)) {
+                if (
+                    !Brick.calcValidPosition_xOutRight(0, false, this.x, blockX, width, this.game)
+                ) {
                     this.x--;
                     if (this.rotate_okay(this, blocks2)) {
                         // yeah
@@ -285,42 +292,48 @@ export class Brick {
             }
 
             this.blocks = blocks2;
-            this.#rotation = (this.#rotation + 1) % 4;
+            this._rotation = (this._rotation + 1) % 4;
         }
-
-
     }
 
     get rotation() {
-        return this.#rotation;
+        return this._rotation;
     }
 
     set rotation(v) {
-        for (var i = this.#rotation; i <= v; i++)
-            this.rotate();
-        this.#rotation = v;
+        for (var i = this._rotation; i <= v; i++) this.rotate();
+        this._rotation = v;
     }
 
     posInfo() {
         return [
             ["x", this.x],
             ["y", this.y],
-            ["rotation", this.#rotation],
-        ].map(x => x.join(":")).join(",");
+            ["rotation", this._rotation],
+        ]
+            .map((x) => x.join(":"))
+            .join(",");
     }
 
     validatePosition(x = 0, y = 0, Throw = false, px = undefined, py = undefined) {
-        if (typeof (px) !== "number")
-            px = this.x;
-        if (typeof (py) !== "number")
-            py = this.y;
-        return Brick.calcValidPosition(x, y, Throw, px, py, this.blocks, this.game.bricks, this.game, this.guid);
+        if (typeof px !== "number") px = this.x;
+        if (typeof py !== "number") py = this.y;
+        return Brick.calcValidPosition(
+            x,
+            y,
+            Throw,
+            px,
+            py,
+            this.blocks,
+            this.game.bricks,
+            this.game,
+            this.guid,
+        );
     }
 
     static calcValidPosition_xOutRight(x = 0, Throw, px, blockX, width, game) {
-        if (((px + width + blockX + x) > (game.width))) {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds");
+        if (px + width + blockX + x > game.width) {
+            if (Throw === true) throw new Error("The brick would be out of bounds");
             return false;
         }
 
@@ -328,9 +341,8 @@ export class Brick {
     }
 
     static calcValidPosition_xOutLeft(x = 0, Throw, px, blockX) {
-        if (((px + blockX + x) < 0)) {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds");
+        if (px + blockX + x < 0) {
+            if (Throw === true) throw new Error("The brick would be out of bounds");
             return false;
         }
 
@@ -339,22 +351,18 @@ export class Brick {
 
     static calcValidPosition(x = 0, y = 0, Throw, px, py, blocks, bricks, game, pguid) {
         var blockX = Brick.calcBlockX(blocks);
-        if (!Brick.calcValidPosition_xOutLeft(x, Throw, px, blockX, game))
-            return false;
+        if (!Brick.calcValidPosition_xOutLeft(x, Throw, px, blockX, game)) return false;
 
         var width = Brick.calcWidth(blocks);
-        if (!Brick.calcValidPosition_xOutRight(x, Throw, px, blockX, width, game))
-            return false;
+        if (!Brick.calcValidPosition_xOutRight(x, Throw, px, blockX, width, game)) return false;
 
-        if ((py + Brick.calcHeight(blocks) + y) > game.height) {
-            if (Throw === true)
-                throw new Error("The brick would be out of bounds");
+        if (py + Brick.calcHeight(blocks) + y > game.height) {
+            if (Throw === true) throw new Error("The brick would be out of bounds");
             return false;
         }
 
         if (Brick.calcWillCollide(x, y, bricks, blocks, px, py, pguid)) {
-            if (Throw === true)
-                throw new Error("The brick would collide with another brick");
+            if (Throw === true) throw new Error("The brick would collide with another brick");
             return false;
         }
 
@@ -363,13 +371,11 @@ export class Brick {
 
     canMoveLeft(Throw = false) {
         if (this.game.running != true) {
-            if (Throw === true)
-                throw new Error("The game is not running");
+            if (Throw === true) throw new Error("The game is not running");
             return false;
         }
         if (this.moving != true) {
-            if (Throw === true)
-                throw new Error("The brick is not flagged as moving");
+            if (Throw === true) throw new Error("The brick is not flagged as moving");
             return false;
         }
 
@@ -378,19 +384,16 @@ export class Brick {
 
     moveleft(Throw = false) {
         if (this.game.running) {
-            if (this.ingame === true)
-                this.game.runEvent("fx", null, "sound", "gamemove");
+            if (this.ingame === true) this.game.runEvent("fx", null, "sound", "gamemove");
             if (this.canMoveLeft(Throw)) {
                 this.x--;
                 return true;
             } else {
-                if (Throw === true)
-                    throw new Error("Unknown reason");
+                if (Throw === true) throw new Error("Unknown reason");
                 return false;
             }
         } else {
-            if (Throw === true)
-                throw new Error("The game is not running");
+            if (Throw === true) throw new Error("The game is not running");
         }
         console.debug("did not move right: out of conditions");
         return false;
@@ -425,10 +428,8 @@ export class Brick {
     }
 
     willCollide(x, y, bricks = null, blocks = null) {
-        if (blocks == null)
-            blocks = this.blocks;
-        if (bricks == null)
-            bricks = this.game.bricks;
+        if (blocks == null) blocks = this.blocks;
+        if (bricks == null) bricks = this.game.bricks;
         return Brick.calcWillCollide(x, y, bricks, blocks, this.x, this.y, this.guid);
     }
 
@@ -436,8 +437,7 @@ export class Brick {
         var thisBlocks = Brick.calcAbsoluteBlocks(blocks, px, py, x, y);
 
         for (var brick of bricks) {
-            if (brick.guid === pguid)
-                continue;
+            if (brick.guid === pguid) continue;
 
             var opponentBlocks = brick.getAbsoluteBlocks();
 
@@ -453,13 +453,11 @@ export class Brick {
 
     canMoveRight(Throw = false) {
         if (this.game.running != true) {
-            if (Throw === true)
-                throw new Error("The game is not running");
+            if (Throw === true) throw new Error("The game is not running");
             return false;
         }
         if (this.moving != true) {
-            if (Throw === true)
-                throw new Error("The brick is not flagged as moving");
+            if (Throw === true) throw new Error("The brick is not flagged as moving");
             return false;
         }
 
@@ -468,19 +466,16 @@ export class Brick {
 
     moveright(Throw = false) {
         if (this.game.running) {
-            if (this.ingame === true)
-                this.game.runEvent("fx", null, "sound", "gamemove");
+            if (this.ingame === true) this.game.runEvent("fx", null, "sound", "gamemove");
             if (this.canMoveRight(Throw)) {
                 this.x++;
                 return true;
             } else {
-                if (Throw === true)
-                    throw new Error("Unknown reason");
+                if (Throw === true) throw new Error("Unknown reason");
                 return false;
             }
         } else {
-            if (Throw === true)
-                throw new Error("The game is not running");
+            if (Throw === true) throw new Error("The game is not running");
         }
         console.debug("did not move right: out of conditions");
         return false;
@@ -488,8 +483,7 @@ export class Brick {
 
     canSmashDown(Throw = false) {
         if (this.game.running != true) {
-            if (Throw === true)
-                throw new Error("The game is not running");
+            if (Throw === true) throw new Error("The game is not running");
             return false;
         }
         return true;
@@ -497,38 +491,33 @@ export class Brick {
 
     smashdown(Throw = false) {
         if (this.canSmashDown(Throw)) {
-            if (this.ingame === true)
-                this.game.runEvent("fx", null, "sound", "gamebump");
+            if (this.ingame === true) this.game.runEvent("fx", null, "sound", "gamebump");
             this.moving = false;
             this.y = this.getLowestPosition();
             this.requestUpdate();
-            if ((this.y + this.getBlockY()) >= 0) {
+            if (this.y + this.getBlockY() >= 0) {
                 const sliced = this.slice_up();
                 this.game.bricks.splice(this.findMe(), 1);
                 for (const i in sliced) {
-                    this.game.bricks.push(sliced[i])
+                    this.game.bricks.push(sliced[i]);
                 }
                 this.game.checkLines();
                 this.game.addNewBrick();
                 this.game.HOLDINGCOUNT = 0;
             } else {
                 this.game.loseView();
-                if (this.ingame === true)
-                    this.game.runEvent("fx", null, "sound", "gamelose");
+                if (this.ingame === true) this.game.runEvent("fx", null, "sound", "gamelose");
             }
-
         }
     }
 
     canMoveDown(Throw = false) {
         if (this.game.running != true) {
-            if (Throw === true)
-                throw new Error("The game is not running");
+            if (Throw === true) throw new Error("The game is not running");
             return false;
         }
         if (this.moving != true) {
-            if (Throw === true)
-                throw new Error("The brick is not flagged as moving");
+            if (Throw === true) throw new Error("The brick is not flagged as moving");
             return false;
         }
 
@@ -542,9 +531,8 @@ export class Brick {
                     this.y++;
                 } else {
                     this.moving = false;
-                    if (this.ingame === true)
-                        this.game.runEvent("fx", null, "sound", "gamebump");
-                    if ((this.y + this.getBlockY()) >= 0) {
+                    if (this.ingame === true) this.game.runEvent("fx", null, "sound", "gamebump");
+                    if (this.y + this.getBlockY() >= 0) {
                         const sliced = this.slice_up();
                         this.game.bricks.splice(this.findMe(), 1);
                         for (var i in sliced) {
@@ -564,33 +552,39 @@ export class Brick {
     }
 
     getLowestPosition(addX = 0) {
-        return Brick.calcLowestPosition(this.blocks, addX, this.game.height, this.game.bricks, this.x, this.y, this.guid);
+        return Brick.calcLowestPosition(
+            this.blocks,
+            addX,
+            this.game.height,
+            this.game.bricks,
+            this.x,
+            this.y,
+            this.guid,
+        );
     }
 
     /**
-     * 
-     * @param {any} blocks 
-     * @param {any} addX 
+     *
+     * @param {any} blocks
+     * @param {any} addX
      * @param {Number} height
      * @param {Brick[]} bricks
-     * @param {*} px 
-     * @param {*} py 
-     * @param {*} pguid 
+     * @param {*} px
+     * @param {*} py
+     * @param {*} pguid
      */
     static calcLowestPosition(blocks, addX = 0, height, bricks, px, py, pguid) {
         const h = Brick.calcHeight(blocks);
         let additionalY = 0;
         // eslint-disable-next-line no-constant-condition
         while (true) {
-            if ((py + additionalY + h) > height)
-                break;
+            if (py + additionalY + h > height) break;
 
-            if (Brick.calcWillCollide(addX, additionalY, bricks, blocks, px, py, pguid))
-                break;
+            if (Brick.calcWillCollide(addX, additionalY, bricks, blocks, px, py, pguid)) break;
 
             additionalY++;
         }
-        return (py + additionalY) - 1;
+        return py + additionalY - 1;
     }
 
     slice_up() {
@@ -599,17 +593,19 @@ export class Brick {
         for (var i1 in this.blocks) {
             for (var i2 in this.blocks[i1]) {
                 if (this.blocks[i1][i2] == 1) {
-                    rtn.push(((x, y, origin) => {
-                        const tmp = new Brick();
-                        tmp.moving = false;
-                        tmp.blocks = [[1]];
-                        tmp.color = this_color;
-                        tmp.x = x;
-                        tmp.y = y;
-                        tmp.id = origin.id;
-                        tmp.index = origin.index;
-                        return tmp;
-                    })(parseInt(i2) + this.x, parseInt(i1) + this.y, this));
+                    rtn.push(
+                        ((x, y, origin) => {
+                            const tmp = new Brick();
+                            tmp.moving = false;
+                            tmp.blocks = [[1]];
+                            tmp.color = this_color;
+                            tmp.x = x;
+                            tmp.y = y;
+                            tmp.id = origin.id;
+                            tmp.index = origin.index;
+                            return tmp;
+                        })(parseInt(i2) + this.x, parseInt(i1) + this.y, this),
+                    );
                 }
             }
         }
@@ -627,12 +623,12 @@ export class Brick {
     }
 }
 
-Brick.emulate = vblocks => {
+Brick.emulate = (vblocks) => {
     const tmp = new Brick({
         ingame: false,
-        game: null
+        game: null,
     });
     tmp.moving = false;
     tmp.blocks = vblocks;
     return tmp;
-}
+};

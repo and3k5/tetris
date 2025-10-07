@@ -2,21 +2,32 @@ import DocumentUtil from "../../utils/document-util";
 
 var cache = [];
 class CacheKey {
-    #color;
-    #width;
-    #height;
-    #countX;
-    #countY;
+    private _color;
+    private _width;
+    private _height;
+    private _countX;
+    private _countY;
     constructor(color, gridWidth, gridHeight, countX, countY) {
-        this.#color = color;
-        this.#width = gridWidth;
-        this.#height = gridHeight;
-        this.#countX = countX;
-        this.#countY = countY;
+        this._color = color;
+        this._width = gridWidth;
+        this._height = gridHeight;
+        this._countX = countX;
+        this._countY = countY;
     }
 
     get key() {
-        return "C:" + this.#color.toRGBAString() + "W:" + this.#width + "H:" + this.#height + "X:" + this.#countX + "Y:" + this.#countY;
+        return (
+            "C:" +
+            this._color.toRGBAString() +
+            "W:" +
+            this._width +
+            "H:" +
+            this._height +
+            "X:" +
+            this._countX +
+            "Y:" +
+            this._countY
+        );
     }
 
     matches(b) {
@@ -26,9 +37,8 @@ class CacheKey {
 
 export function getGrid(color, gridWidth, gridHeight, countX, countY) {
     var key = new CacheKey(color, gridWidth, gridHeight, countX, countY);
-    var match = cache.filter(c => key.matches(c.key));
-    if (match.length > 0)
-        return match[0].data;
+    var match = cache.filter((c) => key.matches(c.key));
+    if (match.length > 0) return match[0].data;
     var newObj = { key };
     newObj.data = createGrid(color, gridWidth, gridHeight, countX, countY);
     cache.push(newObj);

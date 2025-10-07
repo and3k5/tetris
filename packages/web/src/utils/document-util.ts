@@ -1,14 +1,14 @@
 export default class DocumentUtil {
-    #element;
-    #reacts = [];
+    private _element;
+    private _reacts = [];
     constructor(element) {
-        this.#element = this.parse(element);
+        this._element = this.parse(element);
     }
 
     parse(element) {
         if (element instanceof DocumentUtil) {
-            return this.parse(element.#element);
-        } else if (typeof (element) === "string") {
+            return this.parse(element._element);
+        } else if (typeof element === "string") {
             element = element.trim();
             if (element.indexOf("<") !== -1) {
                 return DocumentUtil.stringToElement(element);
@@ -21,45 +21,41 @@ export default class DocumentUtil {
     }
 
     querySelector(query) {
-        return new DocumentUtil(this.#element.querySelector(query));
+        return new DocumentUtil(this._element.querySelector(query));
     }
 
     attr(name, value) {
-        if (arguments.length == 1)
-            return this.#element.getAttribute(name);
-        else
-            this.#element.setAttribute(name, value);
+        if (arguments.length == 1) return this._element.getAttribute(name);
+        else this._element.setAttribute(name, value);
         return this;
     }
 
     append(element) {
         if (Array.isArray(element)) {
-            for (var item of element)
-                this.append(item);
-        } else
-        if (element instanceof DocumentUtil) {
-            this.#element.appendChild(element.#element);
+            for (var item of element) this.append(item);
+        } else if (element instanceof DocumentUtil) {
+            this._element.appendChild(element._element);
         } else {
-            this.#element.appendChild(this.parse(element));
+            this._element.appendChild(this.parse(element));
         }
         return this;
     }
 
     toString() {
-        return this.#element.outerHTML;
+        return this._element.outerHTML;
     }
 
     text(txt) {
         if (arguments.length === 0) {
-            return this.#element.textContent;
+            return this._element.textContent;
         } else {
-            this.#element.textContent = txt;
+            this._element.textContent = txt;
         }
         return this;
     }
 
     get el() {
-        return this.#element;
+        return this._element;
     }
 
     static stringToElement(str, parent) {
@@ -72,49 +68,47 @@ export default class DocumentUtil {
         return result.length === 1 ? result[0] : result;
     }
 
-    react(getter,observe = true) {
+    react(getter, observe = true) {
         var reactor = new Reactor(getter);
-        this.#reacts.push(reactor);
-        if (observe === true)
-            reactor.observe();
+        this._reacts.push(reactor);
+        if (observe === true) reactor.observe();
         return reactor;
     }
 }
 
 class Reactor {
-    #getter;
-    #interval = -1;
-    #tick;
-    #lastValue;
-    #handlers = [];
+    private _getter;
+    private _interval = -1;
+    private _tick;
+    private _lastValue;
+    private _handlers = [];
     constructor(getter) {
-        this.#getter = getter;
+        this._getter = getter;
 
-        this.#tick = (function () {
+        this._tick = function () {
             var currentValue = this.getCurrentValue();
             var lastValue = this.lastValue;
             if (currentValue !== lastValue) {
                 this.lastValue = currentValue;
                 this.emit();
             }
-        }).bind(this);
+        }.bind(this);
     }
 
     get lastValue() {
-        return this.#lastValue;
+        return this._lastValue;
     }
 
     set lastValue(v) {
-        this.#lastValue = v;
+        this._lastValue = v;
     }
 
     emit() {
-        for (var handler of this.#handlers)
-            this.invoke(handler);
+        for (var handler of this._handlers) this.invoke(handler);
     }
 
     addHandler(callback) {
-        this.#handlers.push(callback);
+        this._handlers.push(callback);
         return this;
     }
 
@@ -123,12 +117,11 @@ class Reactor {
     }
 
     getCurrentValue() {
-        return this.#getter();
+        return this._getter();
     }
 
     observe() {
-        if (this.#interval !== -1)
-            throw new Error("Is already observing");
-        this.#interval = setInterval(this.#tick,100);
+        if (this._interval !== -1) throw new Error("Is already observing");
+        this._interval = setInterval(this._tick, 100);
     }
 }

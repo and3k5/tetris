@@ -14,125 +14,131 @@ const { NextBrick } = nextBrick;
 
 export class TetrisGame {
     // [number] Bricks x count
-    #width;
+    private _width;
 
     // [number] Bricks y count
-    #height;
+    private _height;
 
     // [bool] ghost option
-    #SETTING_GHOST = true;
+    private _SETTING_GHOST = true;
 
     // [Brick] current holding brick
-    #HOLDING = null;
+    private _HOLDING = null;
 
     // [Bool] Update to graphic
-    #PENDINGUPDATE = false;
+    private _PENDINGUPDATE = false;
 
     // count of holding
-    #HOLDINGCOUNT = 0;
+    private _HOLDINGCOUNT = 0;
 
     // next random brick pos
-    #nextRandom;
+    private _nextRandom;
 
-    #currentSequence = -1;
+    private _currentSequence = -1;
 
     // different type of bricks in game
-    #brickforms;
+    private _brickforms;
 
     // bricks in game
-    #bricks = [];
+    private _bricks = [];
 
     // game setup
-    #setup;
+    private _setup;
 
     // grid color
-    #gridColor;
+    private _gridColor;
 
     // events
-    #eventController = new EventController(this);
+    private _eventController = new EventController(this);
 
-    #addons = new AddonContainer();
+    private _addons = new AddonContainer();
 
-    #simulator = null;
+    private _simulator = null;
 
-    #RUNNING = true;
+    private _RUNNING = true;
 
-    #socket = null;
+    private _socket = null;
 
-    #gameGuid;
+    private _gameGuid;
 
-    #logEntries = [];
+    private _logEntries = [];
 
-    #graphicEngine;
+    private _graphicEngine;
 
-    #nextRandomGenerator;
+    private _nextRandomGenerator;
 
-    #score = 0;
+    private _score = 0;
 
     get gridColor() {
-        return this.#gridColor;
+        return this._gridColor;
     }
 
     registerAddon(object, callback, initType) {
-        this.#addons.add(object, (obj) => callback(obj, this), initType);
+        this._addons.add(object, (obj) => callback(obj, this), initType);
     }
 
     get simulator() {
-        return this.#simulator;
+        return this._simulator;
     }
 
     get graphicsEngine() {
-        return this.#graphicEngine;
+        return this._graphicEngine;
     }
 
     constructor(gameSetup, extra = null, graphicEngine = null) {
-        this.#setup = gameSetup;
+        this._setup = gameSetup;
 
-        this.#nextRandomGenerator = gameSetup.nextBrick || new NextBrick();
+        this._nextRandomGenerator = gameSetup.nextBrick || new NextBrick();
 
-        this.#graphicEngine = graphicEngine;
-        if (this.#graphicEngine != null) {
-            this.#graphicEngine.setGame(this);
+        this._graphicEngine = graphicEngine;
+        if (this._graphicEngine != null) {
+            this._graphicEngine.setGame(this);
         }
         if (gameSetup.logger === true) {
             this.addLogEntry({ name: "gameInit" });
         }
 
-        this.#width = gameSetup.width;
-        this.#height = gameSetup.height;
-        this.#gameGuid = Math.round(Math.random() * 10000000000000000);
-        this.#gridColor = new Color(0, 255, 0, 0.5);
+        this._width = gameSetup.width;
+        this._height = gameSetup.height;
+        this._gameGuid = Math.round(Math.random() * 10000000000000000);
+        this._gridColor = new Color(0, 255, 0, 0.5);
 
         if (extra != null) {
             if (Array.isArray(extra.bricks)) {
-                this.#bricks = extra.bricks.concat();
-                for (var brick of this.#bricks) {
+                this._bricks = extra.bricks.concat();
+                for (var brick of this._bricks) {
                     brick.game = this;
                 }
             }
 
             if (extra.holding != null) {
-                this.#HOLDING = extra.holding;
-                this.#HOLDING.game = this;
+                this._HOLDING = extra.holding;
+                this._HOLDING.game = this;
             }
         }
 
         this.brickforms = gameSetup.brickforms;
-        const colors = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1), new Color(255, 255, 0, 1), new Color(0, 255, 255, 1), new Color(255, 0, 255, 1), new Color(0, 128, 128, 1)];
+        const colors = [
+            new Color(255, 0, 0, 1),
+            new Color(0, 255, 0, 1),
+            new Color(0, 0, 255, 1),
+            new Color(255, 255, 0, 1),
+            new Color(0, 255, 255, 1),
+            new Color(255, 0, 255, 1),
+            new Color(0, 128, 128, 1),
+        ];
         this.setNextRandom();
 
         var game = this;
 
         this.getColors = () => colors;
 
-
-
         function clearLine(l) {
-            if (this.#RUNNING) {
+            if (this._RUNNING) {
                 this.score++;
                 this.runEvent("fx", null, "sound", "gamerow");
                 var bricks = game.bricks;
-                (line => {
+                ((line) => {
                     const rtn = [];
                     let times = 0;
                     for (times = 0; times <= this.width; times++) {
@@ -140,8 +146,8 @@ export class TetrisGame {
                             for (const i1 in bricks[i].blocks) {
                                 for (const i2 in bricks[i].blocks[i1]) {
                                     if (bricks[i].blocks[i1][i2] == 1) {
-                                        const cond1 = (line == bricks[i].y + parseInt(i1));
-                                        const cond2 = (bricks[i].moving == false);
+                                        const cond1 = line == bricks[i].y + parseInt(i1);
+                                        const cond2 = bricks[i].moving == false;
                                         if (cond1 && cond2) {
                                             bricks.splice(parseInt(i), 1);
                                         }
@@ -152,14 +158,14 @@ export class TetrisGame {
                     }
                     return rtn;
                 })(l);
-                (line => {
+                ((line) => {
                     const rtn = [];
                     for (const i in bricks) {
                         for (const i1 in bricks[i].blocks) {
                             for (const i2 in bricks[i].blocks[i1]) {
                                 if (bricks[i].blocks[i1][i2] == 1) {
-                                    const cond1 = (line > bricks[i].y + parseInt(i1));
-                                    const cond2 = (bricks[i].moving == false);
+                                    const cond1 = line > bricks[i].y + parseInt(i1);
+                                    const cond2 = bricks[i].moving == false;
                                     if (cond1 && cond2) {
                                         bricks[i].y++;
                                     }
@@ -174,7 +180,7 @@ export class TetrisGame {
         }
         this.checkLines = () => {
             //check for full lines
-            if (this.#RUNNING) {
+            if (this._RUNNING) {
                 let cx;
                 for (let i = this.height; i > 1; i--) {
                     let cnt = 0;
@@ -189,15 +195,15 @@ export class TetrisGame {
                 }
                 this.PENDINGUPDATE = true;
             }
-        }
+        };
 
         this.init = function () {
-            this.#RUNNING = true;
+            this._RUNNING = true;
             this.score = 0;
             this.HOLDINGCOUNT = 0;
 
             if (this.setup.simulator === true) {
-                this.#simulator = attachSimulator(this);
+                this._simulator = attachSimulator(this);
             }
 
             this.addNewBrick();
@@ -208,38 +214,37 @@ export class TetrisGame {
                 var socket = transmitter();
                 var game = this;
                 setInterval(function () {
-                    if (game.#socket != null && game.#socket.readyState === game.#socket.OPEN) {
+                    if (game._socket != null && game._socket.readyState === game._socket.OPEN) {
                         let items;
-                        while ((items = game.#logEntries.splice(0, 1)).length > 0)
-                            for (var item of items)
-                                game.#socket.send(JSON.stringify(item));
+                        while ((items = game._logEntries.splice(0, 1)).length > 0)
+                            for (var item of items) game._socket.send(JSON.stringify(item));
                     }
                 });
-                this.#socket = socket;
+                this._socket = socket;
                 if (global.development === true) {
                     this.socket = socket;
                 }
             }
 
-            if (this.#graphicEngine != null) {
-                this.#graphicEngine.initializeInput();
+            if (this._graphicEngine != null) {
+                this._graphicEngine.initializeInput();
 
-                this.#graphicEngine.initRender();
+                this._graphicEngine.initRender();
             }
 
-            this.#addons.loadByType(INIT_TYPES.AFTER_INIT);
-        }
+            this._addons.loadByType(INIT_TYPES.AFTER_INIT);
+        };
 
         this.input = new InputController(this);
     }
 
     get score() {
-        return this.#score;
+        return this._score;
     }
 
     set score(v) {
-        this.#score = v;
-        this.#eventController.trigger("update-score", null, v);
+        this._score = v;
+        this._eventController.trigger("update-score", null, v);
     }
 
     get colors() {
@@ -247,11 +252,11 @@ export class TetrisGame {
     }
 
     get holding() {
-        return this.#HOLDING;
+        return this._HOLDING;
     }
 
     set holding(v) {
-        this.#HOLDING = v;
+        this._HOLDING = v;
     }
 
     renderBrickMatrix(modifications = []) {
@@ -259,11 +264,11 @@ export class TetrisGame {
     }
 
     /**
-     * 
-     * @param {number} width 
-     * @param {number} height 
-     * @param {Brick[]} bricks 
-     * @param {any[]} modifications 
+     *
+     * @param {number} width
+     * @param {number} height
+     * @param {Brick[]} bricks
+     * @param {any[]} modifications
      */
     static renderBrickMatrix(width, height, bricks, modifications = []) {
         modifications = modifications.concat();
@@ -279,18 +284,15 @@ export class TetrisGame {
             var x = brick.x;
             var y = brick.y;
 
-            var matchingModifications = modifications.filter(m => m.guid == brick.guid);
+            var matchingModifications = modifications.filter((m) => m.guid == brick.guid);
             if (matchingModifications.length > 1)
                 throw new Error("There were multiple modifications found for a single brick!");
             if (matchingModifications.length == 1) {
                 var mod = matchingModifications[0];
 
-                if (typeof (mod.x) === "number")
-                    x = mod.x;
-                if (typeof (mod.y) === "number")
-                    y = mod.y;
-                if (typeof (mod.blocks) !== "undefined")
-                    brickForm = mod.blocks;
+                if (typeof mod.x === "number") x = mod.x;
+                if (typeof mod.y === "number") y = mod.y;
+                if (typeof mod.blocks !== "undefined") brickForm = mod.blocks;
 
                 modifications.splice(modifications.indexOf(mod), 1);
             }
@@ -298,12 +300,10 @@ export class TetrisGame {
             for (var i1 in brickForm) {
                 for (var i2 in brickForm[i1]) {
                     if (brickForm[i1][i2] == 1) {
-                        var cx = (x) + (parseInt(i2));
-                        var cy = (y) + (parseInt(i1));
-                        if (cy < 0)
-                            continue;
-                        if (cy > height)
-                            continue;
+                        var cx = x + parseInt(i2);
+                        var cy = y + parseInt(i1);
+                        if (cy < 0) continue;
+                        if (cy > height) continue;
                         result[cy][cx] = true;
                     }
                 }
@@ -326,7 +326,8 @@ export class TetrisGame {
     }
 
     getBrickId() {
-        var max = this.bricks.length > 0 ? this.bricks.map(b => b.id).sort((a, b) => b - a)[0] : 0;
+        var max =
+            this.bricks.length > 0 ? this.bricks.map((b) => b.id).sort((a, b) => b - a)[0] : 0;
 
         return max + 1;
     }
@@ -355,35 +356,35 @@ export class TetrisGame {
             this.bricks[pos] = brick;
         }
 
-        this.#eventController.trigger("current-brick-change", null);
+        this._eventController.trigger("current-brick-change", null);
     }
 
     logEvent(logObj) {
         if (this.setup.logger === true) {
-            var gameGuid = this.#gameGuid;
+            var gameGuid = this._gameGuid;
             var time = new Date().getTime();
             var obj = {
                 action: "log",
                 time,
                 data: Object.assign({ gameGuid }, logObj),
             };
-            this.addLogEntry(obj)
+            this.addLogEntry(obj);
         }
     }
 
     addLogEntry(entry) {
-        this.#logEntries.push(entry);
+        this._logEntries.push(entry);
     }
 
     holdingShift() {
         if (this.canUseHolding) {
-            if (this.#HOLDING == null) {
-                this.#HOLDING = this.getMovingBrick();
+            if (this._HOLDING == null) {
+                this._HOLDING = this.getMovingBrick();
                 this.addNewBrick(this.getMovingBrick().findMe());
                 this.HOLDINGCOUNT++;
             } else {
-                const HOLDING2 = this.#HOLDING;
-                this.#HOLDING = this.getMovingBrick();
+                const HOLDING2 = this._HOLDING;
+                this._HOLDING = this.getMovingBrick();
                 HOLDING2.resetPosition();
                 this.bricks[this.getMovingBrick().findMe()] = HOLDING2;
                 this.HOLDINGCOUNT++;
@@ -424,83 +425,83 @@ export class TetrisGame {
     }
 
     get ghostDrawing() {
-        return this.#SETTING_GHOST;
+        return this._SETTING_GHOST;
     }
 
     set ghostDrawing(v) {
-        this.#SETTING_GHOST = v;
+        this._SETTING_GHOST = v;
     }
 
     get brickforms() {
-        return this.#brickforms;
+        return this._brickforms;
     }
 
     set brickforms(val) {
-        this.#brickforms = val;
+        this._brickforms = val;
     }
 
     get HOLDING() {
-        return this.#HOLDING;
+        return this._HOLDING;
     }
 
     get HOLDINGCOUNT() {
-        return this.#HOLDINGCOUNT;
+        return this._HOLDINGCOUNT;
     }
 
     set HOLDINGCOUNT(v) {
-        this.#HOLDINGCOUNT = v;
+        this._HOLDINGCOUNT = v;
     }
 
     get PENDINGUPDATE() {
-        return this.#PENDINGUPDATE;
+        return this._PENDINGUPDATE;
     }
 
     set PENDINGUPDATE(v) {
-        this.#PENDINGUPDATE = v;
+        this._PENDINGUPDATE = v;
     }
 
     get nextRandom() {
-        return this.#nextRandom;
+        return this._nextRandom;
     }
 
     set nextRandom(v) {
-        this.#nextRandom = v;
+        this._nextRandom = v;
     }
 
     setNextRandom() {
         if (Array.isArray(this.setup.sequence)) {
-            this.#currentSequence = (this.#currentSequence + 1) % this.setup.sequence.length;
-            this.nextRandom = this.setup.sequence[this.#currentSequence];
+            this._currentSequence = (this._currentSequence + 1) % this.setup.sequence.length;
+            this.nextRandom = this.setup.sequence[this._currentSequence];
         } else {
-            this.nextRandom = this.#nextRandomGenerator.nextBrick(this);
+            this.nextRandom = this._nextRandomGenerator.nextBrick(this);
         }
     }
 
     get running() {
-        return this.#RUNNING;
+        return this._RUNNING;
     }
 
     get width() {
-        return this.#width;
+        return this._width;
     }
 
     get height() {
-        return this.#height;
+        return this._height;
     }
 
     /**
      * @returns {Brick[]}
      */
     get bricks() {
-        return this.#bricks;
+        return this._bricks;
     }
 
     set bricks(v) {
-        if ((v == "") && (typeof ([]) == "object")) {
+        if (v == "" && typeof [] == "object") {
             this.score = 0;
             this.HOLDINGCOUNT = 0;
-            this.#HOLDING = null;
-            this.#bricks = [];
+            this._HOLDING = null;
+            this._bricks = [];
         }
     }
 
@@ -510,9 +511,9 @@ export class TetrisGame {
             for (let j = 0, blo_len = brick.blocks.length; j < blo_len; j++) {
                 for (let k = 0, brl_len = brick.blocks[j].length; k < brl_len; k++) {
                     if (brick.blocks[j][k] == 1) {
-                        const cond1 = (x == brick.x + parseInt(k));
-                        const cond2 = (y == brick.y + parseInt(j));
-                        const cond3 = (brick.moving == false);
+                        const cond1 = x == brick.x + parseInt(k);
+                        const cond2 = y == brick.y + parseInt(j);
+                        const cond3 = brick.moving == false;
                         if (cond1 && cond2 && cond3) {
                             return true;
                         }
@@ -524,14 +525,14 @@ export class TetrisGame {
     }
 
     get setup() {
-        return this.#setup;
+        return this._setup;
     }
 
     moveTowards(x, r = null) {
         console.debug("moving to", x, r);
         var movingBrick = this.getMovingBrick();
 
-        if (typeof (r) === "number") {
+        if (typeof r === "number") {
             if (r != this.getMovingBrick().rotation) {
                 console.debug("rotating from " + this.getMovingBrick().rotation + " to " + r);
                 this.action_rotate();
@@ -542,29 +543,27 @@ export class TetrisGame {
         if (movingBrick.x > x) {
             console.debug("left");
             this.action_moveleft();
-        }
-        else if (movingBrick.x < x) {
+        } else if (movingBrick.x < x) {
             console.debug("right");
             this.action_moveright();
-        }
-        else {
+        } else {
             console.debug("down");
             this.action_smashdown();
         }
     }
 
     addEvent(name, handler) {
-        this.#eventController.on(name, handler);
+        this._eventController.on(name, handler);
     }
 
     runEvent(name, _this, ...args) {
-        this.#eventController.trigger.apply(this.#eventController, [name, _this].concat(args));
+        this._eventController.trigger.apply(this._eventController, [name, _this].concat(args));
     }
 
     loseView() {
         this.runEvent("fx", null, "sound", "gamelose");
-        this.#RUNNING = false;
-        this.#eventController.trigger("lose", null);
+        this._RUNNING = false;
+        this._eventController.trigger("lose", null);
         if (this.setup.simulator === true) {
             setTimeout(() => window.location.reload(), 2000);
         }

@@ -2,9 +2,8 @@ export class EngineBase {
     /**
      * @type {import("../game").TetrisGame}
      */
-    #game;
-    constructor() {
-    }
+    private _game;
+    constructor() {}
 
     initialize() {
         throw new Error("Missing implementation");
@@ -15,7 +14,7 @@ export class EngineBase {
     }
 
     initRender() {
-        throw new Error("Missing implementation")
+        throw new Error("Missing implementation");
     }
 
     clear() {
@@ -23,13 +22,13 @@ export class EngineBase {
     }
 
     setGame(game) {
-        this.#game = game;
+        this._game = game;
     }
 
     /**
      * @returns {import("../game").TetrisGame}
      */
     get game() {
-        return this.#game;
+        return this._game;
     }
 }

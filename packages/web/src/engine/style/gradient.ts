@@ -1,15 +1,15 @@
 class Gradient {
-    #gradient;
+    private _gradient;
     constructor(gradient) {
-        this.#gradient = gradient;
+        this._gradient = gradient;
     }
 
     addColor(pos, color) {
-        this.#gradient.addColorStop(pos, color.toRGBAString());
+        this._gradient.addColorStop(pos, color.toRGBAString());
     }
 
     compile() {
-        return this.#gradient;
+        return this._gradient;
     }
 }
 

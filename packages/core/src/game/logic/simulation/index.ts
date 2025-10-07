@@ -7,18 +7,17 @@ import { getPositions } from "./positions";
 import { getScore, sortMovements } from "./simulate-rating";
 
 export function cloneGame(game, setupChanges) {
-    var bricks = game.bricks.concat().map(b => b.clone());
+    var bricks = game.bricks.concat().map((b) => b.clone());
 
     var extra = { bricks };
 
-    if (game.HOLDING != null)
-        extra.holding = game.HOLDING.clone();
+    if (game.HOLDING != null) extra.holding = game.HOLDING.clone();
 
     var setup = Object.assign({}, game.setup, setupChanges, {
         brickforms: game.setup.brickforms,
         width: game.setup.width,
         height: game.setup.height,
-        sequence: game.setup.sequence
+        sequence: game.setup.sequence,
     });
 
     var clone = new TetrisGame(setup, extra);
@@ -28,40 +27,34 @@ export function cloneGame(game, setupChanges) {
 }
 
 function arrangeBrick(clone, movingBrick, x, maxWidth) {
-    if (movingBrick == null)
-        throw new Error("No moving brick");
+    if (movingBrick == null) throw new Error("No moving brick");
 
     try {
         //var oldX = movingBrick.innerX;
         //console.debug(movingBrick.blocks);
         var moveStep = 0;
         while (movingBrick.x > x) {
-            if (!movingBrick.moveleft(true))
-                throw new Error("brick is not moving left");
-            if (moveStep++ > maxWidth)
-                throw new Error("moving out of view");
+            if (!movingBrick.moveleft(true)) throw new Error("brick is not moving left");
+            if (moveStep++ > maxWidth) throw new Error("moving out of view");
         }
 
         moveStep = 0;
         // oldX = movingBrick.innerX;
 
         while (movingBrick.x < x) {
-            if (!movingBrick.moveright(true))
-                throw new Error("brick is not moving right");
-            if (moveStep++ > maxWidth)
-                throw new Error("moving out of view");
+            if (!movingBrick.moveright(true)) throw new Error("brick is not moving right");
+            if (moveStep++ > maxWidth) throw new Error("moving out of view");
         }
-    }
-    catch (e) {
+    } catch (e) {
         console.error(movingBrick, x);
         throw e;
     }
 }
 
 /**
- * 
- * @param {TetrisGame} game 
- * @param {*} setupChanges 
+ *
+ * @param {TetrisGame} game
+ * @param {*} setupChanges
  */
 export function getPossibleMoves(game, setupChanges) {
     var positions = [];
@@ -73,7 +66,12 @@ export function getPossibleMoves(game, setupChanges) {
         var clone = cloneGame(game, setupChanges);
         clone.holdingShift();
 
-        for (let pos of getPositions(clone.width, clone.height, clone.bricks, clone.getMovingBrick())) {
+        for (let pos of getPositions(
+            clone.width,
+            clone.height,
+            clone.bricks,
+            clone.getMovingBrick(),
+        )) {
             pos.needsHolding = true;
             positions.push(pos);
         }
@@ -89,64 +87,60 @@ export function getPossibleMoves(game, setupChanges) {
 }
 
 class SimulatorRunner {
-    #movements = [];
-    #game;
-    #cancelled = false;
-    #mode = "assist";
-    #simulation = [];
-    #starttime = 0;
-    #eventController = new EventController(this);
-    constructor() {
-
-    }
+    private _movements = [];
+    private _game;
+    private _cancelled = false;
+    private _mode = "assist";
+    private _simulation = [];
+    private _starttime = 0;
+    private _eventController = new EventController(this);
+    constructor() {}
 
     attach(game) {
-        this.#game = game;
+        this._game = game;
         var simulator = this;
-        this.#game.addEvent("current-brick-change", function () {
+        this._game.addEvent("current-brick-change", function () {
             console.debug("current brick change");
             simulator.getNewMove();
         });
     }
 
     drawMovements() {
-        if (this.#movements.length > 0) {
-            var brick = this.#movements[0].brick;
+        if (this._movements.length > 0) {
+            var brick = this._movements[0].brick;
             console.debug("drawing", brick);
             var color = new Color(255, 255, 255, 0.2);
-            setTimeout(() => this.#game.drawBrick(brick, color), 50);
+            setTimeout(() => this._game.drawBrick(brick, color), 50);
         }
     }
 
     cancel() {
-        this.#cancelled = true;
+        this._cancelled = true;
     }
 
     get isCancelled() {
-        return this.#cancelled;
+        return this._cancelled;
     }
 
     start() {
         var runner = this;
-        this.#starttime = new Date().getTime();
-        if (this.#game.setup.clickTick === true) {
-            this.#game.ghostDrawing = false;
-            this.#game.addEvent("tick", function () {
-                if (runner.isCancelled !== false)
-                    return;
+        this._starttime = new Date().getTime();
+        if (this._game.setup.clickTick === true) {
+            this._game.ghostDrawing = false;
+            this._game.addEvent("tick", function () {
+                if (runner.isCancelled !== false) return;
                 runner.tick();
                 runner.drawMovements();
-            })
+            });
         } else {
             const ticker = () => {
-                if (runner.isCancelled !== false)
-                    return;
+                if (runner.isCancelled !== false) return;
                 runner.tick();
                 setTimeout(ticker, runner.getTimeout());
             };
             setTimeout(ticker, 0);
         }
-        this.#game.addEvent("lose", function () {
+        this._game.addEvent("lose", function () {
             runner.cancel();
         });
     }
@@ -156,51 +150,44 @@ class SimulatorRunner {
     }
 
     setMode(mode) {
-        this.#mode = mode;
+        this._mode = mode;
     }
 
     setSimulation(simulation) {
-        this.#simulation = JSON.parse(JSON.stringify(simulation));
+        this._simulation = JSON.parse(JSON.stringify(simulation));
     }
 
     tick() {
-        if (this.#game.running !== true)
-            return;
-        if (this.#mode === "assist")
-            this.assistTick();
-        else if (this.#mode === "playback")
-            this.playbackTick();
-        else
-            throw new Error("Mode is not supported: " + this.#mode);
+        if (this._game.running !== true) return;
+        if (this._mode === "assist") this.assistTick();
+        else if (this._mode === "playback") this.playbackTick();
+        else throw new Error("Mode is not supported: " + this._mode);
     }
 
     getNewMove() {
-        this.#movements = getPossibleMoves(this.#game, { nextBrick: new StaticNextBrick(0) });
-        //console.log(this.#movements[0]);
-        this.#eventController.trigger("update-movements", null, this.#movements.concat());
+        this._movements = getPossibleMoves(this._game, { nextBrick: new StaticNextBrick(0) });
+        //console.log(this._movements[0]);
+        this._eventController.trigger("update-movements", null, this._movements.concat());
     }
 
     addEvent(name, handler) {
-        this.#eventController.on(name, handler);
+        this._eventController.on(name, handler);
     }
 
     get targetMovement() {
-        if (this.#movements.length < 1)
-            return undefined;
-        return this.#movements[0];
+        if (this._movements.length < 1) return undefined;
+        return this._movements[0];
     }
 
     assistTick() {
         const movement = this.targetMovement;
-        if (movement == null)
-            return;
+        if (movement == null) return;
 
         const instruction = movement.getNextInstruction();
-        if (typeof (instruction) === "undefined") {
+        if (typeof instruction === "undefined") {
             return; // skip
-        }
-        else if (typeof (instruction) === "function") {
-            const response = instruction(this.#game);
+        } else if (typeof instruction === "function") {
+            const response = instruction(this._game);
             if (response instanceof Promise) {
                 console.warn("TODO: async handle / promise await missing");
             }
@@ -212,22 +199,22 @@ class SimulatorRunner {
     playbackTick() {
         throw new Error("Not implemented");
         // eslint-disable-next-line no-unreachable
-        var time = new Date().getTime() - this.#starttime;
-        var simulations = this.#simulation.filter(s => s.done !== true && s.time < time);
+        var time = new Date().getTime() - this._starttime;
+        var simulations = this._simulation.filter((s) => s.done !== true && s.time < time);
         console.log(simulations);
         for (var simulation of simulations) {
             if (simulation.type === "nextRandom") {
-                this.#game.nextRandom = simulation.val;
+                this._game.nextRandom = simulation.val;
             } else if (simulation.type === "smashdown") {
-                this.#game.input.smashDown();
+                this._game.input.smashDown();
             }
-            this.#game.PENDINGUPDATE = true;
+            this._game.PENDINGUPDATE = true;
             simulation.done = true;
         }
     }
 
     get movements() {
-        return this.#movements;
+        return this._movements;
     }
 }
 
@@ -238,7 +225,6 @@ export function attachSimulator(game, start = true) {
         ticker.setMode("playback");
         ticker.setSimulation(game.setup.simulation);
     }
-    if (start === true)
-        ticker.start();
+    if (start === true) ticker.start();
     return ticker;
 }
