@@ -1,8 +1,8 @@
-var _debug = false;
-var _info = false;
-var _log = true;
-var _warn = true;
-var _error = true;
+let _debug = false;
+let _info = false;
+let _log = true;
+let _warn = true;
+let _error = true;
 
 if (global.development === true) {
     _debug = true;

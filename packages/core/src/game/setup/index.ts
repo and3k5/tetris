@@ -127,7 +127,7 @@ export function easyGame2() {
             [0, 1, 0, 0],
         ],
     ];
-    var setup = new TetrisSetup(brickforms, 10, 20);
+    const setup = new TetrisSetup(brickforms, 10, 20);
     setup.setSequence();
     return setup;
 }

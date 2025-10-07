@@ -3,7 +3,7 @@ import { countClearingLines, countHeight, countHoles } from "./";
 
 describe("countHoles", function () {
     it("counts properly", function () {
-        var matrix = [
+        const matrix = [
             "          ",
             "          ",
             "          ",
@@ -16,7 +16,7 @@ describe("countHoles", function () {
             "          ",
         ].map(x => x.split("").map(y => y === "x"));
 
-        var result = countHoles(matrix);
+        const result = countHoles(matrix);
 
         expect(result).toBe(6);
     });
@@ -24,7 +24,7 @@ describe("countHoles", function () {
 
 describe("countHeight", function () {
     it("counts properly", function () {
-        var matrix = [
+        const matrix = [
             "          ",
             "          ",
             "          ",
@@ -37,7 +37,7 @@ describe("countHeight", function () {
             "xxxxx     ",
         ].map(x => x.split("").map(y => y === "x"));
 
-        var result = countHeight(matrix);
+        const result = countHeight(matrix);
 
         expect(result.blocksHeight).toBe(5);
     });
@@ -45,7 +45,7 @@ describe("countHeight", function () {
 
 describe("countClearingLines", function () {
     it("counts no rows properly", function () {
-        var matrix = [
+        const matrix = [
             "          ",
             "          ",
             "          ",
@@ -58,13 +58,13 @@ describe("countClearingLines", function () {
             "          ",
         ].map(x => x.split("").map(y => y === "x"));
 
-        var result = countClearingLines(matrix);
+        const result = countClearingLines(matrix);
 
         expect(result).toBe(0);
     });
 
     it("counts 1 row properly", function () {
-        var matrix = [
+        const matrix = [
             "          ",
             "          ",
             "          ",
@@ -77,13 +77,13 @@ describe("countClearingLines", function () {
             "xxxxxxxxxx",
         ].map(x => x.split("").map(y => y === "x"));
 
-        var result = countClearingLines(matrix);
+        const result = countClearingLines(matrix);
 
         expect(result).toBe(1);
     });
 
     it("counts 2 rows properly", function () {
-        var matrix = [
+        const matrix = [
             "          ",
             "          ",
             "          ",
@@ -96,13 +96,13 @@ describe("countClearingLines", function () {
             "xxxxxxxxxx",
         ].map(x => x.split("").map(y => y === "x"));
 
-        var result = countClearingLines(matrix);
+        const result = countClearingLines(matrix);
 
         expect(result).toBe(2);
     });
 
     it("counts 3 rows properly", function () {
-        var matrix = [
+        const matrix = [
             "          ",
             "          ",
             "          ",
@@ -115,7 +115,7 @@ describe("countClearingLines", function () {
             "xxxxxxxxxx",
         ].map(x => x.split("").map(y => y === "x"));
 
-        var result = countClearingLines(matrix);
+        const result = countClearingLines(matrix);
 
         expect(result).toBe(3);
     });

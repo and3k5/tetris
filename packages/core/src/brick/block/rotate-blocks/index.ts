@@ -49,7 +49,7 @@ export function createRotatedBlocks(blocks, rotations) {
         /**
          * @type {boolean[]}
          */
-        let row = [];
+        const row = [];
         let blocksRow = null;
         switch (rotations) {
             case 2:

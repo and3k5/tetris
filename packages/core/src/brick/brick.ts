@@ -40,7 +40,7 @@ export class Brick {
     }
 
     clone() {
-        var brick = new Brick({ guid: this._guid });
+        const brick = new Brick({ guid: this._guid });
 
         brick._x = this._x;
         brick._y = this._y;
@@ -96,10 +96,10 @@ export class Brick {
 
     // todo make static
     static calcAbsoluteBlocks(blocks, px, py, x = 0, y = 0) {
-        var result = [];
+        const result = [];
 
-        var offsetX = px + x;
-        var offsetY = py + y;
+        const offsetX = px + x;
+        const offsetY = py + y;
 
         for (const i1 in blocks) {
             for (const i2 in blocks[i1]) {
@@ -263,8 +263,8 @@ export class Brick {
                 //yeah
                 this.requestUpdate();
             } else {
-                var blockX = Brick.calcBlockX(blocks2);
-                var width = Brick.calcWidth(blocks2);
+                const blockX = Brick.calcBlockX(blocks2);
+                const width = Brick.calcWidth(blocks2);
 
                 if (
                     !Brick.calcValidPosition_xOutRight(0, false, this.x, blockX, width, this.game)
@@ -301,7 +301,7 @@ export class Brick {
     }
 
     set rotation(v) {
-        for (var i = this._rotation; i <= v; i++) this.rotate();
+        for (let i = this._rotation; i <= v; i++) this.rotate();
         this._rotation = v;
     }
 
@@ -350,10 +350,10 @@ export class Brick {
     }
 
     static calcValidPosition(x = 0, y = 0, Throw, px, py, blocks, bricks, game, pguid) {
-        var blockX = Brick.calcBlockX(blocks);
+        const blockX = Brick.calcBlockX(blocks);
         if (!Brick.calcValidPosition_xOutLeft(x, Throw, px, blockX, game)) return false;
 
-        var width = Brick.calcWidth(blocks);
+        const width = Brick.calcWidth(blocks);
         if (!Brick.calcValidPosition_xOutRight(x, Throw, px, blockX, width, game)) return false;
 
         if (py + Brick.calcHeight(blocks) + y > game.height) {
@@ -434,15 +434,15 @@ export class Brick {
     }
 
     static calcWillCollide(x, y, bricks, blocks, px, py, pguid) {
-        var thisBlocks = Brick.calcAbsoluteBlocks(blocks, px, py, x, y);
+        const thisBlocks = Brick.calcAbsoluteBlocks(blocks, px, py, x, y);
 
-        for (var brick of bricks) {
+        for (const brick of bricks) {
             if (brick.guid === pguid) continue;
 
-            var opponentBlocks = brick.getAbsoluteBlocks();
+            const opponentBlocks = brick.getAbsoluteBlocks();
 
-            for (var thisBlock of thisBlocks) {
-                for (var opponentBlock of opponentBlocks)
+            for (const thisBlock of thisBlocks) {
+                for (const opponentBlock of opponentBlocks)
                     if (opponentBlock.x === thisBlock.x && opponentBlock.y === thisBlock.y)
                         return true;
             }
@@ -535,7 +535,7 @@ export class Brick {
                     if (this.y + this.getBlockY() >= 0) {
                         const sliced = this.slice_up();
                         this.game.bricks.splice(this.findMe(), 1);
-                        for (var i in sliced) {
+                        for (const i in sliced) {
                             this.game.bricks.push(sliced[i]);
                         }
                         this.game.checkLines();
@@ -576,7 +576,7 @@ export class Brick {
     static calcLowestPosition(blocks, addX = 0, height, bricks, px, py, pguid) {
         const h = Brick.calcHeight(blocks);
         let additionalY = 0;
-        // eslint-disable-next-line no-constant-condition
+         
         while (true) {
             if (py + additionalY + h > height) break;
 
@@ -590,8 +590,8 @@ export class Brick {
     slice_up() {
         const rtn = [];
         const this_color = this.color;
-        for (var i1 in this.blocks) {
-            for (var i2 in this.blocks[i1]) {
+        for (const i1 in this.blocks) {
+            for (const i2 in this.blocks[i1]) {
                 if (this.blocks[i1][i2] == 1) {
                     rtn.push(
                         ((x, y, origin) => {

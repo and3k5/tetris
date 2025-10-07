@@ -2,7 +2,7 @@ import { sortBy } from "../../../../utils/sorting";
 
 export function countClearingLines(matrix) {
     let clearingLines = 0;
-    for (var y = matrix.length - 1; y >= 0; y--) {
+    for (let y = matrix.length - 1; y >= 0; y--) {
         if (matrix[y].filter(x => x !== true).length === 0) {
             clearingLines++;
         }
@@ -11,22 +11,22 @@ export function countClearingLines(matrix) {
 }
 
 function swapXY(matrix) {
-    var aLength = matrix.length;
-    var bLength = matrix[0].length;
+    const aLength = matrix.length;
+    const bLength = matrix[0].length;
 
-    var result = [];
+    const result = [];
 
     while (result.length < bLength) {
-        var row = [];
+        const row = [];
         while (row.length < aLength) {
             row.push(undefined);
         }
         result.push(row);
     }
 
-    for (var a = 0; a < aLength; a++) {
+    for (let a = 0; a < aLength; a++) {
 
-        for (var b = 0; b < bLength; b++) {
+        for (let b = 0; b < bLength; b++) {
             result[b][a] = matrix[a][b]
         }
     }
@@ -39,13 +39,13 @@ export function countHoles(matrix) {
 
     matrix = swapXY(matrix);
 
-    for (var x = 0; x < matrix.length; x++) {
-        var topBlockIndex = matrix[x].indexOf(true);
+    for (let x = 0; x < matrix.length; x++) {
+        const topBlockIndex = matrix[x].indexOf(true);
 
         if (topBlockIndex === -1)
             continue;
 
-        for (var y = topBlockIndex; y < matrix[x].length; y++) {
+        for (let y = topBlockIndex; y < matrix[x].length; y++) {
             if (matrix[x][y] === false)
                 holes++;
         }
@@ -60,14 +60,14 @@ export function countHeight(matrix) {
 
     let gameHeight = null;
 
-    for (var x = 0; x < matrix.length; x++) {
+    for (let x = 0; x < matrix.length; x++) {
         const col = matrix[x];
         if (gameHeight == null)
             gameHeight = col.length;
-        var index = col.indexOf(true);
+        const index = col.indexOf(true);
         if (index < 0)
             continue;
-        var xHeight = col.length - index;
+        const xHeight = col.length - index;
 
         if (xHeight > height)
             height = xHeight;
@@ -114,7 +114,7 @@ export function ratioValue(worst, best, current) {
     if (worst == best)
         return 1;
 
-    let result = (current - worst) / (best - worst)
+    const result = (current - worst) / (best - worst)
 
     return result;
 }

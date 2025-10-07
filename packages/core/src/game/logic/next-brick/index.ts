@@ -5,8 +5,8 @@ export class NextBrick {
     constructor() {}
 
     nextBrick(game) {
-        var previousRandom = game.nextRandom;
-        var nextRandom = previousRandom;
+        const previousRandom = game.nextRandom;
+        let nextRandom = previousRandom;
 
         while (nextRandom === previousRandom)
             nextRandom = Math.round(Math.random() * (game.brickforms.length - 1));
@@ -35,25 +35,25 @@ export class EasyNextBrick extends NextBrick {
     }
 
     nextBrick(game) {
-        var latestBrick = game.bricks.concat().sort((a, b) => b.id - a.id)[0];
-        var movements = [];
-        for (var i = 0; i < game.brickforms.length; i++) {
+        const latestBrick = game.bricks.concat().sort((a, b) => b.id - a.id)[0];
+        const movements = [];
+        for (let i = 0; i < game.brickforms.length; i++) {
             if (latestBrick != null && i == latestBrick.index) continue;
-            var move = this.getPossibleMovesForType(game, i)[0];
+            const move = this.getPossibleMovesForType(game, i)[0];
             movements.push({ i, move });
         }
-        var best = sortMovements(movements)[0];
+        const best = sortMovements(movements)[0];
 
         //console.log(best.move.brick.game.nextBrick);
         return best.move.brick.index;
     }
 
     getPossibleMovesForType(game, index) {
-        var setupChanges = {};
+        const setupChanges = {};
         setupChanges.nextBrick = new StaticNextBrick(index);
-        var clone = cloneGame(game, setupChanges);
+        const clone = cloneGame(game, setupChanges);
         clone.addNewBrick();
-        var moves = getPossibleMoves(clone);
+        const moves = getPossibleMoves(clone);
         //console.log(moves);
         return moves;
     }

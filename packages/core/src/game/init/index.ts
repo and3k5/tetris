@@ -6,9 +6,9 @@ function optionParser() {
     /**
      * @type {Options}
      */
-    var options = {};
+    const options = {};
     if (global.browser === true) {
-        var url = new URL(location.href);
+        const url = new URL(location.href);
         options.setup = url.searchParams.get("setup");
         options.next = url.searchParams.get("next");
         options.simulate = url.searchParams.get("simulate");
@@ -17,11 +17,11 @@ function optionParser() {
         options.view = url.searchParams.get("view");
         options.debug = url.searchParams.get("debug");
     } else if (global.node === true) {
-        var args = process.argv.concat();
+        const args = process.argv.concat();
         args.splice(0, 2);
 
-        var getValue = function (args, name, def = undefined) {
-            for (var arg of args) {
+        const getValue = function (args, name, def = undefined) {
+            for (const arg of args) {
                 if (arg.indexOf("--" + name) === 0) {
                     return arg.substring(name.length + 3);
                 }
@@ -72,11 +72,11 @@ export class Options {
  * @param {any} engine 
  */
 export function init(options, engine) {
-    var tetrisgame;
+    let tetrisgame;
 
     //.append(DocumentUtil.stringToElement(htmlLoad));
 
-    var setup;
+    let setup;
 
     switch (options.setup) {
         case "ez":
@@ -117,8 +117,8 @@ export function init(options, engine) {
 
             var time = 0;
 
-            for (var i = 0; i < 5; i++) {
-                for (var j = 0; j < 4; j++) {
+            for (let i = 0; i < 5; i++) {
+                for (let j = 0; j < 4; j++) {
                     setup.simulation.push({
                         type: "nextRandom",
                         val: 0,

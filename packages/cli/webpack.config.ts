@@ -13,7 +13,7 @@ function globals(mode,opts) {
 
 module.exports = function (env) {
 
-    var mode = env.mode;
+    const mode = env.mode;
 
     const commonConfig = {
         mode: mode,

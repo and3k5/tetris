@@ -8,7 +8,7 @@ function uuidv4() {
     );
 }
 
-var usedGuids = [];
+const usedGuids = [];
 
 export function createGuid() {
     const guid = uuidv4();

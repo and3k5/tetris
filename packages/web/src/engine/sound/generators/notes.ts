@@ -3,7 +3,7 @@ export const KeysPerOctave = 12;
 
 // Note number to note name
 // 57 = A4
-var NOTENAMES = ["C?", "C#?/Db?", "D?", "D#?/Eb?", "E?", "F?", "F#?/Gb?", "G?", "G#?/Ab?", "A?", "A#?/Bb?", "B?"];
+const NOTENAMES = ["C?", "C#?/Db?", "D?", "D#?/Eb?", "E?", "F?", "F#?/Gb?", "G?", "G#?/Ab?", "A?", "A#?/Bb?", "B?"];
 export function noteToName(num) {
     return NOTENAMES[~~(num) % KeysPerOctave].replace(/\?/g, ~~(num / KeysPerOctave));
 }

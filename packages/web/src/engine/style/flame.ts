@@ -2,8 +2,8 @@
 //var nois = new SimplexNoise(Math.random);
 
 function noise2(x,y) {
-    var time = performance.now() / 1000
-    var v = nois.noise3D(x*20,y*20,time);
+    const time = performance.now() / 1000
+    const v = nois.noise3D(x*20,y*20,time);
 
     //v = Math.pow(2,v);
     

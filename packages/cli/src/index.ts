@@ -6,11 +6,11 @@ const options = {};
 import { NodeGraphicEngine } from "./engine";
 const graphicEngine = new NodeGraphicEngine();
 
-var args = process.argv.concat();
+const args = process.argv.concat();
 args.splice(0, 2);
 
-var getValue = function (args, name, def = undefined) {
-    for (var arg of args) {
+const getValue = function (args, name, def = undefined) {
+    for (const arg of args) {
         if (arg.indexOf("--" + name) === 0) {
             return arg.substring(name.length + 3);
         }

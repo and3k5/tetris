@@ -59,7 +59,7 @@ export class SoundController {
             // tell the source which sound to play
             source.connect(this._context.destination); // connect the source to the context's destination (the speakers)
             source.start(0); // play the source now
-            var timeout = (source.buffer.length / this._context.sampleRate) * 1000 + 100;
+            const timeout = (source.buffer.length / this._context.sampleRate) * 1000 + 100;
             setTimeout(() => source.disconnect(), timeout);
             return true;
         } catch (e) {

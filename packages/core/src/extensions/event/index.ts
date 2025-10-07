@@ -16,7 +16,7 @@ export class EventController {
         if (_this === null) {
             _this = this._defaultThis;
         }
-        for (var event of this._handlers) {
+        for (const event of this._handlers) {
             if (event.name === name) {
                 event.handler.apply(_this, args);
             }

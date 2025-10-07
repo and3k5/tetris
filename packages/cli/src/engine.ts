@@ -13,7 +13,7 @@ class TermWriter {
     }
 
     addNew(txt = "") {
-        var item = new TermUtil(txt);
+        const item = new TermUtil(txt);
         this.items.push(item);
         return item;
     }
@@ -35,7 +35,7 @@ class TermUtil {
     }
 
     set(...codes) {
-        for (var code of codes)
+        for (const code of codes)
             this.codes.push(code);
         return this;
     }
@@ -171,23 +171,23 @@ export class NodeGraphicEngine extends EngineBase {
 
     render(force = false, loop = false) {
         // CTX GRAPHICS
-        var game = this.game;
+        const game = this.game;
         if (force === true || game.PENDINGUPDATE) {
             this.drawBricks();
             game.PENDINGUPDATE = false;
         }
 
         if (loop === true) {
-            var $this = this;
+            const $this = this;
             setTimeout(() => $this.render(false, loop), 10);
         }
     }
 
     createDisplay(w, h) {
-        var display = [];
-        for (var i = 0; i < h; i++) {
+        const display = [];
+        for (let i = 0; i < h; i++) {
             display[i] = [];
-            for (var j = 0; j < w; j++) {
+            for (let j = 0; j < w; j++) {
                 display[i][j] = {
                     state: false,
                     color: null,
@@ -198,26 +198,26 @@ export class NodeGraphicEngine extends EngineBase {
     }
 
     drawBricks() {
-        var bricks = this.game.bricks;
+        const bricks = this.game.bricks;
 
-        var display = this.createDisplay(this.game.width, this.game.height);
+        const display = this.createDisplay(this.game.width, this.game.height);
 
         for (const i in bricks) {
             if (this.game.ghostDrawing && bricks[i].moving) {
-                var ghostColor = new Color(255, 255, 255, 0.2);
+                const ghostColor = new Color(255, 255, 255, 0.2);
                 const tmp_lowestPos = bricks[i].getLowestPosition();
                 this.setDisplay(display, bricks[i].blocks, ghostColor, bricks[i].x, tmp_lowestPos);
             }
             this.setDisplay(display, bricks[i]);
         }
 
-        var holdingDisplay = this.createDisplay(6, 6);
+        const holdingDisplay = this.createDisplay(6, 6);
 
         if (this.game.holding != null) {
             this.setDisplay(holdingDisplay, this.game.holding, this.game.holding.color, 2, 2);
         }
 
-        var nextDisplay = this.createDisplay(6, 6);
+        const nextDisplay = this.createDisplay(6, 6);
         this.setDisplay(nextDisplay, this.game.brickforms[this.game.nextRandom], this.game.colors[this.game.nextRandom], 2, 2);
 
 
@@ -233,19 +233,19 @@ export class NodeGraphicEngine extends EngineBase {
     }
 
     drawDisplay(display, holdingDisplay, nextDisplay) {
-        var gameWidth = display[0].length * 2 + 2;
+        const gameWidth = display[0].length * 2 + 2;
 
-        var offset = parseInt(size.width / 2 - gameWidth / 2);
+        const offset = parseInt(size.width / 2 - gameWidth / 2);
 
-        var eol = require("os").EOL;
+        const eol = require("os").EOL;
 
         //if (this.rendered === true)
 
-        var output = new TermWriter();
+        const output = new TermWriter();
 
-        var theme = TermUtil.SingleLineFrame;
+        const theme = TermUtil.SingleLineFrame;
 
-        var holdingOffset = offset - holdingDisplay[0].length * 2 - 2;
+        const holdingOffset = offset - holdingDisplay[0].length * 2 - 2;
 
         //process.stdout.write(border+eol);
         output.addNew(" ".repeat(holdingOffset - 2));
@@ -255,16 +255,16 @@ export class NodeGraphicEngine extends EngineBase {
         output.addNew(" ".repeat(2));
         output.addNew(theme.topLeft + theme.horizontal.repeat(nextDisplay[0].length * 2) + theme.topRight + eol).set(TermUtil.FgGreen, TermUtil.Bright);
 
-        for (var row of display) {
-            var y = display.indexOf(row);
+        for (const row of display) {
+            const y = display.indexOf(row);
 
-            var tempOffset = offset;
+            let tempOffset = offset;
 
             if (y < holdingDisplay.length) {
-                var holdingWidth = holdingDisplay[y].length * 2;
+                const holdingWidth = holdingDisplay[y].length * 2;
                 output.addNew(" ".repeat(holdingOffset - 2));
                 output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
-                for (var hCell of holdingDisplay[y]) {
+                for (const hCell of holdingDisplay[y]) {
                     this.writeDisplayCell(output, hCell);
                 }
                 output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
@@ -280,7 +280,7 @@ export class NodeGraphicEngine extends EngineBase {
 
 
             output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
-            for (var cell of row) {
+            for (const cell of row) {
                 this.writeDisplayCell(output, cell);
             }
             output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
@@ -288,7 +288,7 @@ export class NodeGraphicEngine extends EngineBase {
             if (y < nextDisplay.length) {
                 output.addNew(" ".repeat(2));
                 output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
-                for (var nCell of nextDisplay[y]) {
+                for (const nCell of nextDisplay[y]) {
                     this.writeDisplayCell(output, nCell);
                 }
                 output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
@@ -320,9 +320,9 @@ export class NodeGraphicEngine extends EngineBase {
 
     getMatchingTerminalColorName(color) {
 
-        var hsla = color.toHSLA();
+        const hsla = color.toHSLA();
 
-        var h = hsla.h % 360;
+        let h = hsla.h % 360;
         while (h < 0)
             h += 360;
 
@@ -355,7 +355,7 @@ export class NodeGraphicEngine extends EngineBase {
             y = brick.y;
         if (color == null)
             color = brick.color;
-        var blocks = brick instanceof Brick ? brick.blocks : brick;
+        const blocks = brick instanceof Brick ? brick.blocks : brick;
 
         this.drawBrickForm(blocks, display, x, y, color);
     }
@@ -365,11 +365,11 @@ export class NodeGraphicEngine extends EngineBase {
             throw new Error("x is not number: " + x);
         if (typeof (y) !== "number")
             throw new Error("y is not number: " + x);
-        for (var i1 in brickForm) {
-            for (var i2 in brickForm[i1]) {
+        for (const i1 in brickForm) {
+            for (const i2 in brickForm[i1]) {
                 if (brickForm[i1][i2] == 1) {
-                    var _x = (x) + (parseInt(i2));
-                    var _y = (y) + (parseInt(i1));
+                    const _x = (x) + (parseInt(i2));
+                    const _y = (y) + (parseInt(i1));
 
                     if (_y < 0)
                         continue;
@@ -383,11 +383,11 @@ export class NodeGraphicEngine extends EngineBase {
                     if (isNaN(_x))
                         throw new Error("X parsed as NaN: " + x + " + " + i2);
 
-                    var row = display[_y];
+                    const row = display[_y];
                     if (row == undefined)
                         throw new Error("Row not found: " + _y);
 
-                    var cell = row[_x];
+                    const cell = row[_x];
 
                     if (cell == undefined)
                         throw new Error("Cell not found: " + _x);
@@ -404,7 +404,7 @@ export class NodeGraphicEngine extends EngineBase {
         readline.emitKeypressEvents(process.stdin);
         process.stdin.setRawMode(true);
 
-        var game = this.game;
+        const game = this.game;
 
         process.stdin.on("keypress", (str, key) => {
             if (key.ctrl && key.name === "c")

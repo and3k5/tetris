@@ -27,26 +27,26 @@ export class BinaryBrickForm extends BrickFormBase {
         this._size = size;
     }
     getBrickForm() {
-        var size = this._size;
-        var mask = 0;
+        const size = this._size;
+        let mask = 0;
         for (let i = 0; i < size; i++) {
             mask = mask << 1;
             mask |= 0b1;
         }
 
-        var form = [[]];
+        const form = [[]];
 
-        var temp = this._value;
+        let temp = this._value;
 
         for (let i = 0; i < size * size; i++) {
-            var block = 0;
+            let block = 0;
             if ((temp & 1) === 1) {
                 block = 1;
             }
             if (form[0].length == size) {
                 form.splice(0, 0, []);
             }
-            var line = form[0];
+            const line = form[0];
             line.splice(0, 0, block);
             temp = temp >> 1;
         }

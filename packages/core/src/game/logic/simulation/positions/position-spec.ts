@@ -11,8 +11,8 @@ describe("getPositions", function () {
     };
 
     const createArray = function (count, createValue) {
-        var result = [];
-        for (var i = 0; i < count; i++)
+        const result = [];
+        for (let i = 0; i < count; i++)
             result.push(createValue());
         return result;
     }
@@ -23,7 +23,7 @@ describe("getPositions", function () {
 
     it("can get expected positions", function () {
         const blocks = [[0, 1, 1], [1, 1, 0], [0, 0, 0]];
-        var game = new TetrisGame(predictableGameWithOneBlock(blocks));
+        const game = new TetrisGame(predictableGameWithOneBlock(blocks));
         game.init();
         const positions = getPositions(game.width, game.height, game.bricks, game.getMovingBrick());
 
@@ -33,14 +33,14 @@ describe("getPositions", function () {
 
         expect(positions.length).toBe(differentPositions);
 
-        var startI = 0;
-        var rotation = 0;
-        for (var sequenceLength of lengthSequences) {
-            var segment = positions.slice(startI, startI + sequenceLength);
+        let startI = 0;
+        let rotation = 0;
+        for (const sequenceLength of lengthSequences) {
+            const segment = positions.slice(startI, startI + sequenceLength);
 
             expect(segment.length).toBe(sequenceLength);
 
-            for (var position of segment) {
+            for (const position of segment) {
                 expect(position.rotation).toBe(rotation);
 
                 const positionMatrixString = brickMatrixToString(position.brickMatrix);
@@ -49,8 +49,8 @@ describe("getPositions", function () {
 
                 const expectedBlocks = createMatrix(game.width, game.height);
 
-                for (var y = 0; y < expectedBrickBlocks.length; y++) {
-                    for (var x = 0; x < expectedBrickBlocks[y].length; x++) {
+                for (let y = 0; y < expectedBrickBlocks.length; y++) {
+                    for (let x = 0; x < expectedBrickBlocks[y].length; x++) {
                         const actualX = position.x + x;
                         const actualY = position.y + y;
 
@@ -66,7 +66,7 @@ describe("getPositions", function () {
                     }
                 }
 
-                let expectedBlocksString = brickMatrixToString(expectedBlocks, true);
+                const expectedBlocksString = brickMatrixToString(expectedBlocks, true);
 
 
 

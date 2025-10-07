@@ -12,7 +12,7 @@ import { SoundController } from "./engine/sound/sound-controller.js";
 
 const { addon: { INIT_TYPES } } = extensions;
 
-var container = "#container";
+let container = "#container";
 if (typeof (container) === "string") {
     container = window.document.body.querySelector(container);
 }
@@ -23,7 +23,7 @@ const graphicEngine = new WebGraphicEngine({
 });
 
 const options = new Options();
-var url = new URL(location.href);
+const url = new URL(location.href);
 if (url.searchParams.get("setup") != null)
     options.setup = url.searchParams.get("setup");
 
@@ -45,7 +45,7 @@ if (url.searchParams.get("view") != null)
 if (url.searchParams.get("debug") != null)
     options.debug = url.searchParams.get("debug");
 
-var tetrisgame = init(options, graphicEngine);
+const tetrisgame = init(options, graphicEngine);
 
 if (options.debug === "1")
     require("./engine/debug").initDebug(container.parentElement, container.el, tetrisgame);

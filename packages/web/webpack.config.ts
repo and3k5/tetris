@@ -23,12 +23,12 @@ module.exports = function ({mode = "production"}) {
         commonConfig.devtool = "inline-source-map";
     }
 
-    var cssLoader = {
+    const cssLoader = {
         test: /\.css$/,
         use: ["style-loader","css-loader"]
     };
 
-    var htmlLoader = {
+    const htmlLoader = {
         test: /\.html$/,
         use: {
             loader:"html-loader",
@@ -44,7 +44,7 @@ module.exports = function ({mode = "production"}) {
         exclude: /node_modules/,
     };
 
-    var imgLoader = {
+    const imgLoader = {
         test: /\.svg$/,
         use: {
             loader: "file-loader",

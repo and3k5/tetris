@@ -4,33 +4,33 @@ import { game, utils } from "../";
 const { TetrisGame, setup: { defaultGame } } = game;
 const { trace: console } = utils;
 
-var setup = defaultGame();
+const setup = defaultGame();
 
 describe("brick", () => {
 
     it("returns false when collision is detected", function () {
-        var brickA = new Brick({ brickform: [[1, 1], [1, 1]], x: 1, y: 10 });
-        var brickB = new Brick({ brickform: [[1, 1], [1, 1]], x: 2, y: 10 });
-        var result = brickA.willCollide(0, 0, [brickB]);
+        const brickA = new Brick({ brickform: [[1, 1], [1, 1]], x: 1, y: 10 });
+        const brickB = new Brick({ brickform: [[1, 1], [1, 1]], x: 2, y: 10 });
+        const result = brickA.willCollide(0, 0, [brickB]);
         expect(result).toEqual(true);
     });
 
-    for (var brickform of setup.brickforms) {
-        var i = setup.brickforms.indexOf(brickform);
+    for (const brickform of setup.brickforms) {
+        const i = setup.brickforms.indexOf(brickform);
 
         for (var j = 0; j < 4; j++) {
             it(`has a proper moveLeft property on brickform ${i} when rotated ${j} times`, function () {
-                var i = this.i;
-                var setup = this.setup;
-                var brickform = this.brickform;
+                const i = this.i;
+                const setup = this.setup;
+                const brickform = this.brickform;
 
-                var testGame = new TetrisGame(setup);
+                const testGame = new TetrisGame(setup);
                 testGame.nextRandom = i;
 
-                var brick = new Brick({ game: testGame, brickform: brickform, x: 3, y: 0 });
+                const brick = new Brick({ game: testGame, brickform: brickform, x: 3, y: 0 });
                 brick.moving = true;
 
-                for (var k = 0; k < j; k++)
+                for (let k = 0; k < j; k++)
                     brick.rotate();
 
                 testGame.bricks.push(brick);
@@ -43,17 +43,17 @@ describe("brick", () => {
             }.bind({ i, setup, brickform }))
 
             it(`has a proper moveRight property on brickform ${i} when rotated ${j} times`, function () {
-                var i = this.i;
-                var setup = this.setup;
-                var brickform = this.brickform;
+                const i = this.i;
+                const setup = this.setup;
+                const brickform = this.brickform;
 
-                var testGame = new TetrisGame(setup);
+                const testGame = new TetrisGame(setup);
                 testGame.nextRandom = i;
 
-                var brick = new Brick({ game: testGame, brickform: brickform, x: 3, y: 0 });
+                const brick = new Brick({ game: testGame, brickform: brickform, x: 3, y: 0 });
                 brick.moving = true;
 
-                for (var k = 0; k < j; k++)
+                for (let k = 0; k < j; k++)
                     brick.rotate();
 
                 testGame.bricks.push(brick);

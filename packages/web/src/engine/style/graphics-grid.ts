@@ -1,6 +1,6 @@
 import DocumentUtil from "../../utils/document-util";
 
-var cache = [];
+const cache = [];
 class CacheKey {
     private _color;
     private _width;
@@ -36,24 +36,24 @@ class CacheKey {
 }
 
 export function getGrid(color, gridWidth, gridHeight, countX, countY) {
-    var key = new CacheKey(color, gridWidth, gridHeight, countX, countY);
-    var match = cache.filter((c) => key.matches(c.key));
+    const key = new CacheKey(color, gridWidth, gridHeight, countX, countY);
+    const match = cache.filter((c) => key.matches(c.key));
     if (match.length > 0) return match[0].data;
-    var newObj = { key };
+    const newObj = { key };
     newObj.data = createGrid(color, gridWidth, gridHeight, countX, countY);
     cache.push(newObj);
     return newObj.data;
 }
 
 function createGrid(color, gridWidth, gridHeight, countX, countY) {
-    var canvas = new DocumentUtil("canvas").el;
+    const canvas = new DocumentUtil("canvas").el;
     canvas.width = gridWidth * countX;
     canvas.height = gridHeight * countY;
-    var ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d");
     ctx.strokeStyle = color.toRGBAString();
     ctx.lineWidth = 2;
 
-    for (var x = 0; x <= countX; x++) {
+    for (let x = 0; x <= countX; x++) {
         ctx.beginPath();
         ctx.moveTo(x * gridWidth, 0);
         ctx.lineTo(x * gridWidth, canvas.height);
@@ -61,7 +61,7 @@ function createGrid(color, gridWidth, gridHeight, countX, countY) {
         ctx.stroke();
     }
 
-    for (var y = 0; y <= countY; y++) {
+    for (let y = 0; y <= countY; y++) {
         ctx.beginPath();
         ctx.moveTo(0, y * gridHeight, 0);
         ctx.lineTo(canvas.width, y * gridHeight);
@@ -73,6 +73,6 @@ function createGrid(color, gridWidth, gridHeight, countX, countY) {
 }
 
 export function drawGrid(ctx, color, gridWidth, gridHeight, countX, countY) {
-    var imageData = getGrid(color, gridWidth, gridHeight, countX, countY);
+    const imageData = getGrid(color, gridWidth, gridHeight, countX, countY);
     ctx.putImageData(imageData, 0, 0);
 }

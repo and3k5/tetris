@@ -9,12 +9,12 @@ import { Color } from "@tetris/core/src/utils/color";
  * @param {import("../../../../core/src/game").TetrisGame} game 
  */
 export function initDebug(parent, container, game) {
-    var debugContainer = new DocumentUtil(container);
+    const debugContainer = new DocumentUtil(container);
 
-    var element = DocumentUtil.stringToElement(htmlLoad);
+    const element = DocumentUtil.stringToElement(htmlLoad);
     debugContainer.append(element);
 
-    var clickTick = debugContainer.querySelector("[data-target='clickTick']");
+    const clickTick = debugContainer.querySelector("[data-target='clickTick']");
     clickTick.el.addEventListener("change", function (ev) {
         game.setup.clickTick = ev.target.checked;
     });
@@ -22,19 +22,19 @@ export function initDebug(parent, container, game) {
         clickTick.el.checked = v
     });
 
-    var simulationViewer = debugContainer.querySelector("[data-target='simulation-viewer']");
+    const simulationViewer = debugContainer.querySelector("[data-target='simulation-viewer']");
 
 
     if (game.simulator != null) {
-        var selectedValue = -1;
-        var movements = [];
+        let selectedValue = -1;
+        let movements = [];
 
         /**
          * @type {import("..").WebGraphicEngine}
          */
         const graphicsEngine = game.graphicsEngine;
 
-        var cloneCtx = document.createElement("canvas").getContext("2d");
+        const cloneCtx = document.createElement("canvas").getContext("2d");
         cloneCtx.canvas.style.position = "absolute";
         cloneCtx.canvas.style.top = "0px";
         cloneCtx.canvas.style.left = "0px";
@@ -52,15 +52,15 @@ export function initDebug(parent, container, game) {
             if (selectedValue < 0) {
                 console.log("TODO CLEAR");
             } else {
-                var movement = movements[selectedValue]
+                const movement = movements[selectedValue]
                 console.log(movement);
                 cloneCtx.canvas.width = graphicsEngine.gameCtx.canvas.width;
                 cloneCtx.canvas.height = graphicsEngine.gameCtx.canvas.height;
                 
-                for (var y = 0;y<game.height;y++) {
-                    for (var x = 0;x < game.width;x++) {
+                for (let y = 0;y<game.height;y++) {
+                    for (let x = 0;x < game.width;x++) {
                         if (movement.brickMatrix[y][x] === true) {
-                            var color = new Color(255,0,0,1);
+                            const color = new Color(255,0,0,1);
                             graphicsEngine.drawSquare(cloneCtx, x, y, color);
                         }
                     }
@@ -68,7 +68,7 @@ export function initDebug(parent, container, game) {
             }
         }
 
-        var selector = simulationViewer.querySelector("[data-target='simulationSelector']");
+        const selector = simulationViewer.querySelector("[data-target='simulationSelector']");
         selector.react(() => movements).addHandler(() => {
             console.log("UPDATED MOVEMENTS");
             selector.el.max = movements.length - 1;
@@ -90,7 +90,7 @@ export function initDebug(parent, container, game) {
             calldraw();
         });
 
-        var upBtn = simulationViewer.querySelector("[data-target='sim-up']");
+        const upBtn = simulationViewer.querySelector("[data-target='sim-up']");
         upBtn.el.addEventListener("click", function () {
             selectedValue = selectedValue + 1;
             if (selectedValue > movements.length)
@@ -98,7 +98,7 @@ export function initDebug(parent, container, game) {
             selector.el.value = selectedValue;
             calldraw();
         });
-        var downBtn = simulationViewer.querySelector("[data-target='sim-down']");
+        const downBtn = simulationViewer.querySelector("[data-target='sim-down']");
         downBtn.el.addEventListener("click", function () {
             selectedValue = selectedValue - 1;
             if (selectedValue < 0)

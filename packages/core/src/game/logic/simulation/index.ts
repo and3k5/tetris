@@ -7,20 +7,20 @@ import { getPositions } from "./positions";
 import { getScore, sortMovements } from "./simulate-rating";
 
 export function cloneGame(game, setupChanges) {
-    var bricks = game.bricks.concat().map((b) => b.clone());
+    const bricks = game.bricks.concat().map((b) => b.clone());
 
-    var extra = { bricks };
+    const extra = { bricks };
 
     if (game.HOLDING != null) extra.holding = game.HOLDING.clone();
 
-    var setup = Object.assign({}, game.setup, setupChanges, {
+    const setup = Object.assign({}, game.setup, setupChanges, {
         brickforms: game.setup.brickforms,
         width: game.setup.width,
         height: game.setup.height,
         sequence: game.setup.sequence,
     });
 
-    var clone = new TetrisGame(setup, extra);
+    const clone = new TetrisGame(setup, extra);
     clone.brickforms = game.brickforms;
     clone.HOLDINGCOUNT = game.HOLDINGCOUNT;
     return clone;
@@ -32,7 +32,7 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
     try {
         //var oldX = movingBrick.innerX;
         //console.debug(movingBrick.blocks);
-        var moveStep = 0;
+        let moveStep = 0;
         while (movingBrick.x > x) {
             if (!movingBrick.moveleft(true)) throw new Error("brick is not moving left");
             if (moveStep++ > maxWidth) throw new Error("moving out of view");
@@ -57,16 +57,16 @@ function arrangeBrick(clone, movingBrick, x, maxWidth) {
  * @param {*} setupChanges
  */
 export function getPossibleMoves(game, setupChanges) {
-    var positions = [];
+    let positions = [];
 
-    for (let pos of getPositions(game.width, game.height, game.bricks, game.getMovingBrick()))
+    for (const pos of getPositions(game.width, game.height, game.bricks, game.getMovingBrick()))
         positions.push(pos);
 
     if (game.canUseHolding) {
-        var clone = cloneGame(game, setupChanges);
+        const clone = cloneGame(game, setupChanges);
         clone.holdingShift();
 
-        for (let pos of getPositions(
+        for (const pos of getPositions(
             clone.width,
             clone.height,
             clone.bricks,
@@ -77,7 +77,7 @@ export function getPossibleMoves(game, setupChanges) {
         }
     }
 
-    for (let setup of positions) {
+    for (const setup of positions) {
         setup.scores = getScore(setup.brickMatrix);
     }
 
@@ -98,7 +98,7 @@ class SimulatorRunner {
 
     attach(game) {
         this._game = game;
-        var simulator = this;
+        const simulator = this;
         this._game.addEvent("current-brick-change", function () {
             console.debug("current brick change");
             simulator.getNewMove();
@@ -107,9 +107,9 @@ class SimulatorRunner {
 
     drawMovements() {
         if (this._movements.length > 0) {
-            var brick = this._movements[0].brick;
+            const brick = this._movements[0].brick;
             console.debug("drawing", brick);
-            var color = new Color(255, 255, 255, 0.2);
+            const color = new Color(255, 255, 255, 0.2);
             setTimeout(() => this._game.drawBrick(brick, color), 50);
         }
     }
@@ -123,7 +123,7 @@ class SimulatorRunner {
     }
 
     start() {
-        var runner = this;
+        const runner = this;
         this._starttime = new Date().getTime();
         if (this._game.setup.clickTick === true) {
             this._game.ghostDrawing = false;
@@ -198,11 +198,11 @@ class SimulatorRunner {
 
     playbackTick() {
         throw new Error("Not implemented");
-        // eslint-disable-next-line no-unreachable
-        var time = new Date().getTime() - this._starttime;
-        var simulations = this._simulation.filter((s) => s.done !== true && s.time < time);
+         
+        const time = new Date().getTime() - this._starttime;
+        const simulations = this._simulation.filter((s) => s.done !== true && s.time < time);
         console.log(simulations);
-        for (var simulation of simulations) {
+        for (const simulation of simulations) {
             if (simulation.type === "nextRandom") {
                 this._game.nextRandom = simulation.val;
             } else if (simulation.type === "smashdown") {
@@ -219,7 +219,7 @@ class SimulatorRunner {
 }
 
 export function attachSimulator(game, start = true) {
-    var ticker = new SimulatorRunner();
+    const ticker = new SimulatorRunner();
     ticker.attach(game);
     if (Array.isArray(game.setup.simulation)) {
         ticker.setMode("playback");

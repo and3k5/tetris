@@ -33,7 +33,7 @@ export class AddonContainer {
         if (this.typeIsAlreadyLoaded(type))
             throw new Error("Type " + type + " has already been loaded");
         this._typesLoaded.push(type);
-        for (var addon of this._addons) {
+        for (const addon of this._addons) {
             if (addon.initType !== type) continue;
             if (addon.loaded !== false) continue;
 

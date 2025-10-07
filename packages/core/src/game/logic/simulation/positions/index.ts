@@ -11,20 +11,20 @@ import { SimpleMovement } from "../movement";
  * @returns {import("../movement").Movement[]}
  */
 export function getPositions(width, height, bricks, currentBrick) {
-    var positions = [];
+    const positions = [];
 
     const movingBrick = currentBrick;
 
-    for (var i = 0; i < 4; i++) {
-        let rotatedBlocks = Brick.rotateBlocks(movingBrick.blocks, i);
+    for (let i = 0; i < 4; i++) {
+        const rotatedBlocks = Brick.rotateBlocks(movingBrick.blocks, i);
 
-        var mostLeft = Brick.calcMostLeft(rotatedBlocks);
-        var mostRight = Brick.calcMostRight(width, rotatedBlocks);
+        const mostLeft = Brick.calcMostLeft(rotatedBlocks);
+        const mostRight = Brick.calcMostRight(width, rotatedBlocks);
 
-        for (var x = mostLeft; x <= mostRight; x++) {
-            var lowestY = Brick.calcLowestPosition(rotatedBlocks, x - movingBrick.x, height, bricks, movingBrick.x, movingBrick.y, movingBrick.guid);
+        for (let x = mostLeft; x <= mostRight; x++) {
+            const lowestY = Brick.calcLowestPosition(rotatedBlocks, x - movingBrick.x, height, bricks, movingBrick.x, movingBrick.y, movingBrick.guid);
 
-            var brickMatrix = TetrisGame.renderBrickMatrix(width, height, bricks, [
+            const brickMatrix = TetrisGame.renderBrickMatrix(width, height, bricks, [
                 { guid: movingBrick.guid, x: x, y: lowestY, blocks: rotatedBlocks },
             ]);
 

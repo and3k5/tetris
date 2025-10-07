@@ -15,13 +15,13 @@ export class LogFile {
     }
 
     watch() {
-        var lf = this;
+        const lf = this;
 
         var proxySetup = {
             get: function (target, prop) {
                 //console.log({ type: 'get', target, prop });
                 return Reflect.get(target, prop);
-                var value = Reflect.get(target, prop);
+                let value = Reflect.get(target, prop);
                 if (typeof (value) === "function" || prop === "toJSON")
                     return Reflect.get(target, prop);
 
@@ -52,7 +52,7 @@ export class LogFile {
             }
         };
 
-        var proxy = new Proxy(this.json, proxySetup);
+        const proxy = new Proxy(this.json, proxySetup);
         this.json = proxy;
         // Object.observe(this.json,function () {
         //     console.log("change",this,arguments);
@@ -64,16 +64,16 @@ export class LogFile {
         this.readHandler = function () {
             if (!fs.existsSync(path)) {
                 if (typeof (init) == "function") {
-                    var value = init();
+                    const value = init();
                     fs.writeFileSync(path, JSON.stringify(value));
                 }
             }
-            var content = fs.readFileSync(path);
+            const content = fs.readFileSync(path);
             this.json = JSON.parse(content);
         };
         this.writeHandler = function () {
             //console.log("file write");
-            var content = JSON.stringify(this.json);
+            const content = JSON.stringify(this.json);
             fs.writeFileSync(path, content);
         }
     }

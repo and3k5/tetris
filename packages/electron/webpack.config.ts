@@ -13,19 +13,19 @@ function globals(mode,opts) {
 
 module.exports = function (env) {
 
-    var mode = env.mode;
+    const mode = env.mode;
 
     const commonConfig = {
         mode: mode,
         watch: env.watch === "yes",
     };
 
-    var cssLoader = {
+    const cssLoader = {
         test: /\.css$/,
         use: ["style-loader","css-loader"]
     };
 
-    var htmlLoader = {
+    const htmlLoader = {
         test: /\.html$/,
         use: {
             loader:"html-loader",
@@ -35,7 +35,7 @@ module.exports = function (env) {
         }
     };
 
-    var imgLoader = {
+    const imgLoader = {
         test: /\.svg$/,
         use: {
             loader: "file-loader",

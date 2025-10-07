@@ -32,7 +32,7 @@ export default class DocumentUtil {
 
     append(element) {
         if (Array.isArray(element)) {
-            for (var item of element) this.append(item);
+            for (const item of element) this.append(item);
         } else if (element instanceof DocumentUtil) {
             this._element.appendChild(element._element);
         } else {
@@ -59,17 +59,17 @@ export default class DocumentUtil {
     }
 
     static stringToElement(str, parent) {
-        var container = document.createElement(parent || "div");
+        const container = document.createElement(parent || "div");
         container.innerHTML = str;
-        var result = [];
-        for (var i = 0; i < container.children.length; i++) {
+        const result = [];
+        for (let i = 0; i < container.children.length; i++) {
             result.push(container.children[i]);
         }
         return result.length === 1 ? result[0] : result;
     }
 
     react(getter, observe = true) {
-        var reactor = new Reactor(getter);
+        const reactor = new Reactor(getter);
         this._reacts.push(reactor);
         if (observe === true) reactor.observe();
         return reactor;
@@ -86,8 +86,8 @@ class Reactor {
         this._getter = getter;
 
         this._tick = function () {
-            var currentValue = this.getCurrentValue();
-            var lastValue = this.lastValue;
+            const currentValue = this.getCurrentValue();
+            const lastValue = this.lastValue;
             if (currentValue !== lastValue) {
                 this.lastValue = currentValue;
                 this.emit();
@@ -104,7 +104,7 @@ class Reactor {
     }
 
     emit() {
-        for (var handler of this._handlers) this.invoke(handler);
+        for (const handler of this._handlers) this.invoke(handler);
     }
 
     addHandler(callback) {

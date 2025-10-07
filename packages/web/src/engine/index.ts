@@ -58,7 +58,7 @@ export class WebGraphicEngine extends EngineBase {
     constructor(options) {
         super();
 
-        var container = new DocumentUtil(options.container).append(
+        const container = new DocumentUtil(options.container).append(
             DocumentUtil.stringToElement(htmlLoad),
         );
 
@@ -72,7 +72,7 @@ export class WebGraphicEngine extends EngineBase {
     }
 
     initializeInput() {
-        var game = this.game;
+        const game = this.game;
 
         this.gameCanvas.addEventListener("click", function () {
             if (game.setup.clickTick === true) executeTick(game);
@@ -125,20 +125,20 @@ export class WebGraphicEngine extends EngineBase {
             false,
         );
 
-        var touchStart = null;
+        let touchStart = null;
 
         this.gameCanvas.addEventListener("touchstart", function (event) {
-            var touch = event.changedTouches[0];
+            const touch = event.changedTouches[0];
             touchStart = { x: touch.screenX, y: touch.screenY };
         });
         this.gameCanvas.addEventListener("touchend", function (event) {
-            var touch = event.changedTouches[0];
-            var touchEnd = { x: touch.screenX, y: touch.screenY };
+            const touch = event.changedTouches[0];
+            const touchEnd = { x: touch.screenX, y: touch.screenY };
 
-            var deltaX = touchEnd.x - touchStart.x;
-            var deltaY = touchEnd.y - touchStart.y;
-            var rad = Math.atan2(deltaY, deltaX);
-            var deg = rad * (180 / Math.PI);
+            const deltaX = touchEnd.x - touchStart.x;
+            const deltaY = touchEnd.y - touchStart.y;
+            const rad = Math.atan2(deltaY, deltaX);
+            let deg = rad * (180 / Math.PI);
 
             while (deg < 0) deg += 360;
 
@@ -177,7 +177,7 @@ export class WebGraphicEngine extends EngineBase {
             this.game.width,
             this.game.height,
         );
-        var smallBrickSize = this.brickSize / BRICKSIZESCALE;
+        const smallBrickSize = this.brickSize / BRICKSIZESCALE;
         drawGrid(this._nextCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
         drawGrid(this._holdingCtx, this.game.gridColor, smallBrickSize, smallBrickSize, 6, 6);
     }
@@ -192,7 +192,7 @@ export class WebGraphicEngine extends EngineBase {
             };
         }
         this.clearArray(this._state.bricks.holding);
-        var removedGameItems = this.clearArray(this._state.bricks.game);
+        const removedGameItems = this.clearArray(this._state.bricks.game);
         this.clearArray(this._state.bricks.next);
         return removedGameItems;
     }
@@ -206,7 +206,7 @@ export class WebGraphicEngine extends EngineBase {
             old = state;
         }
 
-        var entry = brick != null ? old.filter((b) => b.brick === brick)[0] : null;
+        let entry = brick != null ? old.filter((b) => b.brick === brick)[0] : null;
 
         if (typeof x !== "number") {
             if (brick instanceof Brick) {
@@ -261,13 +261,13 @@ export class WebGraphicEngine extends EngineBase {
     }
 
     drawBricks() {
-        var removedGameEntries = this.clearState();
+        const removedGameEntries = this.clearState();
         const BRICKSIZESCALE = 1.5;
 
-        var bricks = this.game.bricks;
+        const bricks = this.game.bricks;
         for (const i in bricks) {
             if (this.game.ghostDrawing && bricks[i].moving) {
-                var ghostColor = new Color(255, 255, 255, 0.2);
+                const ghostColor = new Color(255, 255, 255, 0.2);
                 const tmp_lowestPos = bricks[i].getLowestPosition();
                 //this.drawBrickForm(bricks[i].blocks, this._gameCtx, bricks[i].x, tmp_lowestPos, ghostColor)
                 this.addToState({
@@ -328,10 +328,10 @@ export class WebGraphicEngine extends EngineBase {
             typeof entry.toY === "number" &&
             typeof entry.fromStamp === "number"
         ) {
-            var stamp = new Date().getTime() - entry.fromStamp;
-            var percX = stamp / 100;
+            const stamp = new Date().getTime() - entry.fromStamp;
+            let percX = stamp / 100;
             if (percX > 1) percX = 1;
-            var percY = stamp / 1000;
+            let percY = stamp / 1000;
             if (percY > 1) percY = 1;
             entry.currentX = this.mix(entry.fromX, entry.toX, percX);
             entry.currentY = this.mix(entry.fromY, entry.toY, percY);
@@ -342,7 +342,7 @@ export class WebGraphicEngine extends EngineBase {
     }
 
     drawState(entries, ctx) {
-        for (var entry of entries) {
+        for (const entry of entries) {
             this.updateBrickState(entry);
             this.drawBrickForm(
                 entry.blocks,
@@ -356,8 +356,8 @@ export class WebGraphicEngine extends EngineBase {
     }
 
     drawBrickForm(brickForm, ctx, x, y, color, scale = 1) {
-        for (var i1 in brickForm) {
-            for (var i2 in brickForm[i1]) {
+        for (const i1 in brickForm) {
+            for (const i2 in brickForm[i1]) {
                 if (brickForm[i1][i2] == 1) {
                     this.drawSquare(ctx, x + parseInt(i2), y + parseInt(i1), color, scale);
                 }
@@ -366,14 +366,14 @@ export class WebGraphicEngine extends EngineBase {
     }
 
     drawSquare(ctx, bx, by, color, scale = 1) {
-        var brickSize = this.brickSize / scale;
+        const brickSize = this.brickSize / scale;
 
-        var x = bx * brickSize;
-        var y = by * brickSize;
-        var w = brickSize;
-        var h = brickSize;
+        const x = bx * brickSize;
+        const y = by * brickSize;
+        const w = brickSize;
+        const h = brickSize;
 
-        var fstyle = new RadialGradient(ctx, x + w / 2, y + h / 2, 0, x + w / 2, y + h / 2, 40);
+        let fstyle = new RadialGradient(ctx, x + w / 2, y + h / 2, 0, x + w / 2, y + h / 2, 40);
         fstyle.addColor(0, color);
         fstyle.addColor(1, color.alphaScale(0.5));
         ctx.fillStyle = fstyle.compile();
@@ -427,7 +427,7 @@ export class WebGraphicEngine extends EngineBase {
 
     render(force = false, loop = false) {
         // CTX GRAPHICS
-        var game = this.game;
+        const game = this.game;
         if (force === true || game.PENDINGUPDATE) {
             this.drawBricks();
             game.PENDINGUPDATE = false;
@@ -436,7 +436,7 @@ export class WebGraphicEngine extends EngineBase {
         this.drawGrid();
         this.drawStates();
         if (loop === true) {
-            var $this = this;
+            const $this = this;
             requestAnimationFrame(() => $this.render(false, loop));
         }
     }
@@ -451,13 +451,13 @@ export class BurningGraphicEngine extends WebGraphicEngine {
     }
 
     drawSquare(ctx, x, y, w, h, color) {
-        var image = ctx.createImageData(w, h);
+        const image = ctx.createImageData(w, h);
 
-        for (var _x = 0; _x < w; _x++) {
-            for (var _y = 0; _y < w; _y++) {
-                var pos = (_x + ~~(_y * w)) * 4;
+        for (let _x = 0; _x < w; _x++) {
+            for (let _y = 0; _y < w; _y++) {
+                const pos = (_x + ~~(_y * w)) * 4;
 
-                var col = flame.mainImage(_x / w, _y / h);
+                const col = flame.mainImage(_x / w, _y / h);
 
                 if (window.loq != true) {
                     window.loq = true;

@@ -9,15 +9,15 @@ export function sortBy(selector, descending = false) {
             return this;
         },
         compare: function (a, b) {
-            for (var sorter of this.sorters) {
-                var diff = sorter(a, b);
+            for (const sorter of this.sorters) {
+                const diff = sorter(a, b);
                 if (diff !== 0)
                     return diff;
             }
             return 0;
         },
         execute(array) {
-            var sorter = this;
+            const sorter = this;
             return array.concat().sort((a, b) => sorter.compare(a, b));
         }
     }
