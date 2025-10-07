@@ -21,10 +21,10 @@
     "url": "git+https://github.com/and3k5/tetris.git"
   },
   "scripts": {
-    "build": "npx webpack --env.mode=production",
+    "build": "npx webpack --env mode=production",
     "start": "npm run build && node dist/tetris-node.js",
-    "watch": "npx webpack --env.mode=development --env.watch=yes",
-    "build-dev": "npx webpack --env.mode=development --env.mode=development"
+    "watch": "npx webpack --env mode=development --env watch=yes",
+    "build-dev": "npx webpack --env mode=development --env mode=development"
   },
   "bugs": {
     "url": "https://github.com/and3k5/tetris/issues"
