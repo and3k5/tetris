@@ -8,6 +8,9 @@
     "test": "npx lerna run test",
     "postinstall": "npx lerna bootstrap"
   },
+  "workspaces": [
+    "packages/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/and3k5/tetris.git"
