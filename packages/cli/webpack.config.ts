@@ -20,23 +20,12 @@ module.exports = function (env) {
         watch: env.watch === "yes",
     };
 
-    var jsLoader = {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-            loader: "babel-loader",
-            options: {
-                root: "../../"
-            }
-        }
-    };
-
     const nodeConfig = Object.assign({}, commonConfig, {
-        entry: path.resolve(__dirname, "src", "index.js"),
+        entry: path.resolve(__dirname, "src", "index.ts"),
         target: "node",
         module: {
             rules: [
-                jsLoader,
+                
             ]
         },
         plugins: [

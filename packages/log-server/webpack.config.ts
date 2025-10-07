@@ -19,23 +19,18 @@ module.exports = function (env) {
         watch: env.watch === "yes",
     };
 
-    var jsLoader = {
-        test: /\.js$/,
+    const tsLoader =  {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
         exclude: /node_modules/,
-        use: {
-            loader: "babel-loader",
-            options: {
-                root: "../../"
-            }
-        }
     };
 
     const logServerConfig = Object.assign({}, commonConfig, {
-        entry: "./src/index.js",
+        entry: "./src/index.ts",
         target: "node",
         module: {
             rules: [
-                jsLoader
+                tsLoader
             ]
         },
         plugins: [
@@ -48,7 +43,7 @@ module.exports = function (env) {
         },
         resolve: {
             alias: {
-                "@tetris/core": path.resolve(__dirname, "../core")
+                "@tetris/core": path.resolve(__dirname, "../core/src/index.ts")
             }
         }
     });

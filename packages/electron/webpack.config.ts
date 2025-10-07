@@ -35,17 +35,6 @@ module.exports = function (env) {
         }
     };
 
-    var jsLoader = {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-            loader: "babel-loader",
-            options: {
-                root: "../../"
-            }
-        }
-    };
-
     var imgLoader = {
         test: /\.svg$/,
         use: {
@@ -57,13 +46,12 @@ module.exports = function (env) {
     };
 
     const elecConfig = Object.assign({}, commonConfig, {
-        entry: path.resolve(__dirname, "../web/src", "index.js"),
+        entry: path.resolve(__dirname, "../web/src", "index.ts"),
         target: "electron-main",
         module: {
             rules: [
                 cssLoader,
                 htmlLoader,
-                jsLoader,
                 imgLoader
             ]
         },

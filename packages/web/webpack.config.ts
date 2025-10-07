@@ -44,17 +44,6 @@ module.exports = function ({mode = "production"}) {
         exclude: /node_modules/,
     };
 
-    var jsLoader = {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-            loader: "babel-loader",
-            options: {
-                root: "../../"
-            }
-        }
-    };
-
     var imgLoader = {
         test: /\.svg$/,
         use: {
@@ -66,12 +55,11 @@ module.exports = function ({mode = "production"}) {
     };
 
     const webConfig = Object.assign({}, commonConfig, {
-        entry: path.resolve(__dirname, "src", "index.js"),
+        entry: path.resolve(__dirname, "src", "index.ts"),
         module: {
             rules: [
                 cssLoader,
                 htmlLoader,
-                jsLoader,
                 tsLoader,
                 imgLoader
             ]
