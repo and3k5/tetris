@@ -4,9 +4,9 @@ export class LogFile {
         this.readHandler = null;
         this.writeHandler = null;
         this.json = null;
-        if (typeof (options.path) === "string") {
+        if (typeof options.path === "string") {
             this.initFileHandler(options.path, options.init);
-        } else if (typeof (options.object) != "undefined") {
+        } else if (typeof options.object != "undefined") {
             this.json = options.object;
         }
 
@@ -22,12 +22,12 @@ export class LogFile {
                 //console.log({ type: 'get', target, prop });
                 return Reflect.get(target, prop);
                 let value = Reflect.get(target, prop);
-                if (typeof (value) === "function" || prop === "toJSON")
+                if (typeof value === "function" || prop === "toJSON")
                     return Reflect.get(target, prop);
 
                 console.log("get", prop);
                 value = Reflect.get(target, prop);
-                if (value != null && typeof (value) === "object" && !value.isPrototypeOf(Proxy)) {
+                if (value != null && typeof value === "object" && !value.isPrototypeOf(Proxy)) {
                     console.log("newLink from get");
                     Reflect.set(target, prop, new Proxy(value, proxySetup));
                     //value = new Proxy(value,proxySetup);
@@ -41,7 +41,7 @@ export class LogFile {
                 //console.log({ type: 'set', target, prop, value });
                 //console.log("set", prop);
                 value = Reflect.get(target, prop);
-                if (value != null && typeof (value) === "object" && !value.isPrototypeOf(Proxy)) {
+                if (value != null && typeof value === "object" && !value.isPrototypeOf(Proxy)) {
                     //console.log("newLink from set");
                     Reflect.set(target, prop, new Proxy(value, proxySetup));
                 }
@@ -49,7 +49,7 @@ export class LogFile {
                 lf.writeHandler();
 
                 return Reflect.set(target, prop, value);
-            }
+            },
         };
 
         const proxy = new Proxy(this.json, proxySetup);
@@ -63,7 +63,7 @@ export class LogFile {
         const fs = require("fs");
         this.readHandler = function () {
             if (!fs.existsSync(path)) {
-                if (typeof (init) == "function") {
+                if (typeof init == "function") {
                     const value = init();
                     fs.writeFileSync(path, JSON.stringify(value));
                 }
@@ -75,6 +75,6 @@ export class LogFile {
             //console.log("file write");
             const content = JSON.stringify(this.json);
             fs.writeFileSync(path, content);
-        }
+        };
     }
 }

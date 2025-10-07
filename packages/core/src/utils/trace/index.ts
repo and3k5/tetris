@@ -17,7 +17,7 @@ if (global.node === true) {
     _error = false;
 }
 
-function Void() { }
+function Void() {}
 
 export const debug = _debug === true ? console.debug : Void;
 export const info = _info === true ? console.info : Void;

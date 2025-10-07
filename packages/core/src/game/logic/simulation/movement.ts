@@ -27,7 +27,7 @@ export class SimpleMovement extends Movement {
         /**
          * Result function
          *
-         * @param {import("../../game").TetrisGame} game 
+         * @param {import("../../game").TetrisGame} game
          */
         const result = function (game) {
             if (movement.needsHolding === true && movement.holdingFired !== true) {

@@ -1,20 +1,18 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
 const path = require("path");
 
-function globals(mode,opts) {
+function globals(mode, opts) {
     return {
         "global.development": mode === "development",
         "global.production": mode === "production",
         "global.mode": mode,
         "global.browser": opts.browser === true,
-        "global.node": opts.node === true
+        "global.node": opts.node === true,
     };
 }
 
-
-module.exports = function ({mode = "production"}) {
-
+module.exports = function ({ mode = "production" }) {
     const commonConfig = {
         mode: mode,
     };
@@ -25,22 +23,22 @@ module.exports = function ({mode = "production"}) {
 
     const cssLoader = {
         test: /\.css$/,
-        use: ["style-loader","css-loader"]
+        use: ["style-loader", "css-loader"],
     };
 
     const htmlLoader = {
         test: /\.html$/,
         use: {
-            loader:"html-loader",
+            loader: "html-loader",
             options: {
-                attrs: [":data-src"]
-            }
-        }
+                attrs: [":data-src"],
+            },
+        },
     };
 
-    const tsLoader =  {
+    const tsLoader = {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: "ts-loader",
         exclude: /node_modules/,
     };
 
@@ -49,28 +47,23 @@ module.exports = function ({mode = "production"}) {
         use: {
             loader: "file-loader",
             options: {
-                outputPath: "img"
-            }
-        }
+                outputPath: "img",
+            },
+        },
     };
 
     const webConfig = Object.assign({}, commonConfig, {
         entry: path.resolve(__dirname, "src", "index.ts"),
         module: {
-            rules: [
-                cssLoader,
-                htmlLoader,
-                tsLoader,
-                imgLoader
-            ]
+            rules: [cssLoader, htmlLoader, tsLoader, imgLoader],
         },
         plugins: [
-            new webpack.DefinePlugin(globals(mode, {browser:true})),
+            new webpack.DefinePlugin(globals(mode, { browser: true })),
             new HtmlWebpackPlugin({
                 title: "ToneMatrix",
                 template: path.resolve(__dirname, "src", "index.html"),
                 filename: path.resolve(__dirname, "dist", "index.html"),
-            })
+            }),
         ],
         output: {
             library: "tetris",
@@ -78,14 +71,14 @@ module.exports = function ({mode = "production"}) {
             filename: "tetris-web.js",
         },
         node: {
-            fs: "empty"
+            fs: "empty",
         },
         resolve: {
             alias: {
-                "@tetris/core": path.resolve(__dirname, "../core")
+                "@tetris/core": path.resolve(__dirname, "../core"),
             },
-            extensions: [".tsx", ".ts", ".js"]
-        }
+            extensions: [".tsx", ".ts", ".js"],
+        },
     });
     return webConfig;
-}
+};

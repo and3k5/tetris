@@ -7,22 +7,22 @@ import menumusic from "./menumusic.js";
 export default [
     {
         name: "gamelose",
-        buffer: gamelose
+        buffer: gamelose,
     },
     {
         name: "gamebump",
-        buffer: gamebump
+        buffer: gamebump,
     },
     {
         name: "gamerow",
-        buffer: gamerow
+        buffer: gamerow,
     },
     {
         name: "gamemove",
-        buffer: gamemove
+        buffer: gamemove,
     },
     {
         name: "menumusic",
-        buffer: menumusic
-    }
+        buffer: menumusic,
+    },
 ];

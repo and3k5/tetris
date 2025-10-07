@@ -1,6 +1,6 @@
 /**
  * Returns a blocks array with the blocks data rotated to the right
- * @param {boolean[][]} blocks 
+ * @param {boolean[][]} blocks
  * @returns {boolean[][]}
  */
 export function rotateRight(blocks) {
@@ -9,7 +9,7 @@ export function rotateRight(blocks) {
 
 /**
  * Returns a blocks array with the blocks data rotated to the left
- * @param {boolean[][]} blocks 
+ * @param {boolean[][]} blocks
  * @returns {boolean[][]}
  */
 export function rotateLeft(blocks) {
@@ -17,8 +17,8 @@ export function rotateLeft(blocks) {
 }
 
 /**
- * 
- * @param {boolean[][]} blocks 
+ *
+ * @param {boolean[][]} blocks
  * @returns {boolean[][]}
  */
 export function rotateTwice(blocks) {
@@ -26,18 +26,15 @@ export function rotateTwice(blocks) {
 }
 
 /**
- * 
+ *
  * @param {boolean[][]} blocks Blocks array
  * @param {number} rotations Number of rotations
  */
 export function createRotatedBlocks(blocks, rotations) {
-    if (typeof (rotations) !== "number")
-        throw new Error("rotations parameter must be a number");
-    if (!isFinite(rotations))
-        throw new Error("rotations parameter must be a finite number");
+    if (typeof rotations !== "number") throw new Error("rotations parameter must be a number");
+    if (!isFinite(rotations)) throw new Error("rotations parameter must be a finite number");
     rotations = (4 + (rotations % 4)) % 4;
-    if (rotations == 0)
-        return blocks.concat();
+    if (rotations == 0) return blocks.concat();
 
     /**
      * @type {boolean[][]}

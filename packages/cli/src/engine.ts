@@ -1,5 +1,7 @@
 import { brick, utils, game } from "@tetris/core";
-const { engine : { EngineBase }} = game;
+const {
+    engine: { EngineBase },
+} = game;
 const { Brick } = brick;
 const { color } = utils;
 const { Color } = color;
@@ -19,7 +21,7 @@ class TermWriter {
     }
 
     getString() {
-        return this.items.map(x => x.getString()).join("");
+        return this.items.map((x) => x.getString()).join("");
     }
 
     write() {
@@ -28,15 +30,13 @@ class TermWriter {
 }
 
 class TermUtil {
-
     constructor(text) {
         this.codes = [];
         this.text = text;
     }
 
     set(...codes) {
-        for (const code of codes)
-            this.codes.push(code);
+        for (const code of codes) this.codes.push(code);
         return this;
     }
 
@@ -191,7 +191,7 @@ export class NodeGraphicEngine extends EngineBase {
                 display[i][j] = {
                     state: false,
                     color: null,
-                }
+                };
             }
         }
         return display;
@@ -218,8 +218,13 @@ export class NodeGraphicEngine extends EngineBase {
         }
 
         const nextDisplay = this.createDisplay(6, 6);
-        this.setDisplay(nextDisplay, this.game.brickforms[this.game.nextRandom], this.game.colors[this.game.nextRandom], 2, 2);
-
+        this.setDisplay(
+            nextDisplay,
+            this.game.brickforms[this.game.nextRandom],
+            this.game.colors[this.game.nextRandom],
+            2,
+            2,
+        );
 
         this.drawDisplay(display, holdingDisplay, nextDisplay);
     }
@@ -249,11 +254,26 @@ export class NodeGraphicEngine extends EngineBase {
 
         //process.stdout.write(border+eol);
         output.addNew(" ".repeat(holdingOffset - 2));
-        output.addNew(theme.topLeft + theme.horizontal.repeat(holdingDisplay[0].length * 2) + theme.topRight).set(TermUtil.FgGreen, TermUtil.Bright);
+        output
+            .addNew(
+                theme.topLeft +
+                    theme.horizontal.repeat(holdingDisplay[0].length * 2) +
+                    theme.topRight,
+            )
+            .set(TermUtil.FgGreen, TermUtil.Bright);
         output.addNew(" ".repeat(2));
-        output.addNew(theme.topLeft + theme.horizontal.repeat(gameWidth - 2) + theme.topRight).set(TermUtil.FgGreen, TermUtil.Bright);
+        output
+            .addNew(theme.topLeft + theme.horizontal.repeat(gameWidth - 2) + theme.topRight)
+            .set(TermUtil.FgGreen, TermUtil.Bright);
         output.addNew(" ".repeat(2));
-        output.addNew(theme.topLeft + theme.horizontal.repeat(nextDisplay[0].length * 2) + theme.topRight + eol).set(TermUtil.FgGreen, TermUtil.Bright);
+        output
+            .addNew(
+                theme.topLeft +
+                    theme.horizontal.repeat(nextDisplay[0].length * 2) +
+                    theme.topRight +
+                    eol,
+            )
+            .set(TermUtil.FgGreen, TermUtil.Bright);
 
         for (const row of display) {
             const y = display.indexOf(row);
@@ -272,12 +292,17 @@ export class NodeGraphicEngine extends EngineBase {
                 output.addNew(" ".repeat(2));
             } else if (y === holdingDisplay.length) {
                 output.addNew(" ".repeat(holdingOffset - 2));
-                output.addNew(theme.bottomLeft + theme.horizontal.repeat(holdingDisplay[0].length * 2) + theme.bottomRight).set(TermUtil.FgGreen, TermUtil.Bright);
+                output
+                    .addNew(
+                        theme.bottomLeft +
+                            theme.horizontal.repeat(holdingDisplay[0].length * 2) +
+                            theme.bottomRight,
+                    )
+                    .set(TermUtil.FgGreen, TermUtil.Bright);
                 output.addNew(" ".repeat(2));
             } else {
                 output.addNew(" ".repeat(tempOffset));
             }
-
 
             output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
             for (const cell of row) {
@@ -294,7 +319,13 @@ export class NodeGraphicEngine extends EngineBase {
                 output.addNew(theme.vertical).set(TermUtil.FgGreen, TermUtil.Bright);
             } else if (y === nextDisplay.length) {
                 output.addNew(" ".repeat(2));
-                output.addNew(theme.bottomLeft + theme.horizontal.repeat(nextDisplay[0].length * 2) + theme.bottomRight).set(TermUtil.FgGreen, TermUtil.Bright);
+                output
+                    .addNew(
+                        theme.bottomLeft +
+                            theme.horizontal.repeat(nextDisplay[0].length * 2) +
+                            theme.bottomRight,
+                    )
+                    .set(TermUtil.FgGreen, TermUtil.Bright);
             } else {
                 output.addNew(" ".repeat(tempOffset));
             }
@@ -303,7 +334,11 @@ export class NodeGraphicEngine extends EngineBase {
         }
 
         output.addNew(" ".repeat(offset));
-        output.addNew(theme.bottomLeft + theme.horizontal.repeat(gameWidth - 2) + theme.bottomRight + eol).set(TermUtil.FgGreen, TermUtil.Bright);
+        output
+            .addNew(
+                theme.bottomLeft + theme.horizontal.repeat(gameWidth - 2) + theme.bottomRight + eol,
+            )
+            .set(TermUtil.FgGreen, TermUtil.Bright);
 
         process.stdout.write(TermUtil.Clear);
         readline.cursorTo(process.stdout, 0, 0);
@@ -319,78 +354,56 @@ export class NodeGraphicEngine extends EngineBase {
     }
 
     getMatchingTerminalColorName(color) {
-
         const hsla = color.toHSLA();
 
         let h = hsla.h % 360;
-        while (h < 0)
-            h += 360;
+        while (h < 0) h += 360;
 
-
-
-        if (hsla.l > 0.7)
-            return "White";
+        if (hsla.l > 0.7) return "White";
 
         //TermUtil.FgBlack
-        if (h > 210 && h <= 240)
-            return "Blue";
-        if (h > 140 && h <= 210)
-            return "Cyan";
-        if (h > 100 && h <= 140)
-            return "Green";
-        if (h > 240 && h <= 330)
-            return "Magenta";
-        if (h > 330 || h <= 30)
-            return "Red";
-        if (h > 30 && h <= 100)
-            return "Yellow";
+        if (h > 210 && h <= 240) return "Blue";
+        if (h > 140 && h <= 210) return "Cyan";
+        if (h > 100 && h <= 140) return "Green";
+        if (h > 240 && h <= 330) return "Magenta";
+        if (h > 330 || h <= 30) return "Red";
+        if (h > 30 && h <= 100) return "Yellow";
 
         return "White";
     }
 
     setDisplay(display, brick, color, x, y) {
-        if (typeof (x) !== "number")
-            x = brick.x;
-        if (typeof (y) !== "number")
-            y = brick.y;
-        if (color == null)
-            color = brick.color;
+        if (typeof x !== "number") x = brick.x;
+        if (typeof y !== "number") y = brick.y;
+        if (color == null) color = brick.color;
         const blocks = brick instanceof Brick ? brick.blocks : brick;
 
         this.drawBrickForm(blocks, display, x, y, color);
     }
 
     drawBrickForm(brickForm, display, x, y, color) {
-        if (typeof (x) !== "number")
-            throw new Error("x is not number: " + x);
-        if (typeof (y) !== "number")
-            throw new Error("y is not number: " + x);
+        if (typeof x !== "number") throw new Error("x is not number: " + x);
+        if (typeof y !== "number") throw new Error("y is not number: " + x);
         for (const i1 in brickForm) {
             for (const i2 in brickForm[i1]) {
                 if (brickForm[i1][i2] == 1) {
-                    const _x = (x) + (parseInt(i2));
-                    const _y = (y) + (parseInt(i1));
+                    const _x = x + parseInt(i2);
+                    const _y = y + parseInt(i1);
 
-                    if (_y < 0)
-                        continue;
+                    if (_y < 0) continue;
 
-                    if (_x < 0)
-                        continue;
+                    if (_x < 0) continue;
 
-                    if (isNaN(_y))
-                        throw new Error("Y parsed as NaN: " + y + " + " + i1);
+                    if (isNaN(_y)) throw new Error("Y parsed as NaN: " + y + " + " + i1);
 
-                    if (isNaN(_x))
-                        throw new Error("X parsed as NaN: " + x + " + " + i2);
+                    if (isNaN(_x)) throw new Error("X parsed as NaN: " + x + " + " + i2);
 
                     const row = display[_y];
-                    if (row == undefined)
-                        throw new Error("Row not found: " + _y);
+                    if (row == undefined) throw new Error("Row not found: " + _y);
 
                     const cell = row[_x];
 
-                    if (cell == undefined)
-                        throw new Error("Cell not found: " + _x);
+                    if (cell == undefined) throw new Error("Cell not found: " + _x);
 
                     cell.state = true;
                     cell.color = color;
@@ -407,8 +420,7 @@ export class NodeGraphicEngine extends EngineBase {
         const game = this.game;
 
         process.stdin.on("keypress", (str, key) => {
-            if (key.ctrl && key.name === "c")
-                return process.exit(0);
+            if (key.ctrl && key.name === "c") return process.exit(0);
 
             switch (key.name) {
                 case "left":

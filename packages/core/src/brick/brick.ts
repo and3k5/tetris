@@ -576,7 +576,7 @@ export class Brick {
     static calcLowestPosition(blocks, addX = 0, height, bricks, px, py, pguid) {
         const h = Brick.calcHeight(blocks);
         let additionalY = 0;
-         
+
         while (true) {
             if (py + additionalY + h > height) break;
 

@@ -8,9 +8,7 @@ describe("getPossibleMoves", function () {
         const setup = new defaultGame();
         const game = new TetrisGame(setup);
         game.init();
-        const moves = getPossibleMoves(game, {
-
-        });
+        const moves = getPossibleMoves(game, {});
         //console.log(moves);
     });
 });

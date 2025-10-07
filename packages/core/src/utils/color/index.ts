@@ -7,7 +7,7 @@ export class Color {
     }
 
     add(_r, _g, _b, _a) {
-        return (new Color(Math.min(255, (this.r + _r)), this.g + _g, this.b + _b, this.a + _a))
+        return new Color(Math.min(255, this.r + _r), this.g + _g, this.b + _b, this.a + _a);
     }
 
     toRGBAString() {
@@ -19,7 +19,6 @@ export class Color {
         let r = this.r / 255,
             g = this.g / 255,
             b = this.b / 255,
-
             // find greatest and smallest channel values
             cmin = Math.min(r, g, b),
             cmax = Math.max(r, g, b),
@@ -30,23 +29,18 @@ export class Color {
 
         // calculate hue
         // no difference
-        if (delta == 0)
-            h = 0;
+        if (delta == 0) h = 0;
         // red is max
-        else if (cmax == r)
-            h = ((g - b) / delta) % 6;
+        else if (cmax == r) h = ((g - b) / delta) % 6;
         // green is max
-        else if (cmax == g)
-            h = (b - r) / delta + 2;
+        else if (cmax == g) h = (b - r) / delta + 2;
         // blue is max
-        else
-            h = (r - g) / delta + 4;
+        else h = (r - g) / delta + 4;
 
         h = Math.round(h * 60);
 
         // make negative hues positive behind 360°
-        if (h < 0)
-            h += 360;
+        if (h < 0) h += 360;
 
         // calculate lightness
         l = (cmax + cmin) / 2;

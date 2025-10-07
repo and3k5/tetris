@@ -4,30 +4,29 @@
 name: Deploy web version to gh-pages
 
 on:
-  push:
-    branches: [ master ]
+    push:
+        branches: [master]
 
 jobs:
-  deploy:
+    deploy:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  persist-credentials: false
+            - name: Use Node.js 16
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 16
+            - run: |
+                  npm install
+                  npm run build
 
-    steps:
-    - uses: actions/checkout@v2
-      with:
-        persist-credentials: false
-    - name: Use Node.js 16
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-    - run: |
-        npm install
-        npm run build
-
-    - name: Deploy 🚀
-      uses: JamesIves/github-pages-deploy-action@3.7.1
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: packages/web/dist # The folder the action should deploy.
-        CLEAN: true # Automatically remove deleted files from the deploy branch
+            - name: Deploy 🚀
+              uses: JamesIves/github-pages-deploy-action@3.7.1
+              with:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  BRANCH: gh-pages # The branch the action should deploy to.
+                  FOLDER: packages/web/dist # The folder the action should deploy.
+                  CLEAN: true # Automatically remove deleted files from the deploy branch

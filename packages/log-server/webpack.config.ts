@@ -1,13 +1,13 @@
-const webpack = require('webpack');
-const path = require('path');
+const webpack = require("webpack");
+const path = require("path");
 
-function globals(mode,opts) {
+function globals(mode, opts) {
     return {
         "global.development": mode === "development",
         "global.production": mode === "production",
         "global.mode": mode,
         "global.browser": opts.browser === true,
-        "global.node": opts.node === true
+        "global.node": opts.node === true,
     };
 }
 
@@ -19,9 +19,9 @@ module.exports = function (env) {
         watch: env.watch === "yes",
     };
 
-    const tsLoader =  {
+    const tsLoader = {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: "ts-loader",
         exclude: /node_modules/,
     };
 
@@ -29,13 +29,9 @@ module.exports = function (env) {
         entry: "./src/index.ts",
         target: "node",
         module: {
-            rules: [
-                tsLoader
-            ]
+            rules: [tsLoader],
         },
-        plugins: [
-            new webpack.DefinePlugin(globals(mode,{node:true}))
-        ],
+        plugins: [new webpack.DefinePlugin(globals(mode, { node: true }))],
         output: {
             library: "logserver",
             path: path.resolve(__dirname, "dist"),
@@ -43,10 +39,10 @@ module.exports = function (env) {
         },
         resolve: {
             alias: {
-                "@tetris/core": path.resolve(__dirname, "../core/src/index.ts")
-            }
-        }
+                "@tetris/core": path.resolve(__dirname, "../core/src/index.ts"),
+            },
+        },
     });
 
     return logServerConfig;
-}
+};

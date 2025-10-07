@@ -1,43 +1,43 @@
 {
-  "name": "@tetris/log-server",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "Anders <and3k5@users.noreply.github.com>",
-  "homepage": "https://github.com/and3k5/tetris/tree/master/packages/log-server#readme",
-  "license": "MIT",
-  "main": "lib/log-server.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
-  "publishConfig": {
-    "access": "public"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/and3k5/tetris.git"
-  },
-  "scripts": {
-    "build": "npx webpack --env mode=production",
-    "watch": "npx webpack --env mode=development --env watch=yes",
-    "build-dev": "npx webpack --env mode=development --env mode=development"
-  },
-  "bugs": {
-    "url": "https://github.com/and3k5/tetris/issues"
-  },
-  "dependencies": {
-    "@tetris/core": "file:../core"
-  },
-  "eslintConfig": {
-    "ignorePatterns": [
-      "/dist/**/*"
-    ]
-  },
-  "devDependencies": {
-    "babel-loader": "^8.2.2",
-    "lerna": "^6.0.3"
-  }
+    "name": "@tetris/log-server",
+    "version": "0.0.0",
+    "description": "> TODO: description",
+    "author": "Anders <and3k5@users.noreply.github.com>",
+    "homepage": "https://github.com/and3k5/tetris/tree/master/packages/log-server#readme",
+    "license": "MIT",
+    "main": "lib/log-server.js",
+    "directories": {
+        "lib": "lib",
+        "test": "__tests__"
+    },
+    "files": [
+        "lib"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/and3k5/tetris.git"
+    },
+    "scripts": {
+        "build": "npx webpack --env mode=production",
+        "watch": "npx webpack --env mode=development --env watch=yes",
+        "build-dev": "npx webpack --env mode=development --env mode=development"
+    },
+    "bugs": {
+        "url": "https://github.com/and3k5/tetris/issues"
+    },
+    "dependencies": {
+        "@tetris/core": "file:../core"
+    },
+    "eslintConfig": {
+        "ignorePatterns": [
+            "/dist/**/*"
+        ]
+    },
+    "devDependencies": {
+        "babel-loader": "^8.2.2",
+        "lerna": "^6.0.3"
+    }
 }

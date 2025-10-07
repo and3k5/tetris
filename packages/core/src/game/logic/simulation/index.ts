@@ -198,7 +198,7 @@ class SimulatorRunner {
 
     playbackTick() {
         throw new Error("Not implemented");
-         
+
         const time = new Date().getTime() - this._starttime;
         const simulations = this._simulation.filter((s) => s.done !== true && s.time < time);
         console.log(simulations);

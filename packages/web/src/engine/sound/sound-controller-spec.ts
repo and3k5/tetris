@@ -22,6 +22,5 @@ describe("sound controller", function () {
             const result = soundController.playSound(soundKey, { throwErrors: true });
             expect(result).toBe(true);
         }
-
     });
 });

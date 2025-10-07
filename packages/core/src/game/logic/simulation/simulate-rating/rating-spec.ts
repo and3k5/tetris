@@ -14,13 +14,13 @@ describe("countHoles", function () {
             " x       x",
             "x     x   ",
             "          ",
-        ].map(x => x.split("").map(y => y === "x"));
+        ].map((x) => x.split("").map((y) => y === "x"));
 
         const result = countHoles(matrix);
 
         expect(result).toBe(6);
     });
-})
+});
 
 describe("countHeight", function () {
     it("counts properly", function () {
@@ -35,13 +35,13 @@ describe("countHeight", function () {
             "xx        ",
             "xx x      ",
             "xxxxx     ",
-        ].map(x => x.split("").map(y => y === "x"));
+        ].map((x) => x.split("").map((y) => y === "x"));
 
         const result = countHeight(matrix);
 
         expect(result.blocksHeight).toBe(5);
     });
-})
+});
 
 describe("countClearingLines", function () {
     it("counts no rows properly", function () {
@@ -56,7 +56,7 @@ describe("countClearingLines", function () {
             "          ",
             "          ",
             "          ",
-        ].map(x => x.split("").map(y => y === "x"));
+        ].map((x) => x.split("").map((y) => y === "x"));
 
         const result = countClearingLines(matrix);
 
@@ -75,7 +75,7 @@ describe("countClearingLines", function () {
             "          ",
             "          ",
             "xxxxxxxxxx",
-        ].map(x => x.split("").map(y => y === "x"));
+        ].map((x) => x.split("").map((y) => y === "x"));
 
         const result = countClearingLines(matrix);
 
@@ -94,7 +94,7 @@ describe("countClearingLines", function () {
             "          ",
             "xxxxxxxxxx",
             "xxxxxxxxxx",
-        ].map(x => x.split("").map(y => y === "x"));
+        ].map((x) => x.split("").map((y) => y === "x"));
 
         const result = countClearingLines(matrix);
 
@@ -113,10 +113,10 @@ describe("countClearingLines", function () {
             "xxxxxxxxxx",
             "xxxxxxxxxx",
             "xxxxxxxxxx",
-        ].map(x => x.split("").map(y => y === "x"));
+        ].map((x) => x.split("").map((y) => y === "x"));
 
         const result = countClearingLines(matrix);
 
         expect(result).toBe(3);
     });
-})
+});

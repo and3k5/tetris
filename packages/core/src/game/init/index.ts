@@ -1,5 +1,7 @@
-import { TetrisGame, logic, setup } from "../"
-const { nextBrick: { EasyNextBrick } } = logic;
+import { TetrisGame, logic, setup } from "../";
+const {
+    nextBrick: { EasyNextBrick },
+} = logic;
 const { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } = setup;
 
 function optionParser() {
@@ -40,7 +42,6 @@ function optionParser() {
     return options;
 }
 
-
 export class Options {
     /**
      * @type {string}
@@ -61,15 +62,13 @@ export class Options {
     logger = null;
     view = null;
     debug = null;
-    constructor() {
-
-    }
+    constructor() {}
 }
 
 /**
- * 
- * @param {Options} options 
- * @param {any} engine 
+ *
+ * @param {Options} options
+ * @param {any} engine
  */
 export function init(options, engine) {
     let tetrisgame;
@@ -110,10 +109,7 @@ export function init(options, engine) {
             break;
         case "assistbug":
             setup.simulator = true;
-            setup.simulation = [
-
-
-            ];
+            setup.simulation = [];
 
             var time = 0;
 
@@ -122,35 +118,30 @@ export function init(options, engine) {
                     setup.simulation.push({
                         type: "nextRandom",
                         val: 0,
-                        time: time += 100,
+                        time: (time += 100),
                     });
                     setup.simulation.push({
                         type: "nextRandom",
                         val: 0,
-                        time: time += 100,
+                        time: (time += 100),
                     });
                 }
                 setup.simulation.push({
                     type: "nextRandom",
                     val: 0,
-                    time: time += 100,
+                    time: (time += 100),
                 });
             }
             break;
     }
 
+    if (options.clickTick === true) setup.clickTick = true;
 
-    if (options.clickTick === true)
-        setup.clickTick = true;
+    if (options.logger === "1") setup.logger = true;
 
-    if (options.logger === "1")
-        setup.logger = true;
-
-    if (options.view === "lite")
-        window.document.body.classList.add("lite-view");
+    if (options.view === "lite") window.document.body.classList.add("lite-view");
 
     tetrisgame = new TetrisGame(setup, null, engine);
-
 
     tetrisgame.init();
 

@@ -1,18 +1,17 @@
 const path = require("path");
 const webpack = require("webpack");
 
-function globals(mode,opts) {
+function globals(mode, opts) {
     return {
         "global.development": mode === "development",
         "global.production": mode === "production",
         "global.mode": mode,
         "global.browser": opts.browser === true,
-        "global.node": opts.node === true
+        "global.node": opts.node === true,
     };
 }
 
 module.exports = function (env) {
-
     const mode = env.mode;
 
     const commonConfig = {
@@ -24,13 +23,9 @@ module.exports = function (env) {
         entry: path.resolve(__dirname, "src", "index.ts"),
         target: "node",
         module: {
-            rules: [
-                
-            ]
+            rules: [],
         },
-        plugins: [
-            new webpack.DefinePlugin(globals(mode, {node:true})),
-        ],
+        plugins: [new webpack.DefinePlugin(globals(mode, { node: true }))],
         output: {
             library: "tetris",
             path: path.resolve(__dirname, "dist"),
@@ -38,10 +33,10 @@ module.exports = function (env) {
         },
         resolve: {
             alias: {
-                "@tetris/core": path.resolve(__dirname, "../core")
-            }
-        }
+                "@tetris/core": path.resolve(__dirname, "../core"),
+            },
+        },
     });
 
     return nodeConfig;
-}
+};

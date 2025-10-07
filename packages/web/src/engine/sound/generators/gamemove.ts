@@ -1,10 +1,10 @@
 import { noteToFreq } from "./notes";
 
 /**
- * 
- * @param {AudioContext} audioContext 
- * @param {Number} freq 
- * @param {Number} sampleDuration 
+ *
+ * @param {AudioContext} audioContext
+ * @param {Number} freq
+ * @param {Number} sampleDuration
  */
 export default function Sound(audioContext) {
     const sampleDuration = 0.5;
@@ -20,9 +20,9 @@ export default function Sound(audioContext) {
 }
 
 /**
- * 
- * @param {Float32Array} data 
- * @param {Number} sampleLength 
+ *
+ * @param {Float32Array} data
+ * @param {Number} sampleLength
  */
 export function note(data, startIndex, freq, sampleDuration, sampleRate) {
     const sampleLength = sampleRate * sampleDuration;
@@ -30,11 +30,11 @@ export function note(data, startIndex, freq, sampleDuration, sampleRate) {
         // Math.random() is in [0; 1.0]
         // audio needs to be in [-1.0; 1.0]
         const ang = (i / sampleLength) * freq * (360 * sampleDuration);
-        const wave = Math.sin(ang * Math.PI / 180);
-        const fadeOut = (1 - i / sampleLength);
-        const fadeIn = (i / sampleLength);
+        const wave = Math.sin((ang * Math.PI) / 180);
+        const fadeOut = 1 - i / sampleLength;
+        const fadeIn = i / sampleLength;
         const fadeOut2 = Math.min(i / (sampleLength / 32), 1);
         const volume = 0.6;
-        data[startIndex + i] = (fadeIn * wave * fadeOut * fadeOut2) * volume;
+        data[startIndex + i] = fadeIn * wave * fadeOut * fadeOut2 * volume;
     }
 }
