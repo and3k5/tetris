@@ -1,22 +1,20 @@
 import "./engine/style/tetris.css";
 import { game, extensions } from "@tetris/core";
-const {
-    init: { init, Options },
-} = game;
 
-import "./engine/style/flame.js";
+import "./engine/style/flame";
 
 import DocumentUtil from "./utils/document-util";
 
 import { WebGraphicEngine } from "./engine";
 
-import { SoundController } from "./engine/sound/sound-controller.js";
+import { SoundController } from "./engine/sound/sound-controller";
+import { init, Options } from "@tetris/core/game/init";
 
 const {
     addon: { INIT_TYPES },
 } = extensions;
 
-let container = "#container";
+let container: string | Element | DocumentUtil = "#container";
 if (typeof container === "string") {
     container = window.document.body.querySelector(container);
 }
@@ -47,8 +45,11 @@ if (url.searchParams.get("debug") != null) options.debug = url.searchParams.get(
 
 const tetrisgame = init(options, graphicEngine);
 
-if (options.debug === "1")
-    require("./engine/debug").initDebug(container.parentElement, container.el, tetrisgame);
+// if (options.debug === "1") {
+//     import("./engine/debug").then((mod) =>
+//         mod.initDebug(container.parentElement, container.el, tetrisgame),
+//     );
+// }
 
 if (options.sound !== "off")
     tetrisgame.registerAddon(

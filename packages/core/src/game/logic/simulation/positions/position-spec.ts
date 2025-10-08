@@ -3,7 +3,7 @@ import { Brick } from "../../../../brick";
 import { TetrisGame } from "../../../game";
 import { predictableGameWithOneBlock } from "../../../setup";
 
-/*global describe, expect, it*/
+import { describe, expect, it } from "chai";
 describe("getPositions", function () {
     const brickMatrixToString = function (matrix, trueMatch = true) {
         return matrix.map((x) => x.map((y) => (y === trueMatch ? "X" : "0")).join("")).join("\n");

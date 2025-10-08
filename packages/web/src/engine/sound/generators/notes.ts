@@ -17,8 +17,8 @@ const NOTENAMES = [
     "A#?/Bb?",
     "B?",
 ];
-export function noteToName(num) {
-    return NOTENAMES[~~num % KeysPerOctave].replace(/\?/g, ~~(num / KeysPerOctave));
+export function noteToName(num: number) {
+    return NOTENAMES[~~num % KeysPerOctave].replace(/\?/g, (~~(num / KeysPerOctave)).toString());
 }
 
 // Note number to frequency

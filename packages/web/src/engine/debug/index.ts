@@ -1,7 +1,7 @@
 import { WebGraphicEngine } from "..";
 import DocumentUtil from "../../utils/document-util";
 import * as htmlLoad from "./debug.html";
-import { Color } from "@tetris/core/src/utils/color";
+import { Color } from "@tetris/core/utils/color";
 
 export function initDebug(
     parent: any,

@@ -39,8 +39,7 @@ export function getGrid(color, gridWidth, gridHeight, countX, countY) {
     const key = new CacheKey(color, gridWidth, gridHeight, countX, countY);
     const match = cache.filter((c) => key.matches(c.key));
     if (match.length > 0) return match[0].data;
-    const newObj = { key };
-    newObj.data = createGrid(color, gridWidth, gridHeight, countX, countY);
+    const newObj = { key, data: createGrid(color, gridWidth, gridHeight, countX, countY) };
     cache.push(newObj);
     return newObj.data;
 }

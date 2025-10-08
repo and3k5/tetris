@@ -1,4 +1,5 @@
 import { brick, utils, game } from "@tetris/core";
+import { EOL } from "os";
 const {
     engine: { EngineBase },
 } = game;
@@ -10,6 +11,7 @@ import size from "window-size";
 const { trace: console } = utils;
 
 class TermWriter {
+    items: TermUtil[];
     constructor() {
         this.items = [];
     }
@@ -30,6 +32,7 @@ class TermWriter {
 }
 
 class TermUtil {
+    codes: any[];
     constructor(text) {
         this.codes = [];
         this.text = text;
@@ -178,8 +181,7 @@ export class NodeGraphicEngine extends EngineBase {
         }
 
         if (loop === true) {
-            const $this = this;
-            setTimeout(() => $this.render(false, loop), 10);
+            setTimeout(() => this.render(false, loop), 10);
         }
     }
 
@@ -240,9 +242,9 @@ export class NodeGraphicEngine extends EngineBase {
     drawDisplay(display, holdingDisplay, nextDisplay) {
         const gameWidth = display[0].length * 2 + 2;
 
-        const offset = parseInt(size.width / 2 - gameWidth / 2);
+        const offset = ~~(size.width / 2 - gameWidth / 2);
 
-        const eol = require("os").EOL;
+        const eol = EOL;
 
         //if (this.rendered === true)
 
@@ -372,7 +374,7 @@ export class NodeGraphicEngine extends EngineBase {
         return "White";
     }
 
-    setDisplay(display, brick, color, x, y) {
+    setDisplay(display, brick, color?, x?, y?) {
         if (typeof x !== "number") x = brick.x;
         if (typeof y !== "number") y = brick.y;
         if (color == null) color = brick.color;
@@ -381,7 +383,13 @@ export class NodeGraphicEngine extends EngineBase {
         this.drawBrickForm(blocks, display, x, y, color);
     }
 
-    drawBrickForm(brickForm, display, x, y, color) {
+    drawBrickForm(
+        brickForm: { [x: string]: { [x: string]: number } },
+        display: any[],
+        x: string | number,
+        y: string | number,
+        color: any,
+    ) {
         if (typeof x !== "number") throw new Error("x is not number: " + x);
         if (typeof y !== "number") throw new Error("y is not number: " + x);
         for (const i1 in brickForm) {

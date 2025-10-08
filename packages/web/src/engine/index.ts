@@ -1,18 +1,26 @@
 import * as htmlLoad from "./game.html";
 import DocumentUtil from "../utils/document-util";
-import { RadialGradient, LinearGradient } from "./style/gradient.js";
-import { drawGrid } from "./style/graphics-grid.js";
-import { brick, game, utils } from "@tetris/core";
-const {
-    engine: { EngineBase },
-} = game;
-const {
-    color: { Color },
-} = utils;
-const {
-    gameController: { executeTick },
-} = game;
-const { Brick } = brick;
+import { RadialGradient, LinearGradient } from "./style/gradient";
+import { drawGrid } from "./style/graphics-grid";
+import { brick, utils } from "@tetris/core";
+import { Color } from "@tetris/core/utils/color";
+import { EngineBase } from "@tetris/core/game/engine";
+import { executeTick } from "@tetris/core/game/game-controller";
+import { Brick } from "@tetris/core/brick";
+
+export type StateValue = {
+    fromStamp: number;
+    scale: number;
+    color: utils.color.Color;
+    brick: Brick | undefined | null;
+    fromX: number;
+    fromY: number;
+    currentX?: number;
+    currentY?: number;
+    toX: number;
+    toY: number;
+    blocks: undefined;
+};
 
 export class WebGraphicEngine extends EngineBase {
     private _brickSize = 30;
@@ -25,7 +33,13 @@ export class WebGraphicEngine extends EngineBase {
     private _nextCtx;
     private _score;
 
-    private _state = null;
+    private _state: {
+        bricks: {
+            holding: StateValue[];
+            game: StateValue[];
+            next: StateValue[];
+        };
+    } | null = null;
 
     get score() {
         return this._score;
@@ -184,11 +198,12 @@ export class WebGraphicEngine extends EngineBase {
 
     clearState() {
         if (this._state == null) {
-            this._state = {};
-            this._state.bricks = {
-                holding: [],
-                game: [],
-                next: [],
+            this._state = {
+                bricks: {
+                    holding: [],
+                    game: [],
+                    next: [],
+                },
             };
         }
         this.clearArray(this._state.bricks.holding);
@@ -201,7 +216,25 @@ export class WebGraphicEngine extends EngineBase {
         return array.splice(0, array.length);
     }
 
-    addToState({ brick, old, state, x, y, blocks, color, scale = 1 }) {
+    addToState({
+        brick,
+        old,
+        state,
+        x,
+        y,
+        blocks,
+        color,
+        scale = 1,
+    }: {
+        brick?: Brick | undefined;
+        old?: StateValue[] | undefined;
+        state: StateValue[];
+        x?: number | undefined;
+        y?: number | undefined;
+        blocks?: undefined;
+        color?: Color | undefined;
+        scale?: number | undefined;
+    }) {
         if (typeof old === "undefined") {
             old = state;
         }
@@ -224,20 +257,6 @@ export class WebGraphicEngine extends EngineBase {
             }
         }
 
-        if (entry == null) {
-            entry = { brick };
-            entry.fromX = x;
-            entry.fromY = y;
-        } else {
-            entry.fromX = entry.currentX;
-            entry.fromY = entry.currentY;
-        }
-
-        if (state.indexOf(entry) === -1) state.push(entry);
-
-        entry.toX = x;
-        entry.toY = y;
-
         if (typeof blocks === "undefined") {
             if (brick instanceof Brick) {
                 blocks = brick.blocks;
@@ -245,8 +264,6 @@ export class WebGraphicEngine extends EngineBase {
                 throw new Error("Missing blocks");
             }
         }
-        entry.blocks = blocks;
-
         if (typeof color === "undefined") {
             if (brick instanceof Brick) {
                 color = brick.color;
@@ -254,10 +271,31 @@ export class WebGraphicEngine extends EngineBase {
                 throw new Error("Missing color");
             }
         }
-        entry.color = color;
 
-        entry.scale = scale;
-        entry.fromStamp = new Date().getTime();
+        if (entry == null) {
+            entry = {
+                brick,
+                fromX: x,
+                fromY: y,
+                toX: x,
+                toY: y,
+                blocks,
+                color,
+                scale,
+                fromStamp: new Date().getTime(),
+            };
+        } else {
+            entry.fromX = entry.currentX;
+            entry.fromY = entry.currentY;
+            entry.toX = x;
+            entry.toY = y;
+            entry.blocks = blocks;
+            entry.color = color;
+            entry.scale = scale;
+            entry.fromStamp = new Date().getTime();
+        }
+
+        if (state.indexOf(entry) === -1) state.push(entry);
     }
 
     drawBricks() {
@@ -318,27 +356,21 @@ export class WebGraphicEngine extends EngineBase {
         return min * (1 - percent) + max * percent;
     }
 
-    updateBrickState(entry) {
-        if (
-            // disable
-            false &&
-            typeof entry.fromX === "number" &&
-            typeof entry.fromY === "number" &&
-            typeof entry.toX === "number" &&
-            typeof entry.toY === "number" &&
-            typeof entry.fromStamp === "number"
-        ) {
-            const stamp = new Date().getTime() - entry.fromStamp;
-            let percX = stamp / 100;
-            if (percX > 1) percX = 1;
-            let percY = stamp / 1000;
-            if (percY > 1) percY = 1;
-            entry.currentX = this.mix(entry.fromX, entry.toX, percX);
-            entry.currentY = this.mix(entry.fromY, entry.toY, percY);
-        } else {
-            entry.currentX = entry.toX;
-            entry.currentY = entry.toY;
-        }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    updateBrickState(_) {
+        // if (
+        //     // disable
+        //     false &&
+        //     typeof entry.fromX === "number" &&
+        //     typeof entry.fromY === "number" &&
+        //     typeof entry.toX === "number" &&
+        //     typeof entry.toY === "number" &&
+        //     typeof entry.fromStamp === "number"
+        // ) {
+        // } else {
+        //     entry.currentX = entry.toX;
+        //     entry.currentY = entry.toY;
+        // }
     }
 
     drawState(entries, ctx) {
@@ -436,40 +468,39 @@ export class WebGraphicEngine extends EngineBase {
         this.drawGrid();
         this.drawStates();
         if (loop === true) {
-            const $this = this;
-            requestAnimationFrame(() => $this.render(false, loop));
+            requestAnimationFrame(() => this.render(false, loop));
         }
     }
 }
 
-import * as flame from "./style/flame.js";
+// import * as flame from "./style/flame";
 
-export class BurningGraphicEngine extends WebGraphicEngine {
-    constructor(options) {
-        super(options);
-        //this.brickSize = 190;
-    }
+// export class BurningGraphicEngine extends WebGraphicEngine {
+//     constructor(options) {
+//         super(options);
+//         //this.brickSize = 190;
+//     }
 
-    drawSquare(ctx, x, y, w, h, color) {
-        const image = ctx.createImageData(w, h);
+//     drawSquare(ctx, x, y, w, h, color) {
+//         const image = ctx.createImageData(w, h);
 
-        for (let _x = 0; _x < w; _x++) {
-            for (let _y = 0; _y < w; _y++) {
-                const pos = (_x + ~~(_y * w)) * 4;
+//         for (let _x = 0; _x < w; _x++) {
+//             for (let _y = 0; _y < w; _y++) {
+//                 const pos = (_x + ~~(_y * w)) * 4;
 
-                const col = flame.mainImage(_x / w, _y / h);
+//                 const col = flame.mainImage(_x / w, _y / h);
 
-                if (window.loq != true) {
-                    window.loq = true;
-                }
+//                 if (window.loq != true) {
+//                     window.loq = true;
+//                 }
 
-                image.data[pos + 0] = col[0] * 255;
-                image.data[pos + 1] = col[1] * 255;
-                image.data[pos + 2] = col[2] * 255;
-                image.data[pos + 3] = 255;
-            }
-        }
+//                 image.data[pos + 0] = col[0] * 255;
+//                 image.data[pos + 1] = col[1] * 255;
+//                 image.data[pos + 2] = col[2] * 255;
+//                 image.data[pos + 3] = 255;
+//             }
+//         }
 
-        ctx.putImageData(image, x, y);
-    }
-}
+//         ctx.putImageData(image, x, y);
+//     }
+// }

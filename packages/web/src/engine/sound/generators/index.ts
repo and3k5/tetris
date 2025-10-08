@@ -1,8 +1,8 @@
-import gamelose from "./gamelose.js";
-import gamebump from "./gamebump.js";
-import gamerow from "./gamerow.js";
-import gamemove from "./gamemove.js";
-import menumusic from "./menumusic.js";
+import gamelose from "./gamelose";
+import gamebump from "./gamebump";
+import gamerow from "./gamerow";
+import gamemove from "./gamemove";
+import menumusic from "./menumusic";
 
 export default [
     {

@@ -1,4 +1,4 @@
-/*global describe, it*/
+import { describe, it } from "chai";
 import { TetrisGame } from "../../game";
 import { defaultGame } from "../../setup";
 import { getPossibleMoves } from "./";

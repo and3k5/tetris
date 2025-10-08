@@ -1,5 +1,5 @@
 import { Brick } from "../brick";
-import * as gameController from "./game-controller.js";
+import * as gameController from "./game-controller";
 import { simulation } from "./logic";
 const { attachSimulator } = simulation;
 import { trace as console, color } from "../utils";
@@ -114,7 +114,7 @@ export class TetrisGame {
         if (extra != null) {
             if (Array.isArray(extra.bricks)) {
                 this._bricks = extra.bricks.concat();
-                for (var brick of this._bricks) {
+                for (const brick of this._bricks) {
                     brick.game = this;
                 }
             }
@@ -137,7 +137,7 @@ export class TetrisGame {
         ];
         this.setNextRandom();
 
-        var game = this;
+        const game = this;
 
         this.getColors = () => colors;
 
@@ -145,7 +145,7 @@ export class TetrisGame {
             if (this._RUNNING) {
                 this.score++;
                 this.runEvent("fx", null, "sound", "gamerow");
-                var bricks = game.bricks;
+                const bricks = game.bricks;
                 ((line) => {
                     const rtn = [];
                     let times = 0;
@@ -219,13 +219,13 @@ export class TetrisGame {
             gameController.gameControlDown(this);
 
             if (this.setup.logger === true) {
-                var socket = transmitter();
-                var game = this;
+                const socket = transmitter();
+                const game = this;
                 setInterval(function () {
                     if (game._socket != null && game._socket.readyState === game._socket.OPEN) {
                         let items;
                         while ((items = game._logEntries.splice(0, 1)).length > 0)
-                            for (var item of items) game._socket.send(JSON.stringify(item));
+                            for (const item of items) game._socket.send(JSON.stringify(item));
                     }
                 });
                 this._socket = socket;
@@ -278,7 +278,7 @@ export class TetrisGame {
         modifications: any[] = [],
     ) {
         modifications = modifications.concat();
-        var result = [];
+        const result = [];
         for (let y = 0; y < height; y++) {
             result.push([]);
             for (let x = 0; x < width; x++) {
@@ -286,15 +286,15 @@ export class TetrisGame {
             }
         }
         for (const brick of bricks) {
-            var brickForm = brick.blocks;
-            var x = brick.x;
-            var y = brick.y;
+            let brickForm = brick.blocks;
+            let x = brick.x;
+            let y = brick.y;
 
-            var matchingModifications = modifications.filter((m) => m.guid == brick.guid);
+            const matchingModifications = modifications.filter((m) => m.guid == brick.guid);
             if (matchingModifications.length > 1)
                 throw new Error("There were multiple modifications found for a single brick!");
             if (matchingModifications.length == 1) {
-                var mod = matchingModifications[0];
+                const mod = matchingModifications[0];
 
                 if (typeof mod.x === "number") x = mod.x;
                 if (typeof mod.y === "number") y = mod.y;
@@ -303,11 +303,11 @@ export class TetrisGame {
                 modifications.splice(modifications.indexOf(mod), 1);
             }
 
-            for (var i1 in brickForm) {
-                for (var i2 in brickForm[i1]) {
+            for (const i1 in brickForm) {
+                for (const i2 in brickForm[i1]) {
                     if (brickForm[i1][i2] == 1) {
-                        var cx = x + parseInt(i2);
-                        var cy = y + parseInt(i1);
+                        const cx = x + parseInt(i2);
+                        const cy = y + parseInt(i1);
                         if (cy < 0) continue;
                         if (cy > height) continue;
                         result[cy][cx] = true;
@@ -332,14 +332,14 @@ export class TetrisGame {
     }
 
     getBrickId() {
-        var max =
+        const max =
             this.bricks.length > 0 ? this.bricks.map((b) => b.id).sort((a, b) => b - a)[0] : 0;
 
         return max + 1;
     }
 
     addNewBrick(pos = -1) {
-        var brick = new Brick({ game: this, ingame: true });
+        const brick = new Brick({ game: this, ingame: true });
 
         brick.id = this.getBrickId();
 
@@ -367,9 +367,9 @@ export class TetrisGame {
 
     logEvent(logObj) {
         if (this.setup.logger === true) {
-            var gameGuid = this._gameGuid;
-            var time = new Date().getTime();
-            var obj = {
+            const gameGuid = this._gameGuid;
+            const time = new Date().getTime();
+            const obj = {
                 action: "log",
                 time,
                 data: Object.assign({ gameGuid }, logObj),
@@ -399,7 +399,7 @@ export class TetrisGame {
     }
 
     getMovingBrick() {
-        for (var i in this.bricks) {
+        for (const i in this.bricks) {
             if (this.bricks[i].moving) {
                 return this.bricks[i];
             }
@@ -509,8 +509,8 @@ export class TetrisGame {
     }
 
     checkXY(x, y) {
-        var bricks = this.bricks;
-        for (var brick of bricks) {
+        const bricks = this.bricks;
+        for (const brick of bricks) {
             for (let j = 0, blo_len = brick.blocks.length; j < blo_len; j++) {
                 for (let k = 0, brl_len = brick.blocks[j].length; k < brl_len; k++) {
                     if (brick.blocks[j][k] == 1) {
@@ -533,7 +533,7 @@ export class TetrisGame {
 
     moveTowards(x, r = null) {
         console.debug("moving to", x, r);
-        var movingBrick = this.getMovingBrick();
+        const movingBrick = this.getMovingBrick();
 
         if (typeof r === "number") {
             if (r != this.getMovingBrick().rotation) {

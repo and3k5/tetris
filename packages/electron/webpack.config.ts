@@ -44,11 +44,17 @@ module.exports = function (env: { mode: any; watch: string }) {
         },
     };
 
+    const tsLoader = {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+    };
+
     const elecConfig = Object.assign({}, commonConfig, {
         entry: path.resolve(__dirname, "../web/src", "index.ts"),
         target: "electron-main",
         module: {
-            rules: [cssLoader, htmlLoader, imgLoader],
+            rules: [cssLoader, htmlLoader, imgLoader, tsLoader],
         },
         plugins: [new webpack.DefinePlugin(globals(mode, { browser: true }))],
         output: {
@@ -58,8 +64,9 @@ module.exports = function (env: { mode: any; watch: string }) {
         },
         resolve: {
             alias: {
-                "@tetris/core": path.resolve(__dirname, "../core/src/index.ts"),
+                "@tetris/core": path.resolve(__dirname, "../core/src"),
             },
+            extensions: [".tsx", ".ts", ".js"],
         },
     });
     return elecConfig;

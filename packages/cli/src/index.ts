@@ -4,7 +4,7 @@ const {
 } = game;
 
 import { NodeGraphicEngine } from "./engine";
-import { Options } from "@tetris/core/src/game/init";
+import { Options } from "@tetris/core/game/init";
 const graphicEngine = new NodeGraphicEngine();
 
 const args = process.argv.concat();

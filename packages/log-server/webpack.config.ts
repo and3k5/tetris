@@ -11,7 +11,7 @@ function globals(mode: string, opts: { browser?: boolean; node?: boolean }) {
     };
 }
 
-module.exports = function (env: { mode: any; watch: string }) {
+export default function (env: { mode: any; watch: string }) {
     const mode = env.mode;
 
     const commonConfig: Partial<Configuration> = {
@@ -41,8 +41,9 @@ module.exports = function (env: { mode: any; watch: string }) {
             alias: {
                 "@tetris/core": path.resolve(__dirname, "../core/src/index.ts"),
             },
+            extensions: [".tsx", ".ts", ".js"],
         },
     });
 
     return logServerConfig;
-};
+}

@@ -1,4 +1,4 @@
-/*global describe, expect, it*/
+import { describe, expect, it } from "chai";
 
 import { sortBy } from ".";
 

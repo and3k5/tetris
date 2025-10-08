@@ -1,1 +1,1 @@
-export { DocumentUtil } from "./document-util.js";
+export { default as DocumentUtil } from "./document-util";

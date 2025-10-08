@@ -41,6 +41,7 @@ module.exports = function (env: { mode: any; watch: string }) {
             alias: {
                 "@tetris/core": path.resolve(__dirname, "../core/src/index.ts"),
             },
+            extensions: [".tsx", ".ts", ".js"],
         },
     });
 

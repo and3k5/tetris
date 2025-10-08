@@ -47,6 +47,7 @@ export class Options {
     logger? = null;
     view? = null;
     debug? = null;
+    sound?: null | "off" = null;
     constructor() {}
 }
 
