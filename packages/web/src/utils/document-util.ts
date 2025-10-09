@@ -1,79 +1,8 @@
-export default class DocumentUtil {
-    private _element;
-    private _reacts = [];
-    constructor(element) {
-        this._element = this.parse(element);
-    }
-
-    parse(element) {
-        if (element instanceof DocumentUtil) {
-            return this.parse(element._element);
-        } else if (typeof element === "string") {
-            element = element.trim();
-            if (element.indexOf("<") !== -1) {
-                return DocumentUtil.stringToElement(element);
-            } else {
-                return document.createElement(element);
-            }
-        }
-
-        return element;
-    }
-
-    querySelector(query) {
-        return new DocumentUtil(this._element.querySelector(query));
-    }
-
-    attr(name, value) {
-        if (arguments.length == 1) return this._element.getAttribute(name);
-        else this._element.setAttribute(name, value);
-        return this;
-    }
-
-    append(element) {
-        if (Array.isArray(element)) {
-            for (const item of element) this.append(item);
-        } else if (element instanceof DocumentUtil) {
-            this._element.appendChild(element._element);
-        } else {
-            this._element.appendChild(this.parse(element));
-        }
-        return this;
-    }
-
-    toString() {
-        return this._element.outerHTML;
-    }
-
-    text(txt) {
-        if (arguments.length === 0) {
-            return this._element.textContent;
-        } else {
-            this._element.textContent = txt;
-        }
-        return this;
-    }
-
-    get el() {
-        return this._element;
-    }
-
-    static stringToElement(str, parent?) {
-        const container = document.createElement(parent || "div");
-        container.innerHTML = str;
-        const result = [];
-        for (let i = 0; i < container.children.length; i++) {
-            result.push(container.children[i]);
-        }
-        return result.length === 1 ? result[0] : result;
-    }
-
-    react(getter, observe = true) {
-        const reactor = new Reactor(getter);
-        this._reacts.push(reactor);
-        if (observe === true) reactor.observe();
-        return reactor;
-    }
+export function createReactor(getter: unknown, observe = true) {
+    const reactor = new Reactor(getter);
+    this._reacts.push(reactor);
+    if (observe === true) reactor.observe();
+    return reactor;
 }
 
 class Reactor {

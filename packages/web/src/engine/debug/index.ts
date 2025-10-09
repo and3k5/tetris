@@ -1,27 +1,31 @@
 import { WebGraphicEngine } from "..";
-import DocumentUtil from "../../utils/document-util";
-import * as htmlLoad from "./debug.html";
+import { createReactor } from "../../utils/document-util";
+import { default as htmlLoad } from "./debug.html";
 import { Color } from "@tetris/core/utils/color";
 
 export function initDebug(
-    parent: any,
-    container: any,
+    parent: never,
+    container: HTMLElement,
     game: import("../../../../core/src/game").TetrisGame,
 ) {
-    const debugContainer = new DocumentUtil(container);
+    const debugContainer = container;
 
-    const element = DocumentUtil.stringToElement(htmlLoad);
-    debugContainer.append(element);
+    const domParser = new DOMParser();
+    const htmlLoadDocument = domParser.parseFromString(htmlLoad, "text/html");
 
-    const clickTick = debugContainer.querySelector("[data-target='clickTick']");
-    clickTick.el.addEventListener("change", function (ev) {
+    for (const element of htmlLoadDocument.body.children) {
+        debugContainer.append(element);
+    }
+
+    const clickTick = debugContainer.querySelector<HTMLInputElement>("[data-target='clickTick']");
+    clickTick.addEventListener("change", function (ev) {
+        if (!(ev.target instanceof HTMLInputElement))
+            throw new Error("unknown click tick checkbox source");
         game.setup.clickTick = ev.target.checked;
     });
-    clickTick
-        .react(() => game.setup.clickTick)
-        .addHandler((v) => {
-            clickTick.el.checked = v;
-        });
+    createReactor(() => game.setup.clickTick).addHandler((v) => {
+        clickTick.checked = v;
+    });
 
     const simulationViewer = debugContainer.querySelector("[data-target='simulation-viewer']");
 
@@ -61,15 +65,15 @@ export function initDebug(
             }
         };
 
-        const selector = simulationViewer.querySelector("[data-target='simulationSelector']");
-        selector
-            .react(() => movements)
-            .addHandler(() => {
-                console.log("UPDATED MOVEMENTS");
-                selector.el.max = movements.length - 1;
-                selector.el.value = 0;
-                calldraw();
-            });
+        const selector = simulationViewer.querySelector<HTMLInputElement>(
+            "[data-target='simulationSelector']",
+        );
+        createReactor(() => movements).addHandler(() => {
+            console.log("UPDATED MOVEMENTS");
+            selector.max = (movements.length - 1).toString();
+            selector.value = "0";
+            calldraw();
+        });
 
         game.simulator.addEvent("update-movements", function (m) {
             movements = m;
@@ -79,23 +83,25 @@ export function initDebug(
 
         movements = game.simulator.movements;
 
-        selector.el.addEventListener("input", function (ev) {
-            selectedValue = ev.target.value;
+        selector.addEventListener("input", function (ev) {
+            if (!(ev.target instanceof HTMLInputElement))
+                throw new Error("invalid selector element");
+            selectedValue = ev.target.valueAsNumber;
             calldraw();
         });
 
         const upBtn = simulationViewer.querySelector("[data-target='sim-up']");
-        upBtn.el.addEventListener("click", function () {
+        upBtn.addEventListener("click", function () {
             selectedValue = selectedValue + 1;
             if (selectedValue > movements.length) selectedValue = movements.length;
-            selector.el.value = selectedValue;
+            selector.value = selectedValue.toString();
             calldraw();
         });
         const downBtn = simulationViewer.querySelector("[data-target='sim-down']");
-        downBtn.el.addEventListener("click", function () {
+        downBtn.addEventListener("click", function () {
             selectedValue = selectedValue - 1;
             if (selectedValue < 0) selectedValue = 0;
-            selector.el.value = selectedValue;
+            selector.value = selectedValue.toString();
             calldraw();
         });
     } else {
@@ -110,5 +116,5 @@ export function initDebug(
         }
     }
 
-    container.parentNode.insertBefore(debugContainer.el, container.nextSibling);
+    container.parentNode.insertBefore(debugContainer, container.nextSibling);
 }

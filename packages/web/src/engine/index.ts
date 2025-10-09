@@ -1,8 +1,7 @@
-import * as htmlLoad from "./game.html";
-import DocumentUtil from "../utils/document-util";
+import { default as htmlLoad } from "./game.html";
 import { RadialGradient, LinearGradient } from "./style/gradient";
 import { drawGrid } from "./style/graphics-grid";
-import { brick, utils } from "@tetris/core";
+import { utils } from "@tetris/core";
 import { Color } from "@tetris/core/utils/color";
 import { EngineBase } from "@tetris/core/game/engine";
 import { executeTick } from "@tetris/core/game/game-controller";
@@ -69,17 +68,22 @@ export class WebGraphicEngine extends EngineBase {
         return this._nextCanvas;
     }
 
-    constructor(options) {
+    constructor(options: { container: HTMLElement }) {
         super();
 
-        const container = new DocumentUtil(options.container).append(
-            DocumentUtil.stringToElement(htmlLoad),
-        );
+        const domParser = new DOMParser();
+        const htmlDocument = domParser.parseFromString(htmlLoad, "text/html");
 
-        this._gameCanvas = container.querySelector("[data-target=gameCanvas]").el;
-        this._holdingCanvas = container.querySelector("[data-target=holdingCanvas]").el;
-        this._nextCanvas = container.querySelector("[data-target=nextCanvas]").el;
-        this._score = container.querySelector("[data-target=score]").el;
+        const { container } = options;
+
+        for (const element of htmlDocument.body.children) {
+            container.append(element);
+        }
+
+        this._gameCanvas = container.querySelector("[data-target=gameCanvas]");
+        this._holdingCanvas = container.querySelector("[data-target=holdingCanvas]");
+        this._nextCanvas = container.querySelector("[data-target=nextCanvas]");
+        this._score = container.querySelector("[data-target=score]");
         this._gameCtx = this._gameCanvas.getContext("2d");
         this._holdingCtx = this._holdingCanvas.getContext("2d");
         this._nextCtx = this._nextCanvas.getContext("2d");

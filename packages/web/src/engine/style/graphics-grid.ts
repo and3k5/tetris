@@ -1,5 +1,3 @@
-import DocumentUtil from "../../utils/document-util";
-
 const cache = [];
 class CacheKey {
     private _color;
@@ -45,7 +43,7 @@ export function getGrid(color, gridWidth, gridHeight, countX, countY) {
 }
 
 function createGrid(color, gridWidth, gridHeight, countX, countY) {
-    const canvas = new DocumentUtil("canvas").el;
+    const canvas = document.querySelector("canvas");
     canvas.width = gridWidth * countX;
     canvas.height = gridHeight * countY;
     const ctx = canvas.getContext("2d");
@@ -62,7 +60,7 @@ function createGrid(color, gridWidth, gridHeight, countX, countY) {
 
     for (let y = 0; y <= countY; y++) {
         ctx.beginPath();
-        ctx.moveTo(0, y * gridHeight, 0);
+        ctx.moveTo(0, y * gridHeight);
         ctx.lineTo(canvas.width, y * gridHeight);
         ctx.closePath();
         ctx.stroke();

@@ -1,9 +1,7 @@
 import "./engine/style/tetris.css";
-import { game, extensions } from "@tetris/core";
+import { extensions } from "@tetris/core";
 
 import "./engine/style/flame";
-
-import DocumentUtil from "./utils/document-util";
 
 import { WebGraphicEngine } from "./engine";
 
@@ -14,11 +12,7 @@ const {
     addon: { INIT_TYPES },
 } = extensions;
 
-let container: string | Element | DocumentUtil = "#container";
-if (typeof container === "string") {
-    container = window.document.body.querySelector(container);
-}
-container = new DocumentUtil(container);
+const container = document.querySelector<HTMLDivElement>("#container");
 
 const graphicEngine = new WebGraphicEngine({
     container: container,
