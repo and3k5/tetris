@@ -1,3 +1,4 @@
+import { TetrisGame } from "@tetris/core/game";
 import { WebGraphicEngine } from "..";
 import { createReactor } from "../../utils/document-util";
 import { default as htmlLoad } from "./debug.html";
@@ -6,7 +7,7 @@ import { Color } from "@tetris/core/utils/color";
 export function initDebug(
     parent: never,
     container: HTMLElement,
-    game: import("../../../../core/src/game").TetrisGame,
+    game: TetrisGame<WebGraphicEngine>,
 ) {
     const debugContainer = container;
 

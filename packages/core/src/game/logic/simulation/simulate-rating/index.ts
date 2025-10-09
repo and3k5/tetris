@@ -1,7 +1,8 @@
+import { Blocks } from "../../../../brick/brick";
 import { sortBy } from "../../../../utils/sorting";
 import { SimpleMovement } from "../movement";
 
-export function countClearingLines(matrix: boolean[][]) {
+export function countClearingLines(matrix: Blocks) {
     let clearingLines = 0;
     for (let y = matrix.length - 1; y >= 0; y--) {
         if (matrix[y].filter((x: boolean) => x !== true).length === 0) {
@@ -11,7 +12,7 @@ export function countClearingLines(matrix: boolean[][]) {
     return clearingLines;
 }
 
-function swapXY(matrix: boolean[][]) {
+function swapXY(matrix: Blocks) {
     const aLength = matrix.length;
     const bLength = matrix[0].length;
 
@@ -34,7 +35,7 @@ function swapXY(matrix: boolean[][]) {
     return result;
 }
 
-export function countHoles(matrix: boolean[][]) {
+export function countHoles(matrix: Blocks) {
     let holes = 0;
 
     matrix = swapXY(matrix);
@@ -51,7 +52,7 @@ export function countHoles(matrix: boolean[][]) {
     return holes;
 }
 
-export function countHeight(matrix: boolean[][]) {
+export function countHeight(matrix: Blocks) {
     let height = 0;
 
     matrix = swapXY(matrix);
@@ -94,7 +95,7 @@ export class Score {
     }
 }
 
-export function getScore(matrix: boolean[][]) {
+export function getScore(matrix: Blocks) {
     const clearingLines = countClearingLines(matrix);
     const holes = countHoles(matrix);
     const height = countHeight(matrix);

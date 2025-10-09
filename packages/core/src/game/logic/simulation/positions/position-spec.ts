@@ -1,7 +1,7 @@
 import { getPositions } from ".";
 import { Brick } from "../../../../brick";
 import { TetrisGame } from "../../../game";
-import { predictableGameWithOneBlock } from "../../../setup";
+import { convertNumbersToBooleans, predictableGameWithOneBlock } from "../../../setup";
 
 describe("getPositions", function () {
     const brickMatrixToString = function (matrix, trueMatch = true) {
@@ -19,11 +19,11 @@ describe("getPositions", function () {
     };
 
     it("can get expected positions", function () {
-        const blocks = [
+        const blocks = convertNumbersToBooleans([
             [0, 1, 1],
             [1, 1, 0],
             [0, 0, 0],
-        ];
+        ]);
         const game = new TetrisGame(predictableGameWithOneBlock(blocks));
         game.init();
         const positions = getPositions(game.width, game.height, game.bricks, game.getMovingBrick());
@@ -55,7 +55,7 @@ describe("getPositions", function () {
                         const actualX = position.x + x;
                         const actualY = position.y + y;
 
-                        const value = expectedBrickBlocks[y][x] === 1;
+                        const value = expectedBrickBlocks[y][x] === true;
 
                         if (
                             actualY < 0 ||

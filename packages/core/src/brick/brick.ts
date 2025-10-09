@@ -1,6 +1,10 @@
+import { TetrisGame } from "../game";
 import { guid, trace as console } from "../utils";
+import { Color } from "../utils/color";
 import { createRotatedBlocks, rotateLeft, rotateRight, rotateTwice } from "./block/rotate-blocks";
 const { createUniqueGuid } = guid;
+
+export type Blocks = boolean[][];
 
 export class Brick {
     private _x = undefined;
@@ -8,14 +12,33 @@ export class Brick {
     private _rotation = 0;
     private _index = undefined;
     private _guid;
-    game: any;
-    ingame: any;
-    color: any;
-    blocks: any;
-    moving: any;
-    id: any;
-    static emulate: (vblocks: any) => Brick;
-    constructor(options?: any) {
+    game: TetrisGame;
+    ingame: boolean;
+    color: Color | undefined;
+    blocks: Blocks;
+    moving: boolean;
+    id: number;
+    static emulate = (vblocks: Blocks) => {
+        const tmp = new Brick({
+            ingame: false,
+            game: null,
+        });
+        tmp.moving = false;
+        tmp.blocks = vblocks;
+        return tmp;
+    };
+    constructor(
+        options?:
+            | {
+                  ingame?: boolean;
+                  game?: null | TetrisGame;
+                  guid?: string;
+                  brickform?: null | Blocks;
+                  x?: number;
+                  y?: number;
+              }
+            | undefined,
+    ) {
         const o = options || { ingame: false, game: null };
         if (typeof o.guid === "string") this._guid = o.guid;
         else this._guid = createUniqueGuid();
@@ -160,8 +183,7 @@ export class Brick {
     static calcWidth(blocks) {
         let high = 0;
 
-        let // 1E309 = infinity
-            low = 1e309;
+        let low = Infinity;
 
         for (const i1 in blocks) {
             for (const i2 in blocks[i1]) {
@@ -179,7 +201,7 @@ export class Brick {
         let rtn = 0;
         for (const i1 in this.blocks) {
             for (const i2 in this.blocks[i1]) {
-                if (this.blocks[i1][i2] == 0) {
+                if (this.blocks[i1][i2] === false) {
                     cnt++;
                 }
             }
@@ -255,8 +277,8 @@ export class Brick {
         return Brick.rotateBlocks(this.blocks, rotations);
     }
 
-    static rotateBlocks(blocks, rotations) {
-        return createRotatedBlocks(blocks, rotations);
+    static rotateBlocks<T>(blocks: T[][], rotations: number) {
+        return createRotatedBlocks<T>(blocks, rotations);
     }
 
     canRotate(Throw = false, blocks2 = null) {
@@ -440,7 +462,7 @@ export class Brick {
         return Brick.calcWillCollide(x, y, bricks, blocks, this.x, this.y, this.guid);
     }
 
-    static calcWillCollide(x, y, bricks, blocks, px, py, pguid) {
+    static calcWillCollide(x: number, y: number, bricks: Brick[], blocks, px, py, pguid) {
         const thisBlocks = Brick.calcAbsoluteBlocks(blocks, px, py, x, y);
 
         for (const brick of bricks) {
@@ -571,13 +593,13 @@ export class Brick {
     }
 
     static calcLowestPosition(
-        blocks: any,
-        addX: any = 0,
+        blocks: Blocks,
+        addX: number = 0,
         height: number,
         bricks: Brick[],
-        px: any,
-        py: any,
-        pguid: any,
+        px: number,
+        py: number,
+        pguid: number,
     ) {
         const h = Brick.calcHeight(blocks);
         let additionalY = 0;
@@ -597,12 +619,12 @@ export class Brick {
         const this_color = this.color;
         for (const i1 in this.blocks) {
             for (const i2 in this.blocks[i1]) {
-                if (this.blocks[i1][i2] == 1) {
+                if (this.blocks[i1][i2] == true) {
                     rtn.push(
                         ((x, y, origin) => {
                             const tmp = new Brick();
                             tmp.moving = false;
-                            tmp.blocks = [[1]];
+                            tmp.blocks = [[true]];
                             tmp.color = this_color;
                             tmp.x = x;
                             tmp.y = y;
@@ -627,13 +649,3 @@ export class Brick {
         return -1;
     }
 }
-
-Brick.emulate = (vblocks) => {
-    const tmp = new Brick({
-        ingame: false,
-        game: null,
-    });
-    tmp.moving = false;
-    tmp.blocks = vblocks;
-    return tmp;
-};

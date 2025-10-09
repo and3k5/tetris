@@ -1,3 +1,5 @@
+// oxlint-disable no-empty-file
+
 // //import SimplexNoise from "simplex-noise";
 // //var nois = new SimplexNoise(Math.random);
 

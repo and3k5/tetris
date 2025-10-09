@@ -10,9 +10,12 @@ import { nextBrick } from "./logic";
 import { EventController } from "../extensions/event";
 import { AddonContainer, INIT_TYPES } from "../extensions/addon";
 import { InputController } from "./input";
+import { TetrisSetup } from "./setup";
+import { EngineBase } from "./engine";
+import { Blocks } from "../brick/brick";
 const { NextBrick } = nextBrick;
 
-export class TetrisGame {
+export class TetrisGame<TEngine extends EngineBase = EngineBase> {
     // [number] Bricks x count
     private _width;
 
@@ -59,11 +62,13 @@ export class TetrisGame {
 
     private _socket = null;
 
+    socket = null;
+
     private _gameGuid;
 
     private _logEntries = [];
 
-    private _graphicEngine;
+    private _graphicEngine: TEngine;
 
     private _nextRandomGenerator;
 
@@ -90,9 +95,9 @@ export class TetrisGame {
     }
 
     constructor(
-        gameSetup?: any,
-        extra: { bricks?: Brick[]; holding?: any } = null,
-        graphicEngine = null,
+        gameSetup?: TetrisSetup,
+        extra: { bricks?: Brick[]; holding?: unknown } = null,
+        graphicEngine: TEngine | null = null,
     ) {
         this._setup = gameSetup;
 
@@ -137,11 +142,12 @@ export class TetrisGame {
         ];
         this.setNextRandom();
 
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const game = this;
 
         this.getColors = () => colors;
 
-        function clearLine(l) {
+        function clearLine(this: TetrisGame, l) {
             if (this._RUNNING) {
                 this.score++;
                 this.runEvent("fx", null, "sound", "gamerow");
@@ -153,7 +159,7 @@ export class TetrisGame {
                         for (const i in bricks) {
                             for (const i1 in bricks[i].blocks) {
                                 for (const i2 in bricks[i].blocks[i1]) {
-                                    if (bricks[i].blocks[i1][i2] == 1) {
+                                    if (bricks[i].blocks[i1][i2] === true) {
                                         const cond1 = line == bricks[i].y + parseInt(i1);
                                         const cond2 = bricks[i].moving == false;
                                         if (cond1 && cond2) {
@@ -171,7 +177,7 @@ export class TetrisGame {
                     for (const i in bricks) {
                         for (const i1 in bricks[i].blocks) {
                             for (const i2 in bricks[i].blocks[i1]) {
-                                if (bricks[i].blocks[i1][i2] == 1) {
+                                if (bricks[i].blocks[i1][i2] === true) {
                                     const cond1 = line > bricks[i].y + parseInt(i1);
                                     const cond2 = bricks[i].moving == false;
                                     if (cond1 && cond2) {
@@ -205,7 +211,7 @@ export class TetrisGame {
             }
         };
 
-        this.init = function () {
+        this.init = function (this: TetrisGame) {
             this._RUNNING = true;
             this.score = 0;
             this.HOLDINGCOUNT = 0;
@@ -220,12 +226,11 @@ export class TetrisGame {
 
             if (this.setup.logger === true) {
                 const socket = transmitter();
-                const game = this;
-                setInterval(function () {
-                    if (game._socket != null && game._socket.readyState === game._socket.OPEN) {
+                setInterval(() => {
+                    if (this._socket != null && this._socket.readyState === this._socket.OPEN) {
                         let items;
-                        while ((items = game._logEntries.splice(0, 1)).length > 0)
-                            for (const item of items) game._socket.send(JSON.stringify(item));
+                        while ((items = this._logEntries.splice(0, 1)).length > 0)
+                            for (const item of items) this._socket.send(JSON.stringify(item));
                     }
                 });
                 this._socket = socket;
@@ -267,7 +272,9 @@ export class TetrisGame {
         this._HOLDING = v;
     }
 
-    renderBrickMatrix(modifications = []) {
+    renderBrickMatrix(
+        modifications: { guid: unknown; x: number; y: number; blocks: Blocks }[] = [],
+    ) {
         return TetrisGame.renderBrickMatrix(this.width, this.height, this.bricks, modifications);
     }
 
@@ -275,7 +282,7 @@ export class TetrisGame {
         width: number,
         height: number,
         bricks: Brick[],
-        modifications: any[] = [],
+        modifications: { guid: unknown; x: number; y: number; blocks: Blocks }[] = [],
     ) {
         modifications = modifications.concat();
         const result = [];
@@ -305,7 +312,7 @@ export class TetrisGame {
 
             for (const i1 in brickForm) {
                 for (const i2 in brickForm[i1]) {
-                    if (brickForm[i1][i2] == 1) {
+                    if (brickForm[i1][i2] === true) {
                         const cx = x + parseInt(i2);
                         const cy = y + parseInt(i1);
                         if (cy < 0) continue;
@@ -513,7 +520,7 @@ export class TetrisGame {
         for (const brick of bricks) {
             for (let j = 0, blo_len = brick.blocks.length; j < blo_len; j++) {
                 for (let k = 0, brl_len = brick.blocks[j].length; k < brl_len; k++) {
-                    if (brick.blocks[j][k] == 1) {
+                    if (brick.blocks[j][k] === true) {
                         const cond1 = x == brick.x + ~~k;
                         const cond2 = y == brick.y + ~~j;
                         const cond3 = brick.moving == false;
@@ -531,7 +538,7 @@ export class TetrisGame {
         return this._setup;
     }
 
-    moveTowards(x, r = null) {
+    moveTowards(x: number, r: null | number = null) {
         console.debug("moving to", x, r);
         const movingBrick = this.getMovingBrick();
 
@@ -560,6 +567,7 @@ export class TetrisGame {
     }
 
     runEvent(name, _this, ...args) {
+        // eslint-disable-next-line prefer-spread
         this._eventController.trigger.apply(this._eventController, [name, _this].concat(args));
     }
 

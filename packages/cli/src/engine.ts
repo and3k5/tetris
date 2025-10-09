@@ -1,14 +1,11 @@
-import { brick, utils, game } from "@tetris/core";
+import { Brick } from "@tetris/core/brick";
+import { EngineBase } from "@tetris/core/game/engine";
+import { trace } from "@tetris/core/utils";
+import { Color } from "@tetris/core/utils/color";
 import { EOL } from "os";
-const {
-    engine: { EngineBase },
-} = game;
-const { Brick } = brick;
-const { color } = utils;
-const { Color } = color;
 import readline from "readline";
 import size from "window-size";
-const { trace: console } = utils;
+const console = trace;
 
 class TermWriter {
     items: TermUtil[];
@@ -32,13 +29,13 @@ class TermWriter {
 }
 
 class TermUtil {
-    codes: any[];
+    codes: unknown[];
     constructor(text) {
         this.codes = [];
         this.text = text;
     }
 
-    set(...codes) {
+    set(...codes: unknown[]) {
         for (const code of codes) this.codes.push(code);
         return this;
     }
@@ -385,10 +382,10 @@ export class NodeGraphicEngine extends EngineBase {
 
     drawBrickForm(
         brickForm: { [x: string]: { [x: string]: number } },
-        display: any[],
+        display: unknown[],
         x: string | number,
         y: string | number,
-        color: any,
+        color: Color,
     ) {
         if (typeof x !== "number") throw new Error("x is not number: " + x);
         if (typeof y !== "number") throw new Error("y is not number: " + x);

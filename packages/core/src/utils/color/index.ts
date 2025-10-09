@@ -1,9 +1,9 @@
 export class Color {
-    r: any;
-    g: any;
-    b: any;
-    a: any;
-    constructor(r, g, b, a) {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+    constructor(r: number, g: number, b: number, a: number) {
         this.r = r; // Red
         this.g = g; // Green
         this.b = b; // Blue
@@ -15,21 +15,21 @@ export class Color {
     }
 
     toRGBAString() {
-        return `rgba(${parseInt(this.r)},${parseInt(this.g)},${parseInt(this.b)},${parseFloat(this.a)})`;
+        return `rgba(${~~this.r},${~~this.g},${~~this.b},${this.a})`;
     }
 
     toHSLA() {
         // make r, g, and b fractions of 1
-        let r = this.r / 255,
-            g = this.g / 255,
-            b = this.b / 255,
-            // find greatest and smallest channel values
-            cmin = Math.min(r, g, b),
-            cmax = Math.max(r, g, b),
-            delta = cmax - cmin,
-            h = 0,
-            s = 0,
-            l = 0;
+        const r = this.r / 255;
+        const g = this.g / 255;
+        const b = this.b / 255;
+        // find greatest and smallest channel values
+        const cmin = Math.min(r, g, b);
+        const cmax = Math.max(r, g, b);
+        const delta = cmax - cmin;
+        let h = 0;
+        let s = 0;
+        let l = 0;
 
         // calculate hue
         // no difference

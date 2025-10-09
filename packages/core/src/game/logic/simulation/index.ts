@@ -27,32 +27,32 @@ export function cloneGame(game, setupChanges) {
     return clone;
 }
 
-function arrangeBrick(clone, movingBrick, x, maxWidth) {
-    if (movingBrick == null) throw new Error("No moving brick");
+// function arrangeBrick(clone, movingBrick, x, maxWidth) {
+//     if (movingBrick == null) throw new Error("No moving brick");
 
-    try {
-        //var oldX = movingBrick.innerX;
-        //console.debug(movingBrick.blocks);
-        let moveStep = 0;
-        while (movingBrick.x > x) {
-            if (!movingBrick.moveleft(true)) throw new Error("brick is not moving left");
-            if (moveStep++ > maxWidth) throw new Error("moving out of view");
-        }
+//     try {
+//         //var oldX = movingBrick.innerX;
+//         //console.debug(movingBrick.blocks);
+//         let moveStep = 0;
+//         while (movingBrick.x > x) {
+//             if (!movingBrick.moveleft(true)) throw new Error("brick is not moving left");
+//             if (moveStep++ > maxWidth) throw new Error("moving out of view");
+//         }
 
-        moveStep = 0;
-        // oldX = movingBrick.innerX;
+//         moveStep = 0;
+//         // oldX = movingBrick.innerX;
 
-        while (movingBrick.x < x) {
-            if (!movingBrick.moveright(true)) throw new Error("brick is not moving right");
-            if (moveStep++ > maxWidth) throw new Error("moving out of view");
-        }
-    } catch (e) {
-        console.error(movingBrick, x);
-        throw e;
-    }
-}
+//         while (movingBrick.x < x) {
+//             if (!movingBrick.moveright(true)) throw new Error("brick is not moving right");
+//             if (moveStep++ > maxWidth) throw new Error("moving out of view");
+//         }
+//     } catch (e) {
+//         console.error(movingBrick, x);
+//         throw e;
+//     }
+// }
 
-export function getPossibleMoves(game: TetrisGame, setupChanges?: any) {
+export function getPossibleMoves(game: TetrisGame, setupChanges?: unknown) {
     let positions = [];
 
     for (const pos of getPositions(game.width, game.height, game.bricks, game.getMovingBrick()))
@@ -94,10 +94,9 @@ class SimulatorRunner {
 
     attach(game) {
         this._game = game;
-        const simulator = this;
-        this._game.addEvent("current-brick-change", function () {
+        this._game.addEvent("current-brick-change", () => {
             console.debug("current brick change");
-            simulator.getNewMove();
+            this.getNewMove();
         });
     }
 
@@ -119,25 +118,24 @@ class SimulatorRunner {
     }
 
     start() {
-        const runner = this;
         this._starttime = new Date().getTime();
         if (this._game.setup.clickTick === true) {
             this._game.ghostDrawing = false;
-            this._game.addEvent("tick", function () {
-                if (runner.isCancelled !== false) return;
-                runner.tick();
-                runner.drawMovements();
+            this._game.addEvent("tick", () => {
+                if (this.isCancelled !== false) return;
+                this.tick();
+                this.drawMovements();
             });
         } else {
             const ticker = () => {
-                if (runner.isCancelled !== false) return;
-                runner.tick();
-                setTimeout(ticker, runner.getTimeout());
+                if (this.isCancelled !== false) return;
+                this.tick();
+                setTimeout(ticker, this.getTimeout());
             };
             setTimeout(ticker, 0);
         }
-        this._game.addEvent("lose", function () {
-            runner.cancel();
+        this._game.addEvent("lose", () => {
+            this.cancel();
         });
     }
 

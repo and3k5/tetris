@@ -40,6 +40,7 @@ function track1(tick, data, sampleRate) {
     start = scale(start, 8, [65, 69, 72]);
     start = scale(start, 8, [64, 69, 72]);
     start = scale(start, 4, [64, 69, 71]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     start = scale(start, 4, [67, 72, 76]);
 }
 
@@ -68,6 +69,7 @@ function track2(tick, data, sampleRate) {
     start = bass(start, 4, 24);
     start = bass(start, 4, 21);
     start = bass(start, 2, 26);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     start = bass(start, 2, 24);
 }
 

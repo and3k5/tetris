@@ -6,6 +6,7 @@ import { Color } from "@tetris/core/utils/color";
 import { EngineBase } from "@tetris/core/game/engine";
 import { executeTick } from "@tetris/core/game/game-controller";
 import { Brick } from "@tetris/core/brick";
+import { Blocks } from "@tetris/core/brick/brick";
 
 export type StateValue = {
     fromStamp: number;
@@ -18,7 +19,7 @@ export type StateValue = {
     currentY?: number;
     toX: number;
     toY: number;
-    blocks: number[][];
+    blocks: Blocks;
 };
 
 export class WebGraphicEngine extends EngineBase {
@@ -235,7 +236,7 @@ export class WebGraphicEngine extends EngineBase {
         state: StateValue[];
         x?: number | undefined;
         y?: number | undefined;
-        blocks?: undefined;
+        blocks?: Blocks | undefined;
         color?: Color | undefined;
         scale?: number | undefined;
     }) {
@@ -391,7 +392,7 @@ export class WebGraphicEngine extends EngineBase {
     }
 
     drawBrickForm(
-        brickForm: number[][],
+        brickForm: Blocks,
         ctx: CanvasRenderingContext2D,
         x: number,
         y: number,
@@ -400,7 +401,7 @@ export class WebGraphicEngine extends EngineBase {
     ) {
         for (const i1 in brickForm) {
             for (const i2 in brickForm[i1]) {
-                if (brickForm[i1][i2] == 1) {
+                if (brickForm[i1][i2] === true) {
                     this.drawSquare(ctx, x + parseInt(i2), y + parseInt(i1), color, scale);
                 }
             }

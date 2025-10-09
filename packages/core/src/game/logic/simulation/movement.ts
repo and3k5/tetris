@@ -2,11 +2,11 @@ import { TetrisGame } from "../../game";
 import { Score } from "./simulate-rating";
 
 export class Movement {
-    x: any;
-    y: any;
-    brickMatrix: any;
+    x: number;
+    y: number;
+    brickMatrix: unknown;
     score: Score | null;
-    constructor({ x, y, brickMatrix }) {
+    constructor({ x, y, brickMatrix }: { x: number; y: number; brickMatrix: unknown }) {
         this.x = x;
         this.y = y;
         this.brickMatrix = brickMatrix;
@@ -15,8 +15,8 @@ export class Movement {
 }
 
 export class SimpleMovement extends Movement {
-    rotation: any;
-    needsHolding: any;
+    rotation: number;
+    needsHolding: boolean;
     holdingFired: boolean;
     constructor(options) {
         super(options);
@@ -29,22 +29,20 @@ export class SimpleMovement extends Movement {
     }
 
     getNextInstruction() {
-        const movement = this;
-
-        const result = function (game: TetrisGame) {
-            if (movement.needsHolding === true && movement.holdingFired !== true) {
-                movement.holdingFired = true;
+        const result = (game: TetrisGame) => {
+            if (this.needsHolding === true && this.holdingFired !== true) {
+                this.holdingFired = true;
                 game.holdingShift();
                 return;
             }
 
             const movingBrick = game.getMovingBrick();
-            if (movingBrick.rotation === movement.rotation && movingBrick.x === movement.x) {
+            if (movingBrick.rotation === this.rotation && movingBrick.x === this.x) {
                 game.input.smashDown();
                 return;
             }
 
-            game.moveTowards(movement.x, movement.rotation);
+            game.moveTowards(this.x, this.rotation);
         };
 
         return result;

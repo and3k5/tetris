@@ -1,28 +1,45 @@
+import { Blocks } from "../../brick/brick";
 import { BrickFormBase } from "../../brick/form";
 import { StaticNextBrick } from "../logic/next-brick";
 
+export function convertNumbersToBooleans(blocks: number): boolean;
+export function convertNumbersToBooleans(blocks: number[]): boolean[];
+export function convertNumbersToBooleans(blocks: number[][]): boolean[][];
+export function convertNumbersToBooleans(blocks: number[][][]): boolean[][][];
+export function convertNumbersToBooleans(
+    blocks: number | number[] | number[][] | number[][][],
+): boolean | boolean[] | boolean[][] | boolean[][][] {
+    if (typeof blocks === "number") {
+        return blocks >= 1 ? true : false;
+    } else {
+        return blocks.map((x) => convertNumbersToBooleans(x));
+    }
+}
+
 export class TetrisSetup {
     // different types of bricks
-    private _brickforms: (BrickFormBase | number[][])[];
+    private _brickforms: (BrickFormBase | Blocks)[];
 
     // game width
-    private _width;
+    private _width: number;
 
     // game height
-    private _height;
+    private _height: number;
 
-    private _graphics;
+    private _graphics: unknown;
 
     // brick sequence
     private _sequence = null;
 
     private _nextBrick = null;
 
+    logger = false;
+
     constructor(
-        brickforms: BrickFormBase[] | number[][][],
+        brickforms: BrickFormBase[] | Blocks[],
         width,
         height,
-        extra: { graphics?: any; nextBrick?: any } = {},
+        extra: { graphics?: unknown; nextBrick?: unknown } = {},
     ) {
         this._brickforms = brickforms;
         this._width = width;
@@ -105,7 +122,7 @@ export function defaultGame() {
         ],
     ];
 
-    return new TetrisSetup(brickforms, 10, 20);
+    return new TetrisSetup(convertNumbersToBooleans(brickforms), 10, 20);
 }
 
 export function easyGame2() {
@@ -129,7 +146,7 @@ export function easyGame2() {
             [0, 1, 0, 0],
         ],
     ];
-    const setup = new TetrisSetup(brickforms, 10, 20);
+    const setup = new TetrisSetup(convertNumbersToBooleans(brickforms), 10, 20);
     setup.setSequence();
     return setup;
 }
@@ -141,7 +158,7 @@ export function easyGame() {
             [1, 1],
         ],
     ];
-    return new TetrisSetup(brickforms, 10, 20);
+    return new TetrisSetup(convertNumbersToBooleans(brickforms), 10, 20);
 }
 
 export function longPieceGame() {
@@ -153,7 +170,7 @@ export function longPieceGame() {
             [0, 1, 0, 0],
         ],
     ];
-    return new TetrisSetup(brickforms, 10, 20);
+    return new TetrisSetup(convertNumbersToBooleans(brickforms), 10, 20);
 }
 
 export function shitGame() {
@@ -164,10 +181,12 @@ export function shitGame() {
             [0, 0, 0],
         ],
     ];
-    return new TetrisSetup(brickforms, 10, 20);
+    return new TetrisSetup(convertNumbersToBooleans(brickforms), 10, 20);
 }
 
-export function predictableGameWithOneBlock(blocks: number[][]) {
+export function predictableGameWithOneBlock(blocks: Blocks) {
     const brickforms = [blocks];
-    return new TetrisSetup(brickforms, 10, 20, { nextBrick: new StaticNextBrick(0) });
+    return new TetrisSetup(brickforms, 10, 20, {
+        nextBrick: new StaticNextBrick(0),
+    });
 }

@@ -11,7 +11,7 @@ function globals(mode: string, opts: { browser?: boolean; node?: boolean }) {
     };
 }
 
-export default function (env: { mode: any; watch: string }) {
+export default function (env: { mode: "development" | "production"; watch: string }) {
     const mode = env.mode;
 
     const commonConfig: Partial<Configuration> = {

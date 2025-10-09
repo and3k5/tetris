@@ -1,5 +1,17 @@
+import { existsSync, readFileSync, writeFileSync } from "fs";
+
+export interface Options {
+    path?: string;
+    init: unknown;
+    object: unknown;
+}
+
 export class LogFile {
-    constructor(options) {
+    options: Options;
+    readHandler: () => void;
+    writeHandler: () => void;
+    json: null | unknown;
+    constructor(options: Options) {
         this.options = options;
         this.readHandler = null;
         this.writeHandler = null;
@@ -15,33 +27,24 @@ export class LogFile {
     }
 
     watch() {
+        // oxlint-disable-next-line no-this-alias
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
         const lf = this;
 
-        var proxySetup = {
+        const proxySetup = {
             get: function (target, prop) {
                 //console.log({ type: 'get', target, prop });
-                return Reflect.get(target, prop);
-                let value = Reflect.get(target, prop);
-                if (typeof value === "function" || prop === "toJSON")
-                    return Reflect.get(target, prop);
-
-                console.log("get", prop);
-                value = Reflect.get(target, prop);
-                if (value != null && typeof value === "object" && !value.isPrototypeOf(Proxy)) {
-                    console.log("newLink from get");
-                    Reflect.set(target, prop, new Proxy(value, proxySetup));
-                    //value = new Proxy(value,proxySetup);
-                }
-                //console.log("read");
-                //console.log(target === lf.json);
-                //console.log(lf.json.isPrototypeOf(Proxy));
                 return Reflect.get(target, prop);
             },
             set: function (target, prop, value) {
                 //console.log({ type: 'set', target, prop, value });
                 //console.log("set", prop);
                 value = Reflect.get(target, prop);
-                if (value != null && typeof value === "object" && !value.isPrototypeOf(Proxy)) {
+                if (
+                    value != null &&
+                    typeof value === "object" &&
+                    !Object.prototype.isPrototypeOf.call(value, Proxy)
+                ) {
                     //console.log("newLink from set");
                     Reflect.set(target, prop, new Proxy(value, proxySetup));
                 }
@@ -60,21 +63,19 @@ export class LogFile {
     }
 
     initFileHandler(path, init) {
-        const fs = require("fs");
-        this.readHandler = function () {
-            if (!fs.existsSync(path)) {
+        this.readHandler = () => {
+            if (!existsSync(path)) {
                 if (typeof init == "function") {
                     const value = init();
-                    fs.writeFileSync(path, JSON.stringify(value));
+                    writeFileSync(path, JSON.stringify(value));
                 }
             }
-            const content = fs.readFileSync(path);
+            const content = readFileSync(path, { encoding: "utf8" });
             this.json = JSON.parse(content);
         };
-        this.writeHandler = function () {
-            //console.log("file write");
+        this.writeHandler = () => {
             const content = JSON.stringify(this.json);
-            fs.writeFileSync(path, content);
+            writeFileSync(path, content);
         };
     }
 }

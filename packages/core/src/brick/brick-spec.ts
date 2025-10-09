@@ -1,9 +1,8 @@
 import { Brick } from "./brick";
-import { game, utils } from "../";
-const {
-    TetrisGame,
-    setup: { defaultGame },
-} = game;
+import { utils } from "../";
+import { convertNumbersToBooleans, defaultGame } from "../game/setup";
+import { TetrisGame } from "../game";
+
 const { trace: console } = utils;
 
 const setup = defaultGame();
@@ -11,18 +10,18 @@ const setup = defaultGame();
 describe("brick", () => {
     it("returns false when collision is detected", function () {
         const brickA = new Brick({
-            brickform: [
+            brickform: convertNumbersToBooleans([
                 [1, 1],
                 [1, 1],
-            ],
+            ]),
             x: 1,
             y: 10,
         });
         const brickB = new Brick({
-            brickform: [
+            brickform: convertNumbersToBooleans([
                 [1, 1],
                 [1, 1],
-            ],
+            ]),
             x: 2,
             y: 10,
         });
@@ -33,7 +32,7 @@ describe("brick", () => {
     for (const brickform of setup.brickforms) {
         const i = setup.brickforms.indexOf(brickform);
 
-        for (var j = 0; j < 4; j++) {
+        for (let j = 0; j < 4; j++) {
             it(
                 `has a proper moveLeft property on brickform ${i} when rotated ${j} times`,
                 function () {

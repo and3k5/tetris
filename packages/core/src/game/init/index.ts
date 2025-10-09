@@ -1,43 +1,42 @@
-import { TetrisGame, logic, setup } from "../";
-const {
-    nextBrick: { EasyNextBrick },
-} = logic;
-const { defaultGame, easyGame, longPieceGame, shitGame, easyGame2 } = setup;
+import { TetrisGame } from "../";
+import { EngineBase } from "../engine";
+import { EasyNextBrick } from "../logic/next-brick";
+import { defaultGame, easyGame, easyGame2, longPieceGame, shitGame } from "../setup";
 
-function optionParser() {
-    const options: Partial<Options> = {};
-    if (global.browser === true) {
-        const url = new URL(location.href);
-        options.setup = url.searchParams.get("setup");
-        options.next = url.searchParams.get("next");
-        options.simulate = url.searchParams.get("simulate");
-        options.clickTick = url.searchParams.get("clickTick") === "true";
-        options.logger = url.searchParams.get("logger");
-        options.view = url.searchParams.get("view");
-        options.debug = url.searchParams.get("debug");
-    } else if (global.node === true) {
-        const args = process.argv.concat();
-        args.splice(0, 2);
+// function optionParser() {
+//     const options: Partial<Options> = {};
+//     if (global.browser === true) {
+//         const url = new URL(location.href);
+//         options.setup = url.searchParams.get("setup");
+//         options.next = url.searchParams.get("next");
+//         options.simulate = url.searchParams.get("simulate");
+//         options.clickTick = url.searchParams.get("clickTick") === "true";
+//         options.logger = url.searchParams.get("logger");
+//         options.view = url.searchParams.get("view");
+//         options.debug = url.searchParams.get("debug");
+//     } else if (global.node === true) {
+//         const args = process.argv.concat();
+//         args.splice(0, 2);
 
-        const getValue = function (args, name, def = undefined) {
-            for (const arg of args) {
-                if (arg.indexOf("--" + name) === 0) {
-                    return arg.substring(name.length + 3);
-                }
-            }
-            return def;
-        };
+//         const getValue = function (args, name, def = undefined) {
+//             for (const arg of args) {
+//                 if (arg.indexOf("--" + name) === 0) {
+//                     return arg.substring(name.length + 3);
+//                 }
+//             }
+//             return def;
+//         };
 
-        options.setup = getValue(args, "setup");
-        options.next = getValue(args, "next");
-        options.simulate = getValue(args, "simulate");
-        //options.clickTick = getValue(args,"clickTick");
-        options.logger = getValue(args, "logger");
-        //options.view = getValue(args,"view");
-        //options.debug = getValue(args,"debug");
-    }
-    return options;
-}
+//         options.setup = getValue(args, "setup");
+//         options.next = getValue(args, "next");
+//         options.simulate = getValue(args, "simulate");
+//         //options.clickTick = getValue(args,"clickTick");
+//         options.logger = getValue(args, "logger");
+//         //options.view = getValue(args,"view");
+//         //options.debug = getValue(args,"debug");
+//     }
+//     return options;
+// }
 
 export class Options {
     setup: string | null = null;
@@ -51,11 +50,7 @@ export class Options {
     constructor() {}
 }
 
-export function init(options: Options, engine: any) {
-    let tetrisgame;
-
-    //.append(DocumentUtil.stringToElement(htmlLoad));
-
+export function init(options: Options, engine: EngineBase) {
     let setup;
 
     switch (options.setup) {
@@ -89,29 +84,31 @@ export function init(options: Options, engine: any) {
             setup.simulator = true;
             break;
         case "assistbug":
-            setup.simulator = true;
-            setup.simulation = [];
+            {
+                setup.simulator = true;
+                setup.simulation = [];
 
-            var time = 0;
+                let time = 0;
 
-            for (let i = 0; i < 5; i++) {
-                for (let j = 0; j < 4; j++) {
-                    setup.simulation.push({
-                        type: "nextRandom",
-                        val: 0,
-                        time: (time += 100),
-                    });
+                for (let i = 0; i < 5; i++) {
+                    for (let j = 0; j < 4; j++) {
+                        setup.simulation.push({
+                            type: "nextRandom",
+                            val: 0,
+                            time: (time += 100),
+                        });
+                        setup.simulation.push({
+                            type: "nextRandom",
+                            val: 0,
+                            time: (time += 100),
+                        });
+                    }
                     setup.simulation.push({
                         type: "nextRandom",
                         val: 0,
                         time: (time += 100),
                     });
                 }
-                setup.simulation.push({
-                    type: "nextRandom",
-                    val: 0,
-                    time: (time += 100),
-                });
             }
             break;
     }
@@ -122,7 +119,7 @@ export function init(options: Options, engine: any) {
 
     if (options.view === "lite") window.document.body.classList.add("lite-view");
 
-    tetrisgame = new TetrisGame(setup, null, engine);
+    const tetrisgame = new TetrisGame(setup, null, engine);
 
     tetrisgame.init();
 

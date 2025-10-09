@@ -1,12 +1,14 @@
-export function rotateRight(blocks: boolean[][]): boolean[][] {
+import { Blocks } from "../../brick";
+
+export function rotateRight(blocks: Blocks): Blocks {
     return createRotatedBlocks(blocks, 1);
 }
 
-export function rotateLeft(blocks: boolean[][]): boolean[][] {
+export function rotateLeft(blocks: Blocks): Blocks {
     return createRotatedBlocks(blocks, -1);
 }
 
-export function rotateTwice(blocks: boolean[][]): boolean[][] {
+export function rotateTwice(blocks: Blocks): Blocks {
     return createRotatedBlocks(blocks, 2);
 }
 
@@ -16,7 +18,7 @@ export function createRotatedBlocks<T>(blocks: T[][], rotations: number) {
     rotations = (4 + (rotations % 4)) % 4;
     if (rotations == 0) return blocks.concat();
 
-    const blocks2: boolean[][] = [];
+    const blocks2: Blocks = [];
     const w = blocks[0].length;
     const h = blocks.length;
     for (let y = 0; y < h; y++) {

@@ -1,6 +1,6 @@
 import { Brick } from "../../../../brick";
 import { TetrisGame } from "../../../game";
-import { Movement, SimpleMovement } from "../movement";
+import { SimpleMovement } from "../movement";
 
 export function getPositions(
     width: number,

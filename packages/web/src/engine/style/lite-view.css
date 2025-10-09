@@ -8,7 +8,7 @@ body.lite-view .tetris-logo {
 }
 body.lite-view #container {
     background: rgba(0, 0, 0, 0) !important;
-    zoom: 1.5;
+    scale: 1.5;
 }
 
 body.lite-view span.holding,
