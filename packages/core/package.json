@@ -22,7 +22,7 @@
         "url": "git+https://github.com/and3k5/tetris.git"
     },
     "scripts": {
-        "test": "npx ts-node spec/run.ts"
+        "test": "npx vitest run"
     },
     "bugs": {
         "url": "https://github.com/and3k5/tetris/issues"
@@ -35,8 +35,6 @@
     },
     "devDependencies": {
         "@babel/core": "^7.12.13",
-        "@babel/node": "^7.12.13",
-        "jasmine": "^3.6.4",
-        "jasmine-core": "^3.6.0"
+        "@babel/node": "^7.12.13"
     }
 }
