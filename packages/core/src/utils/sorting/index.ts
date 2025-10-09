@@ -23,7 +23,7 @@ export function sortBy<TItem>(selector: Selector<TItem>, descending = false): So
             return 0;
         },
         execute(array) {
-            return array.concat().sort((a, b) => this.sorter.compare(a, b));
+            return array.concat().sort((a, b) => this.compare(a, b));
         },
     };
 }

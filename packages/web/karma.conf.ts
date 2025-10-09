@@ -17,7 +17,7 @@ module.exports = function (config) {
         frameworks: ["jasmine"],
 
         // list of files / patterns to load in the browser
-        files: ["src/**/*-spec.js"],
+        files: ["src/**/*-spec.ts"],
 
         // list of files / patterns to exclude
         exclude: [],
@@ -26,6 +26,7 @@ module.exports = function (config) {
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
             "src/**/*.js": ["webpack"],
+            "src/**/*.ts": ["webpack"],
         },
 
         webpack: webpackConfig({ mode: "development" }),

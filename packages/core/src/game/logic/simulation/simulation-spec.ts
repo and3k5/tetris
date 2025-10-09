@@ -7,7 +7,7 @@ describe("getPossibleMoves", function () {
         const setup = defaultGame();
         const game = new TetrisGame(setup);
         game.init();
-        const moves = getPossibleMoves(game, {});
+        getPossibleMoves(game, {});
         //console.log(moves);
     });
 });

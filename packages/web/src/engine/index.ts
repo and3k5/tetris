@@ -19,7 +19,7 @@ export type StateValue = {
     currentY?: number;
     toX: number;
     toY: number;
-    blocks: undefined;
+    blocks: number[][];
 };
 
 export class WebGraphicEngine extends EngineBase {
@@ -356,8 +356,7 @@ export class WebGraphicEngine extends EngineBase {
         return min * (1 - percent) + max * percent;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    updateBrickState(_) {
+    updateBrickState(entry: StateValue) {
         // if (
         //     // disable
         //     false &&
@@ -368,12 +367,12 @@ export class WebGraphicEngine extends EngineBase {
         //     typeof entry.fromStamp === "number"
         // ) {
         // } else {
-        //     entry.currentX = entry.toX;
-        //     entry.currentY = entry.toY;
+        entry.currentX = entry.toX;
+        entry.currentY = entry.toY;
         // }
     }
 
-    drawState(entries, ctx) {
+    drawState(entries: StateValue[], ctx: CanvasRenderingContext2D) {
         for (const entry of entries) {
             this.updateBrickState(entry);
             this.drawBrickForm(
@@ -387,7 +386,14 @@ export class WebGraphicEngine extends EngineBase {
         }
     }
 
-    drawBrickForm(brickForm, ctx, x, y, color, scale = 1) {
+    drawBrickForm(
+        brickForm: number[][],
+        ctx: CanvasRenderingContext2D,
+        x: number,
+        y: number,
+        color: Color,
+        scale = 1,
+    ) {
         for (const i1 in brickForm) {
             for (const i2 in brickForm[i1]) {
                 if (brickForm[i1][i2] == 1) {
@@ -397,7 +403,7 @@ export class WebGraphicEngine extends EngineBase {
         }
     }
 
-    drawSquare(ctx, bx, by, color, scale = 1) {
+    drawSquare(ctx: CanvasRenderingContext2D, bx: number, by: number, color: Color, scale = 1) {
         const brickSize = this.brickSize / scale;
 
         const x = bx * brickSize;

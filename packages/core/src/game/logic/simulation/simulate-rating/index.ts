@@ -119,9 +119,10 @@ function getWorstScoreValues(positions: Movement[]) {
     const clearingLines = sortBy<Movement>((s) => s.scores.clearingLines, false).execute(
         positions,
     )[0].scores.clearingLines;
-    const height = sortBy<(typeof positions)[number]>((s) => s.scores.height, true).execute(
-        positions,
-    )[0].scores.height;
+    const height = sortBy<(typeof positions)[number]>(
+        (s) => s.scores.height.blocksHeight / s.scores.height.gameHeight,
+        true,
+    ).execute(positions)[0].scores.height;
     const holes = sortBy<(typeof positions)[number]>((s) => s.scores.holes, true).execute(
         positions,
     )[0].scores.holes;
@@ -133,9 +134,10 @@ function getBestScoreValues(positions: Movement[]) {
     const clearingLines = sortBy<Movement>((s) => s.scores.clearingLines, true).execute(
         positions,
     )[0].scores.clearingLines;
-    const height = sortBy<(typeof positions)[number]>((s) => s.scores.height, false).execute(
-        positions,
-    )[0].scores.height;
+    const height = sortBy<(typeof positions)[number]>(
+        (s) => s.scores.height.blocksHeight / s.scores.height.gameHeight,
+        false,
+    ).execute(positions)[0].scores.height;
     const holes = sortBy<(typeof positions)[number]>((s) => s.scores.holes, false).execute(
         positions,
     )[0].scores.holes;

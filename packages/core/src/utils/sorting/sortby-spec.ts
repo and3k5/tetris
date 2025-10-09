@@ -4,7 +4,7 @@ describe("sortBy", function () {
     it("can sort a simple array ascending", function () {
         const data = [5, 1, 4, 2, 3];
 
-        const newData = sortBy((s) => s, false).execute(data);
+        const newData = sortBy<number>((s) => s, false).execute(data);
 
         expect(newData[0]).toBe(1);
         expect(newData[1]).toBe(2);
@@ -16,7 +16,7 @@ describe("sortBy", function () {
     it("can sort a simple array descending", function () {
         const data = [5, 1, 4, 2, 3];
 
-        const newData = sortBy((s) => s, true).execute(data);
+        const newData = sortBy<number>((s) => s, true).execute(data);
 
         expect(newData[0]).toBe(5);
         expect(newData[1]).toBe(4);
