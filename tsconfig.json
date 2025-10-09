@@ -5,6 +5,7 @@
         { "path": "./packages/core" },
         { "path": "./packages/electron" },
         { "path": "./packages/log-server" },
-        { "path": "./packages/web" }
+        { "path": "./packages/web" },
+        { "path": "./packages/web/tsconfig.webpack.json" }
     ]
 }

@@ -1,7 +1,6 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import webpack, { Configuration } from "webpack";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
+import path from "path";
 
 function globals(mode: string, opts: { browser?: boolean; node?: boolean }) {
     return {
@@ -12,8 +11,6 @@ function globals(mode: string, opts: { browser?: boolean; node?: boolean }) {
         "global.node": opts.node === true,
     };
 }
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default function ({ mode = "production" }: { mode: "production" | "development" }) {
     const commonConfig: Partial<Configuration> = {

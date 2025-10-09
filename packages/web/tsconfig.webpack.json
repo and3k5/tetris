@@ -1,0 +1,14 @@
+{
+    "include": ["webpack.config.ts"],
+    "exclude": ["src/**/*.ts"],
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "module": "CommonJS"
+    },
+    "ts-node": {
+        "compilerOptions": {
+            "esModuleInterop": true,
+            "module": "CommonJS"
+        }
+    }
+}

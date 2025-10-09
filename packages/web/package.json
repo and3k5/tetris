@@ -22,7 +22,7 @@
         "url": "git+https://github.com/and3k5/tetris.git"
     },
     "scripts": {
-        "build": "npx webpack --env mode=production",
+        "build": "npx cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" npx webpack --env mode=production",
         "watch": "npx webpack --env mode=development --watch",
         "build-dev": "npx webpack --env mode=development --env mode=development",
         "host": "mkdir -p dist && cd dist && npx http-server -a 127.0.0.1",
