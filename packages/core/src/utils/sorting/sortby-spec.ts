@@ -1,5 +1,3 @@
-import { describe, expect, it } from "chai";
-
 import { sortBy } from ".";
 
 describe("sortBy", function () {
@@ -50,7 +48,7 @@ describe("sortBy", function () {
 
         expect(JSON.stringify(scrambledData)).not.toBe(JSON.stringify(data));
 
-        const newData = sortBy((s) => s.a)
+        const newData = sortBy<(typeof data)[number]>((s) => s.a)
             .thenBy((s) => s.b)
             .thenBy((s) => s.c)
             .execute(scrambledData);

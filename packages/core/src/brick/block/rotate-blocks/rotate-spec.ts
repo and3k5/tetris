@@ -1,4 +1,3 @@
-import { describe, expect, it } from "chai";
 import { rotateRight, rotateLeft, rotateTwice } from ".";
 
 describe("rotate-blocks", function () {

@@ -1,4 +1,3 @@
-import { describe, expect, it } from "chai";
 import { countClearingLines, countHeight, countHoles } from "./";
 
 describe("countHoles", function () {

@@ -3,6 +3,7 @@
     "references": [
         { "path": "./packages/cli/tsconfig.json" },
         { "path": "./packages/core/tsconfig.json" },
+        { "path": "./packages/core/tsconfig.test.json" },
         { "path": "./packages/electron/tsconfig.json" },
         { "path": "./packages/log-server/tsconfig.json" },
         { "path": "./packages/web/tsconfig.json" },

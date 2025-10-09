@@ -1,16 +1,17 @@
 import { sortBy } from "../../../../utils/sorting";
+import { SimpleMovement } from "../movement";
 
-export function countClearingLines(matrix) {
+export function countClearingLines(matrix: boolean[][]) {
     let clearingLines = 0;
     for (let y = matrix.length - 1; y >= 0; y--) {
-        if (matrix[y].filter((x) => x !== true).length === 0) {
+        if (matrix[y].filter((x: boolean) => x !== true).length === 0) {
             clearingLines++;
         }
     }
     return clearingLines;
 }
 
-function swapXY(matrix) {
+function swapXY(matrix: boolean[][]) {
     const aLength = matrix.length;
     const bLength = matrix[0].length;
 
@@ -33,7 +34,7 @@ function swapXY(matrix) {
     return result;
 }
 
-export function countHoles(matrix) {
+export function countHoles(matrix: boolean[][]) {
     let holes = 0;
 
     matrix = swapXY(matrix);
@@ -50,12 +51,12 @@ export function countHoles(matrix) {
     return holes;
 }
 
-export function countHeight(matrix) {
+export function countHeight(matrix: boolean[][]) {
     let height = 0;
 
     matrix = swapXY(matrix);
 
-    let gameHeight = null;
+    let gameHeight: null | number = null;
 
     for (let x = 0; x < matrix.length; x++) {
         const col = matrix[x];
@@ -70,9 +71,9 @@ export function countHeight(matrix) {
 }
 
 export class Score {
-    clearingLines: any;
-    holes: any;
-    height: any;
+    clearingLines: number;
+    holes: number;
+    height: { blocksHeight: number; gameHeight: number | null };
     constructor({ clearingLines, holes, height }) {
         this.clearingLines = clearingLines;
         this.holes = holes;
@@ -93,7 +94,7 @@ export class Score {
     }
 }
 
-export function getScore(matrix) {
+export function getScore(matrix: boolean[][]) {
     const clearingLines = countClearingLines(matrix);
     const holes = countHoles(matrix);
     const height = countHeight(matrix);
@@ -105,7 +106,7 @@ export function getScore(matrix) {
     });
 }
 
-export function ratioValue(worst, best, current) {
+export function ratioValue(worst: number, best: number, current: number) {
     if (worst == best) return 1;
 
     const result = (current - worst) / (best - worst);
@@ -113,29 +114,41 @@ export function ratioValue(worst, best, current) {
     return result;
 }
 
-function getWorstScoreValues(positions) {
+function getWorstScoreValues(positions: Movement[]) {
     positions = positions.concat();
-    const clearingLines = sortBy((s) => s.scores.clearingLines, false).execute(positions)[0].scores
-        .clearingLines;
-    const height = sortBy((s) => s.scores.height, true).execute(positions)[0].scores.height;
-    const holes = sortBy((s) => s.scores.holes, true).execute(positions)[0].scores.holes;
+    const clearingLines = sortBy<Movement>((s) => s.scores.clearingLines, false).execute(
+        positions,
+    )[0].scores.clearingLines;
+    const height = sortBy<(typeof positions)[number]>((s) => s.scores.height, true).execute(
+        positions,
+    )[0].scores.height;
+    const holes = sortBy<(typeof positions)[number]>((s) => s.scores.holes, true).execute(
+        positions,
+    )[0].scores.holes;
     return new Score({ clearingLines, holes, height });
 }
 
-function getBestScoreValues(positions) {
+function getBestScoreValues(positions: Movement[]) {
     positions = positions.concat();
-    const clearingLines = sortBy((s) => s.scores.clearingLines, true).execute(positions)[0].scores
-        .clearingLines;
-    const height = sortBy((s) => s.scores.height, false).execute(positions)[0].scores.height;
-    const holes = sortBy((s) => s.scores.holes, false).execute(positions)[0].scores.holes;
+    const clearingLines = sortBy<Movement>((s) => s.scores.clearingLines, true).execute(
+        positions,
+    )[0].scores.clearingLines;
+    const height = sortBy<(typeof positions)[number]>((s) => s.scores.height, false).execute(
+        positions,
+    )[0].scores.height;
+    const holes = sortBy<(typeof positions)[number]>((s) => s.scores.holes, false).execute(
+        positions,
+    )[0].scores.holes;
     return new Score({ clearingLines, holes, height });
 }
 
-export function sortMovements(positions) {
+export type Movement = SimpleMovement & { scores: Score };
+
+export function sortMovements(positions: Movement[]) {
     const worstScore = getWorstScoreValues(positions);
     const bestScore = getBestScoreValues(positions);
 
-    return sortBy((s) => s.scores.getRatio(worstScore, bestScore), true)
+    return sortBy<Movement>((s) => s.scores.getRatio(worstScore, bestScore), true)
         .thenBy((s) => s.scores.clearingLines, true)
         .thenBy((s) => s.scores.holes, false)
         .thenBy((s) => s.scores.height, false)

@@ -1,5 +1,6 @@
 {
     "include": ["src/**/*.ts"],
+    "exclude": ["./spec/**/*", "src/**/*-spec.ts", "src/**/*-Spec.ts"],
     "compilerOptions": {
         "moduleResolution": "node",
         "target": "es2020",

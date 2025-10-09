@@ -1,4 +1,3 @@
-import { describe, expect, it } from "chai";
 import { SoundController } from "./sound-controller";
 
 describe("sound controller", function () {

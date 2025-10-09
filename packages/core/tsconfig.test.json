@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.json",
+    "include": ["./spec/**/*", "src/**/*-spec.ts", "src/**/*-Spec.ts"],
+    "exclude": [],
+    "compilerOptions": {
+        "types": ["jest", "jasmine"],
+        "typeRoots": ["../../node_modules/@types"]
+    }
+}

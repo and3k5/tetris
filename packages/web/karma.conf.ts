@@ -1,6 +1,9 @@
+import { executablePath } from "puppeteer";
 // Karma configuration
 // Generated on Wed Feb 10 2021 11:38:36 GMT+0100 (Central European Standard Time)
-process.env.CHROME_BIN = require("puppeteer").executablePath();
+process.env.CHROME_BIN = executablePath();
+
+import webpackConfig from "./webpack.config";
 
 module.exports = function (config) {
     config.set({
@@ -25,7 +28,7 @@ module.exports = function (config) {
             "src/**/*.js": ["webpack"],
         },
 
-        webpack: require("./webpack.config")({ mode: "development" }),
+        webpack: webpackConfig({ mode: "development" }),
 
         // test results reporter to use
         // possible values: 'dots', 'progress'

@@ -10,7 +10,7 @@ export function rotateTwice(blocks: boolean[][]): boolean[][] {
     return createRotatedBlocks(blocks, 2);
 }
 
-export function createRotatedBlocks(blocks: boolean[][], rotations: number) {
+export function createRotatedBlocks<T>(blocks: T[][], rotations: number) {
     if (typeof rotations !== "number") throw new Error("rotations parameter must be a number");
     if (!isFinite(rotations)) throw new Error("rotations parameter must be a finite number");
     rotations = (4 + (rotations % 4)) % 4;

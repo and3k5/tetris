@@ -22,7 +22,7 @@
         "url": "git+https://github.com/and3k5/tetris.git"
     },
     "scripts": {
-        "test": "npx babel-node --config-file ../../babel.config.js spec/run.js"
+        "test": "npx ts-node spec/run.ts"
     },
     "bugs": {
         "url": "https://github.com/and3k5/tetris/issues"

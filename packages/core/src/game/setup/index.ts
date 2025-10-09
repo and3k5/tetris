@@ -3,7 +3,7 @@ import { StaticNextBrick } from "../logic/next-brick";
 
 export class TetrisSetup {
     // different types of bricks
-    private _brickforms: BrickFormBase[] | number[][][];
+    private _brickforms: (BrickFormBase | number[][])[];
 
     // game width
     private _width;

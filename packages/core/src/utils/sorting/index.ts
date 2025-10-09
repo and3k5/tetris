@@ -1,10 +1,17 @@
-export function sortBy(selector, descending = false) {
-    const exec = function (selector, descending) {
+type Selector<TItem> = (item: TItem) => number;
+interface Sorter<TItem> {
+    sorters: unknown[];
+    thenBy(selector: Selector<TItem>, descending?: boolean);
+    compare(a: TItem, b: TItem): number;
+    execute(array: TItem[]);
+}
+export function sortBy<TItem>(selector: Selector<TItem>, descending = false): Sorter<TItem> {
+    const exec = function (selector: Selector<TItem>, descending) {
         return (a, b) => selector(descending ? b : a) - selector(descending ? a : b);
     };
     return {
         sorters: [exec(selector, descending)],
-        thenBy: function (selector2, descending2) {
+        thenBy: function (selector2, descending2 = false) {
             this.sorters.push(exec(selector2, descending2));
             return this;
         },
@@ -16,8 +23,7 @@ export function sortBy(selector, descending = false) {
             return 0;
         },
         execute(array) {
-            const sorter = this;
-            return array.concat().sort((a, b) => sorter.compare(a, b));
+            return array.concat().sort((a, b) => this.sorter.compare(a, b));
         },
     };
 }
