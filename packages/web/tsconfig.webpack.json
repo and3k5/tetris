@@ -1,13 +1,15 @@
 {
-    "include": ["webpack.config.ts"],
+    "include": ["webpack.config.ts", "karma.conf.ts"],
     "exclude": ["src/**/*.ts"],
     "compilerOptions": {
         "esModuleInterop": true,
+        "lib": ["ES2017"],
         "module": "CommonJS"
     },
     "ts-node": {
         "compilerOptions": {
             "esModuleInterop": true,
+            "lib": ["ES2017"],
             "module": "CommonJS"
         }
     }
