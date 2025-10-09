@@ -1,8 +1,9 @@
 import { TetrisGame } from "@tetris/core/game";
 import { WebGraphicEngine } from "..";
 import { createReactor } from "../../utils/document-util";
-import { default as htmlLoad } from "./debug.html";
+import Debug from "./debug.vue";
 import { Color } from "@tetris/core/utils/color";
+import { createApp } from "vue";
 
 export function initDebug(
     parent: never,
@@ -11,12 +12,7 @@ export function initDebug(
 ) {
     const debugContainer = container;
 
-    const domParser = new DOMParser();
-    const htmlLoadDocument = domParser.parseFromString(htmlLoad, "text/html");
-
-    for (const element of htmlLoadDocument.body.children) {
-        debugContainer.append(element);
-    }
+    createApp(Debug).mount(debugContainer);
 
     const clickTick = debugContainer.querySelector<HTMLInputElement>("[data-target='clickTick']");
     clickTick.addEventListener("change", function (ev) {

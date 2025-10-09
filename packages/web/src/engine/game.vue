@@ -1,0 +1,17 @@
+<template>
+    <div class="tetris-logo"></div>
+    <p class="scorelbl">Score: <span id="score" data-target="score">0</span></p>
+    <div class="screen">
+        <div class="holding">
+            <p>Hold:</p>
+            <canvas id="holding" data-target="holdingCanvas"></canvas>
+        </div>
+        <div class="game-canvas-container">
+            <canvas id="game" data-target="gameCanvas"></canvas>
+        </div>
+        <div class="next">
+            <p>Next:</p>
+            <canvas id="next" data-target="nextCanvas"></canvas>
+        </div>
+    </div>
+</template>

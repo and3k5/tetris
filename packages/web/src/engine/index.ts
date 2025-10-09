@@ -1,4 +1,3 @@
-import { default as htmlLoad } from "./game.html";
 import { RadialGradient, LinearGradient } from "./style/gradient";
 import { drawGrid } from "./style/graphics-grid";
 import { utils } from "@tetris/core";
@@ -7,6 +6,9 @@ import { EngineBase } from "@tetris/core/game/engine";
 import { executeTick } from "@tetris/core/game/game-controller";
 import { Brick } from "@tetris/core/brick";
 import { Blocks } from "@tetris/core/brick/brick";
+
+import Game from "./game.vue";
+import { createApp } from "vue";
 
 export type StateValue = {
     fromStamp: number;
@@ -72,14 +74,9 @@ export class WebGraphicEngine extends EngineBase {
     constructor(options: { container: HTMLElement }) {
         super();
 
-        const domParser = new DOMParser();
-        const htmlDocument = domParser.parseFromString(htmlLoad, "text/html");
-
         const { container } = options;
 
-        for (const element of htmlDocument.body.children) {
-            container.append(element);
-        }
+        createApp(Game).mount(container);
 
         this._gameCanvas = container.querySelector("[data-target=gameCanvas]");
         this._holdingCanvas = container.querySelector("[data-target=holdingCanvas]");

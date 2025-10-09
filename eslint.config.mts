@@ -50,19 +50,19 @@ export default defineConfig([
             },
         ],
     },
-    {
-        basePath: "packages/electron",
-        extends: [
-            globalIgnores(["dist/**/*"], "Ignore dist"),
-            {
-                languageOptions: {
-                    parserOptions: {
-                        tsconfigRootDir: resolve(__dirname, "workspaces/electron"),
-                    },
-                },
-            },
-        ],
-    },
+    // {
+    //     basePath: "packages/electron",
+    //     extends: [
+    //         globalIgnores(["dist/**/*"], "Ignore dist"),
+    //         {
+    //             languageOptions: {
+    //                 parserOptions: {
+    //                     tsconfigRootDir: resolve(__dirname, "workspaces/electron"),
+    //                 },
+    //             },
+    //         },
+    //     ],
+    // },
     {
         basePath: "packages/log-server",
         extends: [

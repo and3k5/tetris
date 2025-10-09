@@ -22,17 +22,19 @@
         "url": "git+https://github.com/and3k5/tetris.git"
     },
     "scripts": {
-        "build": "npx cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" npx webpack --env mode=production",
-        "watch": "npx cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" npx webpack --env mode=development --watch",
-        "build-dev": "npx cross-env TS_NODE_PROJECT=\"tsconfig.webpack.json\" npx webpack --env mode=development --env mode=development",
-        "host": "mkdir -p dist && cd dist && npx http-server -a 127.0.0.1",
+        "build": "npx vite build",
+        "watch": "npx vite build --watch",
+        "build-dev": "npx vite build --mode development",
+        "host": "npx vite",
+        "dev": "npx vite",
         "test": "npx vitest run"
     },
     "bugs": {
         "url": "https://github.com/and3k5/tetris/issues"
     },
     "dependencies": {
-        "@tetris/core": "file:../core"
+        "@tetris/core": "file:../core",
+        "vue": "^3.5.22"
     },
     "eslintConfig": {
         "ignorePatterns": [
@@ -41,14 +43,8 @@
         ]
     },
     "devDependencies": {
-        "babel-loader": "^8.2.2",
-        "css-loader": "^3.2.0",
-        "file-loader": "^4.2.0",
-        "html-loader": "^0.5.5",
-        "html-webpack-plugin": "^5.6.4",
-        "http-server": "^14.1.1",
+        "@vitejs/plugin-vue": "^6.0.1",
         "jsdom": "^27.0.0",
-        "lerna": "^6.0.3",
-        "style-loader": "^1.0.0"
+        "lerna": "^6.0.3"
     }
 }
