@@ -19,6 +19,7 @@ jobs:
                   node-version: 22
             - run: |
                   npm install
+                  npm test
                   npm run build
 
     automerge:
