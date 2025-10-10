@@ -1,45 +1,46 @@
+@import "lite-view.css";
+
 html {
-    height:100%;
+    height: 100%;
 }
 body {
-	background-color:rgb(50,50,50);
-	margin:0;
-	text-align:center;
-	background:linear-gradient(rgb(50,50,50), rgb(60,60,60));
-    height:100%;
-    display:flex;
+    background-color: rgb(50, 50, 50);
+    margin: 0;
+    text-align: center;
+    background: linear-gradient(rgb(50, 50, 50), rgb(60, 60, 60));
+    height: 100%;
+    display: flex;
 }
 
-html, body {
-    overflow-x:hidden;
-    overflow-y:hidden;
+html,
+body {
+    overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 * {
     box-sizing: border-box;
-    border:0;
-    margin:0;
+    border: 0;
+    margin: 0;
 }
-
-@import "lite-view.css";
 
 body {
     box-sizing: border-box;
 }
 
 div#container {
-    display:flex;
+    display: flex;
     flex-direction: column;
-    width:600px;
-    margin:auto auto;
+    width: 600px;
+    margin: auto auto;
     border-radius: 50px;
     padding: 30px;
     max-width: 100%;
-    max-height:100%;
+    max-height: 100%;
 }
 
-div#container>.screen {
-    display:flex;
+div#container > .screen {
+    display: flex;
     flex-direction: row;
     align-items: flex-start;
     justify-content: space-around;
@@ -47,54 +48,57 @@ div#container>.screen {
     max-height: 75%;
 }
 
-div.holding, div.next {
+div.holding,
+div.next {
     text-align: left;
-    max-width:20%;
+    max-width: 20%;
 }
 
 canvas#game {
-	background: linear-gradient(rgb(100,100,100), rgb(80,80,80));
+    background: linear-gradient(rgb(100, 100, 100), rgb(80, 80, 80));
     border-radius: 5px;
-    width:100%;
+    width: 100%;
 }
 
 .game-canvas-container {
-    position:relative;
+    position: relative;
     max-width: 50%;
     max-height: 100%;
 }
 
-
-canvas#holding, canvas#next {
-	width: 100%;
+canvas#holding,
+canvas#next {
+    width: 100%;
 }
-div.holding, div.next {
-	background-color: #000;
-	vertical-align: top;
-	border-radius: 20px;
-	background: linear-gradient(#1E1E1E, #3C3C3C);
+div.holding,
+div.next {
+    background-color: #000;
+    vertical-align: top;
+    border-radius: 20px;
+    background: linear-gradient(#1e1e1e, #3c3c3c);
 }
-div.holding p, div.next p, p.scorelbl {
-	font-family: sans-serif;
-	color: #FFF;
-	font-weight: bold;
-	margin: 10px 0px 0px 10px;
+div.holding p,
+div.next p,
+p.scorelbl {
+    font-family: sans-serif;
+    color: #fff;
+    font-weight: bold;
+    margin: 10px 0px 0px 10px;
 }
 
 /* <p>Score: <span id="score">0</span></p> */
 p.scorelbl {
-	margin: 0px 0px 10px 0px;
+    margin: 0px 0px 10px 0px;
 }
 
 .tetris-logo {
-    width:300px;
-    height:73px;
+    width: 300px;
+    height: 73px;
     background-image: url("logo.svg");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    margin:auto;
+    margin: auto;
     margin-bottom: 10px;
     max-width: 100%;
 }
-

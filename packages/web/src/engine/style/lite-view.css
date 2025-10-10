@@ -1,16 +1,18 @@
-body.lite-view { 
-    background: rgba(0, 0, 0, 0) !important; margin: 0px auto; overflow: hidden;
+body.lite-view {
+    background: rgba(0, 0, 0, 0) !important;
+    margin: 0px auto;
+    overflow: hidden;
 }
 body.lite-view .tetris-logo {
-    display:none !important;
+    display: none !important;
 }
 body.lite-view #container {
     background: rgba(0, 0, 0, 0) !important;
-    zoom:1.5;
+    scale: 1.5;
 }
 
-body.lite-view span.holding, 
-body.lite-view span.next, 
+body.lite-view span.holding,
+body.lite-view span.next,
 body.lite-view #game {
-	border-radius:0 !important;
+    border-radius: 0 !important;
 }

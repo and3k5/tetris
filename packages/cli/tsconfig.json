@@ -1,0 +1,12 @@
+{
+    "include": ["src/**/*.ts"],
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "target": "es2020",
+        "esModuleInterop": true,
+        "paths": {
+            "@tetris/core": ["../core/src/index.ts"],
+            "@tetris/core/*": ["../core/src/*"]
+        }
+    }
+}
