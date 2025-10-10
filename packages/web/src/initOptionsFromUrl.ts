@@ -1,6 +1,6 @@
-import { options } from ".";
+import { Options } from "@tetris/core/game/init";
 
-export function initOptionsFromUrl(url: URL) {
+export function initOptionsFromUrl(url: URL, options : Options) {
     if (url.searchParams.get("setup") != null) options.setup = url.searchParams.get("setup");
 
     if (url.searchParams.get("next") != null) options.next = url.searchParams.get("next");
