@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => ({
     },
     resolve: {
         alias: {
+            "@": resolve(__dirname, "./src"),
             "@tetris/core": resolve(__dirname, "../core/src"),
         },
     },
