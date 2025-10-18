@@ -117,9 +117,11 @@ export function init(options: Options, engine: EngineBase) {
 
     if (options.logger === "1") setup.logger = true;
 
-    if (options.view === "lite") window.document.body.classList.add("lite-view");
-
     const tetrisgame = new TetrisGame(setup, null, engine);
+
+    if (options.view === "lite") {
+        tetrisgame.runEvent("setView", null, "lite");
+    }
 
     tetrisgame.init();
 

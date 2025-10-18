@@ -22,6 +22,10 @@ addEventListener("message", (event) => {
             postMessage({ type: "restart" });
         });
 
+        tetrisgame.addEvent("setView", (name) => {
+            postMessage({ type: "setView", name });
+        });
+
         if (options.sound !== "off") {
             postMessage({ type: "init-fx" });
             tetrisgame.registerAddon(

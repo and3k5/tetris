@@ -139,5 +139,9 @@ worker.addEventListener("message", (event) => {
         score.innerHTML = scoreValue;
     } else if (type === "restart") {
         window.location.reload();
+    } else if (type === "setView") {
+        const name = event.data.name;
+        console.log("set view", name);
+        if (name === "lite") window.document.body.classList.add("lite-view");
     }
 });
