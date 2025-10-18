@@ -576,7 +576,7 @@ export class TetrisGame<TEngine extends EngineBase = EngineBase> {
         this._RUNNING = false;
         this._eventController.trigger("lose", null);
         if (this.setup.simulator === true) {
-            setTimeout(() => window.location.reload(), 2000);
+            setTimeout(() => this.runEvent("restart", null), 2000);
         }
     }
 }

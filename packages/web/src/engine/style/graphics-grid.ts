@@ -43,9 +43,9 @@ export function getGrid(color, gridWidth, gridHeight, countX, countY) {
 }
 
 function createGrid(color, gridWidth, gridHeight, countX, countY) {
-    const canvas = document.querySelector("canvas");
-    canvas.width = gridWidth * countX;
-    canvas.height = gridHeight * countY;
+    const canvas = new OffscreenCanvas(gridWidth * countX, gridHeight * countY);
+    // canvas.width = gridWidth * countX;
+    // canvas.height = gridHeight * countY;
     const ctx = canvas.getContext("2d");
     ctx.strokeStyle = color.toRGBAString();
     ctx.lineWidth = 2;

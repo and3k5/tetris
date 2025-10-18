@@ -3,8 +3,6 @@ import { Blocks } from "@tetris/core/brick/brick";
 import { EngineBase } from "@tetris/core/game/engine";
 import { executeTick } from "@tetris/core/game/game-controller";
 import { Color } from "@tetris/core/utils/color";
-import { createApp } from "vue";
-import Game from "./game.vue";
 import { StateValue } from "./StateValue";
 import { RadialGradient, LinearGradient } from "./style/gradient";
 import { drawGrid } from "./style/graphics-grid";
@@ -12,9 +10,6 @@ import { drawGrid } from "./style/graphics-grid";
 export class WebGraphicEngine extends EngineBase {
     private _brickSize = 30;
 
-    private _gameCanvas;
-    private _holdingCanvas;
-    private _nextCanvas;
     private _gameCtx;
     private _holdingCtx;
     private _nextCtx;
@@ -40,122 +35,28 @@ export class WebGraphicEngine extends EngineBase {
         this._brickSize = v;
     }
 
-    get gameCanvas() {
-        return this._gameCanvas;
-    }
-
     get gameCtx() {
         return this._gameCtx;
     }
 
-    get holdingCanvas() {
-        return this._holdingCanvas;
-    }
-
-    get nextCanvas() {
-        return this._nextCanvas;
-    }
-
-    constructor(options: { container: HTMLElement }) {
+    constructor({
+        gameOffscreenCanvas,
+        holdingOffscreenCanvas,
+        nextOffscreenCanvas,
+    }: {
+        gameOffscreenCanvas: OffscreenCanvas;
+        holdingOffscreenCanvas: OffscreenCanvas;
+        nextOffscreenCanvas: OffscreenCanvas;
+    }) {
         super();
 
-        const { container } = options;
-
-        createApp(Game).mount(container);
-
-        this._gameCanvas = container.querySelector("[data-target=gameCanvas]");
-        this._holdingCanvas = container.querySelector("[data-target=holdingCanvas]");
-        this._nextCanvas = container.querySelector("[data-target=nextCanvas]");
-        this._score = container.querySelector("[data-target=score]");
-        this._gameCtx = this._gameCanvas.getContext("2d");
-        this._holdingCtx = this._holdingCanvas.getContext("2d");
-        this._nextCtx = this._nextCanvas.getContext("2d");
+        this._gameCtx = gameOffscreenCanvas.getContext("2d");
+        this._holdingCtx = holdingOffscreenCanvas.getContext("2d");
+        this._nextCtx = nextOffscreenCanvas.getContext("2d");
     }
 
     initializeInput() {
-        const game = this.game;
-
-        this.gameCanvas.addEventListener("click", function () {
-            if (game.setup.clickTick === true) executeTick(game);
-        });
-
-        window.addEventListener(
-            "keydown",
-            function (e) {
-                switch (e.keyCode) {
-                    case 37:
-                        // left
-                        e.preventDefault();
-                        game.input.left();
-                        break;
-                    case 38:
-                        // up
-                        e.preventDefault();
-                        game.input.rotate();
-                        break;
-                    case 39:
-                        // right
-                        e.preventDefault();
-                        game.input.right();
-                        break;
-                    case 40:
-                        // down
-                        e.preventDefault();
-                        game.input.down();
-                        break;
-                    case 32:
-                        // space
-                        e.preventDefault();
-                        if (e.repeat !== true) game.input.smashDown();
-                        break;
-                    case 27:
-                        // escape
-                        e.preventDefault();
-                        if (game.running) {
-                            // ingame
-                            game.runEvent("fx", null, "sound", "menuback");
-                        }
-                        break;
-                    case 16:
-                        // shift
-                        e.preventDefault();
-                        game.input.hold();
-                        break;
-                }
-            },
-            false,
-        );
-
-        let touchStart = null;
-
-        this.gameCanvas.addEventListener("touchstart", function (event) {
-            const touch = event.changedTouches[0];
-            touchStart = { x: touch.screenX, y: touch.screenY };
-        });
-        this.gameCanvas.addEventListener("touchend", function (event) {
-            const touch = event.changedTouches[0];
-            const touchEnd = { x: touch.screenX, y: touch.screenY };
-
-            const deltaX = touchEnd.x - touchStart.x;
-            const deltaY = touchEnd.y - touchStart.y;
-            const rad = Math.atan2(deltaY, deltaX);
-            let deg = rad * (180 / Math.PI);
-
-            while (deg < 0) deg += 360;
-
-            if (deg > 120 && deg < 220) {
-                game.input.left();
-            } else if (deg > 340 || deg < 40) {
-                game.input.right();
-            } else if (deg < 115 && deg > 65) {
-                game.input.smashDown();
-            } else {
-                console.debug(deg);
-            }
-        });
-        this.holdingCanvas.addEventListener("click", function () {
-            game.holdingShift();
-        });
+        postMessage({ type: "init-input" });
     }
 
     clearCanvases() {
@@ -446,7 +347,7 @@ export class WebGraphicEngine extends EngineBase {
     initRender() {
         this.render(true, true);
         this.game.addEvent("update-score", (score) => {
-            this.score.innerHTML = score;
+            postMessage({ type: "update-score", score });
         });
     }
 
