@@ -1,17 +1,13 @@
 import "./engine/style/tetris.css";
-import { extensions } from "@tetris/core";
 
 import "./engine/style/flame";
 
-import { WebGraphicEngine } from "./engine";
+import { WebGraphicEngine } from "./engine/WebGraphicEngine";
 
 import { SoundController } from "./engine/sound/sound-controller";
 import { init, Options } from "@tetris/core/game/init";
 import { initOptionsFromUrl } from "./initOptionsFromUrl";
-
-const {
-    addon: { INIT_TYPES },
-} = extensions;
+import { INIT_TYPES } from "@tetris/core/extensions/addon";
 
 const container = document.querySelector<HTMLDivElement>("#container");
 

@@ -1,5 +1,5 @@
 import { TetrisGame } from "@tetris/core/game";
-import { WebGraphicEngine } from "..";
+import { WebGraphicEngine } from "../WebGraphicEngine";
 import { createReactor } from "../../utils/document-util";
 import Debug from "./debug.vue";
 import { Color } from "@tetris/core/utils/color";

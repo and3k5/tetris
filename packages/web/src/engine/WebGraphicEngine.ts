@@ -1,28 +1,13 @@
-import { RadialGradient, LinearGradient } from "./style/gradient";
-import { drawGrid } from "./style/graphics-grid";
-import { utils } from "@tetris/core";
-import { Color } from "@tetris/core/utils/color";
-import { EngineBase } from "@tetris/core/game/engine";
-import { executeTick } from "@tetris/core/game/game-controller";
 import { Brick } from "@tetris/core/brick";
 import { Blocks } from "@tetris/core/brick/brick";
-
-import Game from "./game.vue";
+import { EngineBase } from "@tetris/core/game/engine";
+import { executeTick } from "@tetris/core/game/game-controller";
+import { Color } from "@tetris/core/utils/color";
 import { createApp } from "vue";
-
-export type StateValue = {
-    fromStamp: number;
-    scale: number;
-    color: utils.color.Color;
-    brick: Brick | undefined | null;
-    fromX: number;
-    fromY: number;
-    currentX?: number;
-    currentY?: number;
-    toX: number;
-    toY: number;
-    blocks: Blocks;
-};
+import Game from "./game.vue";
+import { StateValue } from "./StateValue";
+import { RadialGradient, LinearGradient } from "./style/gradient";
+import { drawGrid } from "./style/graphics-grid";
 
 export class WebGraphicEngine extends EngineBase {
     private _brickSize = 30;
@@ -480,35 +465,3 @@ export class WebGraphicEngine extends EngineBase {
         }
     }
 }
-
-// import * as flame from "./style/flame";
-
-// export class BurningGraphicEngine extends WebGraphicEngine {
-//     constructor(options) {
-//         super(options);
-//         //this.brickSize = 190;
-//     }
-
-//     drawSquare(ctx, x, y, w, h, color) {
-//         const image = ctx.createImageData(w, h);
-
-//         for (let _x = 0; _x < w; _x++) {
-//             for (let _y = 0; _y < w; _y++) {
-//                 const pos = (_x + ~~(_y * w)) * 4;
-
-//                 const col = flame.mainImage(_x / w, _y / h);
-
-//                 if (window.loq != true) {
-//                     window.loq = true;
-//                 }
-
-//                 image.data[pos + 0] = col[0] * 255;
-//                 image.data[pos + 1] = col[1] * 255;
-//                 image.data[pos + 2] = col[2] * 255;
-//                 image.data[pos + 3] = 255;
-//             }
-//         }
-
-//         ctx.putImageData(image, x, y);
-//     }
-// }
