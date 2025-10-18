@@ -7,3 +7,9 @@ My own version of tetris made in JS
 ```sh
 npm install
 ```
+
+### Launch web (local)
+
+```sh
+npm run --workspace packages/web dev
+```
