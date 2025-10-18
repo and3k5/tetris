@@ -1,7 +1,6 @@
 import { Brick } from "@tetris/core/brick";
 import { Blocks } from "@tetris/core/brick/brick";
 import { EngineBase } from "@tetris/core/game/engine";
-import { executeTick } from "@tetris/core/game/game-controller";
 import { Color } from "@tetris/core/utils/color";
 import { StateValue } from "./StateValue";
 import { RadialGradient, LinearGradient } from "./style/gradient";

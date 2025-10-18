@@ -1,6 +1,4 @@
 import { WebGraphicEngine } from "./engine/WebGraphicEngine";
-
-import { SoundController } from "./engine/sound/sound-controller";
 import { init } from "@tetris/core/game/init";
 import { INIT_TYPES } from "@tetris/core/extensions/addon";
 import { executeTick } from "@tetris/core/game/game-controller";
