@@ -1,19 +1,17 @@
 import { Brick } from "../brick";
 import * as gameController from "./game-controller";
-import { simulation } from "./logic";
-const { attachSimulator } = simulation;
 import { trace as console, color } from "../utils";
 const { Color } = color;
 import { logging } from "../diagnostics";
 const { transmitter } = logging;
-import { nextBrick } from "./logic";
 import { EventController } from "../extensions/event";
 import { AddonContainer, INIT_TYPES } from "../extensions/addon";
 import { InputController } from "./input";
 import { ITetrisSetup } from "./setup";
 import { EngineBase } from "./engine";
 import { Blocks } from "../brick/brick";
-const { NextBrick } = nextBrick;
+import { NextBrick } from "./logic/next-brick";
+import { attachSimulator } from "./logic/simulation";
 
 export class TetrisGame<TEngine extends EngineBase = EngineBase> {
     // [number] Bricks x count
