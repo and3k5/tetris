@@ -83,6 +83,10 @@ export function init(options: Options, engine: EngineBase) {
         case true:
             setup.simulator = true;
             break;
+        case "2":
+            setup.simulator = true;
+            setup.simulateMode = "fast";
+            break;
         case "assistbug":
             {
                 setup.simulator = true;
