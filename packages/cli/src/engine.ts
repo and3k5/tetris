@@ -1,11 +1,10 @@
-import { Brick } from "@tetris/core/brick";
+import { Brick } from "@tetris/core/brick/brick";
 import { EngineBase } from "@tetris/core/game/engine";
-import { trace } from "@tetris/core/utils";
 import { Color } from "@tetris/core/utils/color";
 import { EOL } from "os";
 import readline from "readline";
 import size from "window-size";
-const console = trace;
+import * as console from "@tetris/core/utils/trace";
 
 class TermWriter {
     items: TermUtil[];

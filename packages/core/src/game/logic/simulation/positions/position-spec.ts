@@ -1,5 +1,5 @@
 import { getPositions } from ".";
-import { Brick } from "../../../../brick";
+import { Brick } from "../../../../brick/brick";
 import { TetrisGame } from "../../../game";
 import { convertNumbersToBooleans, predictableGameWithOneBlock } from "../../../setup";
 
@@ -66,9 +66,7 @@ describe("getPositions", function () {
                             expect(value).toBe(false);
                             continue;
                         }
-                        expect(expectedBlocks[actualY]).not.toBeUndefined(
-                            "Was undefined at index " + actualY,
-                        );
+                        expect(expectedBlocks[actualY]).not.toBeUndefined();
                         expect(expectedBlocks[actualY][actualX]).toBe(false);
                         expectedBlocks[actualY][actualX] = value;
                     }

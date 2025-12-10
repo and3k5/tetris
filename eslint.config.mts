@@ -22,6 +22,38 @@ export default defineConfig([
         plugins: { js },
         extends: ["js/recommended"],
         languageOptions: { globals: { ...globals.browser, ...globals.node } },
+        rules: {
+            "no-restricted-syntax": [
+                "error",
+                {
+                    selector: "ExportNamedDeclaration[source]",
+                    message:
+                        "Exporting named bindings using `export { ... } from '...'` is not allowed.",
+                },
+                {
+                    selector: "ExportNamespaceSpecifier",
+                    message: "Exporting named bindings using `export * from '...'` is not allowed.",
+                },
+                {
+                    // only match named specifiers inside a re-export (child selector)
+                    selector: "ExportNamedDeclaration[source] > ExportSpecifier",
+                    message:
+                        "Re-exporting named bindings using `export { ... } from '...'` is not allowed.",
+                },
+                {
+                    // only match namespace specifier inside a re-export
+                    selector: "ExportNamedDeclaration[source] > ExportNamespaceSpecifier",
+                    message:
+                        "Re-exporting namespace bindings using `export * as ns from '...'` is not allowed.",
+                },
+                {
+                    // match `export * from 'x'`
+                    selector: "ExportAllDeclaration",
+                    message:
+                        "Re-exporting all bindings using `export * from '...'` is not allowed.",
+                },
+            ],
+        },
     },
     tseslint.configs.recommended,
     {

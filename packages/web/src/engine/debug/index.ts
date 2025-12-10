@@ -1,9 +1,9 @@
-import { TetrisGame } from "@tetris/core/game";
 import { WebGraphicEngine } from "../WebGraphicEngine";
 import { createReactor } from "../../utils/document-util";
 import Debug from "./debug.vue";
 import { Color } from "@tetris/core/utils/color";
 import { createApp } from "vue";
+import { TetrisGame } from "@tetris/core/game/game";
 
 export function initDebug(
     parent: never,

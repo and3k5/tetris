@@ -1,9 +1,7 @@
 import { Brick } from "./brick";
-import { utils } from "../";
 import { convertNumbersToBooleans, defaultGame } from "../game/setup";
-import { TetrisGame } from "../game";
-
-const { trace: console } = utils;
+import { TetrisGame } from "../game/game";
+import * as console from "../utils/trace";
 
 const setup = defaultGame();
 

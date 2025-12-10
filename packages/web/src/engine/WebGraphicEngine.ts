@@ -1,5 +1,4 @@
-import { Brick } from "@tetris/core/brick";
-import { Blocks } from "@tetris/core/brick/brick";
+import { Blocks, Brick } from "@tetris/core/brick/brick";
 import { EngineBase } from "@tetris/core/game/engine";
 import { Color } from "@tetris/core/utils/color";
 import { StateValue } from "./StateValue";

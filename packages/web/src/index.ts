@@ -6,7 +6,7 @@ import { createApp } from "vue";
 import Game from "./engine/game.vue";
 import { Options } from "@tetris/core/game/init";
 import { initOptionsFromUrl } from "./initOptionsFromUrl";
-import { SoundController } from "./engine/sound";
+import { SoundController } from "./engine/sound/sound-controller";
 
 const container = document.querySelector<HTMLDivElement>("#container");
 

@@ -1,11 +1,10 @@
 import { TetrisGame } from "../../game";
-import { Brick } from "../../../brick";
 import { EventController } from "../../../extensions/event";
-import { trace as console, color } from "../../../utils";
-const { Color } = color;
 import { StaticNextBrick } from "../next-brick";
 import { getPositions } from "./positions";
 import { getScore, sortMovements } from "./simulate-rating";
+import { Brick } from "../../../brick/brick";
+import { Color } from "../../../utils/color";
 
 export function cloneGame(game, setupChanges) {
     const bricks = game.bricks.concat().map((b) => b.clone());

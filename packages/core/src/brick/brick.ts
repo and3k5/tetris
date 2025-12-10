@@ -1,8 +1,7 @@
 import { TetrisGame } from "../game/game";
-import { guid, trace as console } from "../utils";
 import { Color } from "../utils/color";
+import { createUniqueGuid } from "../utils/guid";
 import { createRotatedBlocks, rotateLeft, rotateRight, rotateTwice } from "./block/rotate-blocks";
-const { createUniqueGuid } = guid;
 
 export type Blocks = boolean[][];
 

@@ -1,11 +1,10 @@
-import { Brick } from "@tetris/core/brick";
-import { Blocks } from "@tetris/core/brick/brick";
-import { utils } from "@tetris/core/utils";
+import { Blocks, Brick } from "@tetris/core/brick/brick";
+import { Color } from "@tetris/core/utils/color";
 
 export type StateValue = {
     fromStamp: number;
     scale: number;
-    color: utils.color.Color;
+    color: Color;
     brick: Brick | undefined | null;
     fromX: number;
     fromY: number;

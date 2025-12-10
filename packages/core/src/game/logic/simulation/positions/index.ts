@@ -1,4 +1,4 @@
-import { Brick } from "../../../../brick";
+import { Brick } from "../../../../brick/brick";
 import { TetrisGame } from "../../../game";
 import { SimpleMovement } from "../movement";
 

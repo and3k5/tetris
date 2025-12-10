@@ -1,10 +1,6 @@
-import { game } from "@tetris/core";
-const {
-    init: { init },
-} = game;
-
 import { NodeGraphicEngine } from "./engine";
-import { Options } from "@tetris/core/game/init";
+import { init, Options } from "@tetris/core/game/init";
+
 const graphicEngine = new NodeGraphicEngine();
 
 const args = process.argv.concat();

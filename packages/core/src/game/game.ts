@@ -1,17 +1,14 @@
-import { Brick } from "../brick";
 import * as gameController from "./game-controller";
-import { trace as console, color } from "../utils";
-const { Color } = color;
-import { logging } from "../diagnostics";
-const { transmitter } = logging;
 import { EventController } from "../extensions/event";
 import { AddonContainer, INIT_TYPES } from "../extensions/addon";
 import { InputController } from "./input";
 import { ITetrisSetup } from "./setup";
 import { EngineBase } from "./engine";
-import { Blocks } from "../brick/brick";
+import { Blocks, Brick } from "../brick/brick";
 import { NextBrick } from "./logic/next-brick";
 import { attachSimulator } from "./logic/simulation";
+import { Color } from "../utils/color";
+import { transmitter } from "../diagnostics/logging";
 
 export class TetrisGame<TEngine extends EngineBase = EngineBase> {
     // [number] Bricks x count
@@ -71,7 +68,7 @@ export class TetrisGame<TEngine extends EngineBase = EngineBase> {
     private _nextRandomGenerator;
 
     private _score = 0;
-    getColors: () => color.Color[];
+    getColors: () => Color[];
     checkLines: () => void;
     init: () => void;
     input: InputController;
