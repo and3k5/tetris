@@ -16,7 +16,21 @@ export function convertNumbersToBooleans(
     }
 }
 
-export class TetrisSetup {
+export interface ITetrisSetup {
+    brickforms: (BrickFormBase | Blocks)[];
+    width: number;
+    height: number;
+    graphics?: unknown;
+    sequence?: number[];
+    nextBrick?: unknown;
+    logger?: boolean;
+    simulator?: boolean;
+    simulateMode?: "fast" | undefined;
+    simulation?: { type: "nextRandom"; val: number; time: number }[];
+    clickTick?: boolean;
+}
+
+export class TetrisSetup implements ITetrisSetup {
     // different types of bricks
     private _brickforms: (BrickFormBase | Blocks)[];
 
@@ -47,6 +61,10 @@ export class TetrisSetup {
         this._graphics = extra.graphics;
         this._nextBrick = extra.nextBrick;
     }
+    simulator?: boolean;
+    simulateMode?: "fast";
+    simulation?: { type: "nextRandom"; val: number; time: number }[];
+    clickTick?: boolean;
 
     get nextBrick() {
         return this._nextBrick;

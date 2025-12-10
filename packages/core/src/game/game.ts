@@ -10,7 +10,7 @@ import { nextBrick } from "./logic";
 import { EventController } from "../extensions/event";
 import { AddonContainer, INIT_TYPES } from "../extensions/addon";
 import { InputController } from "./input";
-import { TetrisSetup } from "./setup";
+import { ITetrisSetup } from "./setup";
 import { EngineBase } from "./engine";
 import { Blocks } from "../brick/brick";
 const { NextBrick } = nextBrick;
@@ -95,7 +95,7 @@ export class TetrisGame<TEngine extends EngineBase = EngineBase> {
     }
 
     constructor(
-        gameSetup?: TetrisSetup,
+        gameSetup?: ITetrisSetup,
         extra: { bricks?: Brick[]; holding?: unknown } = null,
         graphicEngine: TEngine | null = null,
     ) {

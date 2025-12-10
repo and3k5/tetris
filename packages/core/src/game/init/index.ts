@@ -1,7 +1,7 @@
 import { TetrisGame } from "../";
 import { EngineBase } from "../engine";
 import { EasyNextBrick } from "../logic/next-brick";
-import { defaultGame, easyGame, easyGame2, longPieceGame, shitGame } from "../setup";
+import { defaultGame, easyGame, easyGame2, ITetrisSetup, longPieceGame, shitGame } from "../setup";
 
 // function optionParser() {
 //     const options: Partial<Options> = {};
@@ -51,7 +51,7 @@ export class Options {
 }
 
 export function init(options: Options, engine: EngineBase) {
-    let setup;
+    let setup: ITetrisSetup;
 
     switch (options.setup) {
         case "ez":
