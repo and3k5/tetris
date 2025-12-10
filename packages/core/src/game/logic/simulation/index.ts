@@ -1,4 +1,4 @@
-import { TetrisGame } from "../../";
+import { TetrisGame } from "../../game";
 import { Brick } from "../../../brick";
 import { EventController } from "../../../extensions/event";
 import { trace as console, color } from "../../../utils";

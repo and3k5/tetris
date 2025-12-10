@@ -1,4 +1,4 @@
-import { TetrisGame } from "../";
+import { TetrisGame } from "../game";
 import { EngineBase } from "../engine";
 import { EasyNextBrick } from "../logic/next-brick";
 import { defaultGame, easyGame, easyGame2, ITetrisSetup, longPieceGame, shitGame } from "../setup";

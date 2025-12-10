@@ -1,4 +1,4 @@
-import { TetrisGame } from "../game";
+import { TetrisGame } from "../game/game";
 import { guid, trace as console } from "../utils";
 import { Color } from "../utils/color";
 import { createRotatedBlocks, rotateLeft, rotateRight, rotateTwice } from "./block/rotate-blocks";
