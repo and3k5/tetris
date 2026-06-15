@@ -38,6 +38,6 @@
     },
     "devDependencies": {
         "babel-loader": "^8.2.2",
-        "lerna": "^6.0.3"
+        "lerna": "^9.0.7"
     }
 }
